@@ -259,12 +259,11 @@
       margin-top: 2px;
     }
 
-    /* থিম কালার */
     .theme-doctor { background: #E0F2FE; color: #0284C7; }
     .theme-gov-hospital { background: #DCFCE7; color: #16A34A; }
     .theme-pvt-hospital { background: #E0E7FF; color: #4338CA; }
     .theme-diagnostic { background: #CCFBF1; color: #0D9488; }
-    .theme-dental { background: #E0E7FF; color: #2563EB; } /* ডেন্টাল থিম */
+    .theme-dental { background: #E0E7FF; color: #2563EB; }
     .theme-edu { background: #EDE9FE; color: #7C3AED; }
     .theme-news { background: #E2E8F0; color: #334155; }
     .theme-movie { background: #FDF2F8; color: #DB2777; }
@@ -275,7 +274,6 @@
     .theme-food { background: #FFEDD5; color: #EA580C; }
     .theme-all { background: #F1F5F9; color: #475569; }
 
-    /* স্লাইড পেজ */
     .slide-page, .details-view {
       position: fixed;
       top: 0;
@@ -567,11 +565,10 @@
         <span>আপনার চেম্বার বা ব্যবসার বিজ্ঞাপন দিন এখানে</span>
       </div>
 
-      <!-- ১. স্বাস্থ্য সেবা (ডেন্টাল ক্যাটাগরিসহ) -->
+      <!-- ১. স্বাস্থ্য সেবা -->
       <div id="section-health">
         <div class="section-title"><i class="fa-solid fa-notes-medical"></i> স্বাস্থ্য সেবা</div>
         <div class="home-categories-grid">
-          <!-- ১. বিশেষজ্ঞ ডাক্তার -->
           <div class="home-cat-card" id="catCard-doctor" style="display: none;" onclick="openDoctorList(null, 'সকল বিশেষজ্ঞ চিকিৎসক')">
             <div class="home-cat-icon theme-doctor"><i class="fa-solid fa-user-doctor"></i></div>
             <div class="home-cat-info">
@@ -580,7 +577,6 @@
             </div>
           </div>
 
-          <!-- ২. সরকারি হাসপাতাল -->
           <div class="home-cat-card" id="catCard-সরকারি হাসপাতাল" style="display: none;" onclick="openCategoryPage('সরকারি হাসপাতাল', 'সরকারি হাসপাতাল ও স্বাস্থ্য কেন্দ্র')">
             <div class="home-cat-icon theme-gov-hospital"><i class="fa-solid fa-hospital-user"></i></div>
             <div class="home-cat-info">
@@ -589,7 +585,6 @@
             </div>
           </div>
 
-          <!-- ৩. বেসরকারি হাসপাতাল -->
           <div class="home-cat-card" id="catCard-বেসরকারি হাসপাতাল" style="display: none;" onclick="openCategoryPage('বেসরকারি হাসপাতাল', 'প্রাইভেট হাসপাতাল ও ক্লিনিক')">
             <div class="home-cat-icon theme-pvt-hospital"><i class="fa-solid fa-square-h"></i></div>
             <div class="home-cat-info">
@@ -598,7 +593,6 @@
             </div>
           </div>
 
-          <!-- ৪. ডায়াগনস্টিক ও কনসালটেশন -->
           <div class="home-cat-card" id="catCard-ডায়াগনস্টিক" style="display: none;" onclick="openCategoryPage('ডায়াগনস্টিক', 'ল্যাব টেস্ট ও কনসালটেশন সেন্টার')">
             <div class="home-cat-icon theme-diagnostic"><i class="fa-solid fa-hospital"></i></div>
             <div class="home-cat-info">
@@ -607,7 +601,6 @@
             </div>
           </div>
 
-          <!-- ৫. ডেন্টাল (নতুন ক্যাটাগরি) -->
           <div class="home-cat-card" id="catCard-ডেন্টাল" style="display: none;" onclick="openCategoryPage('ডেন্টাল', 'ডেন্টাল ক্লিনিক ও দাঁতের বিশেষজ্ঞ')">
             <div class="home-cat-icon theme-dental"><i class="fa-solid fa-tooth"></i></div>
             <div class="home-cat-info">
@@ -794,7 +787,7 @@
     <div class="page-listings" id="bookmarkListings"></div>
   </div>
 
-  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন -->
+  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (ডায়নামিক ডেসক্রিপশনসহ ফিক্সড) -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -867,11 +860,10 @@
         </div>
       </div>
 
-      <div style="border-top: 1px solid var(--border); padding-top: 14px;">
+      <!-- ফিক্সড: পরিচিতি ও সুবিধা বক্স (ডাটা না থাকলে সম্পূর্ণ লুকানো থাকবে) -->
+      <div id="detailsDescBox" style="border-top: 1px solid var(--border); padding-top: 14px; display: none;">
         <h4 style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">পরিচিতি ও সুবিধা</h4>
-        <p id="detailsDesc" style="font-size: 14px; color: #475569; line-height: 1.6;">
-          এখানে বিশেষজ্ঞ চিকিৎসকদের নিয়মিত কনসালটেশন, প্যাথলজিক্যাল টেস্ট, ডিজিটাল এক্স-রে ও সার্বক্ষণিক স্বাস্থ্যসেবা পাওয়া যায়।
-        </p>
+        <p id="detailsDesc" style="font-size: 14px; color: #475569; line-height: 1.6;">-</p>
       </div>
     </div>
   </div>
@@ -1055,9 +1047,7 @@
       window.open(formUrl, '_blank');
     }
 
-    // =========================================================
-    // অটো-হাইড লজিক (ডেন্টাল ক্যাটাগরি অন্তর্ভুক্ত)
-    // =========================================================
+    // অটো-হাইড লজিক
     function updateVisibleCategoryCards() {
       const docCard = document.getElementById('catCard-doctor');
       if (docCard) {
@@ -1068,7 +1058,7 @@
         { id: 'catCard-সরকারি হাসপাতাল', keywords: ['সরকারি হাসপাতাল', 'সরকারি স্বাস্থ্য', '৩০০ শয্যা', 'ভিক্টোরিয়া', 'মাতৃসদন'] },
         { id: 'catCard-বেসরকারি হাসপাতাল', keywords: ['বেসরকারি হাসপাতাল', 'প্রাইভেট হাসপাতাল', 'ক্লিনিক'] },
         { id: 'catCard-ডায়াগনস্টিক', keywords: ['ডায়াগনস্টিক', 'কনসালটেশন', 'ল্যাব', 'প্যাথলজি'] },
-        { id: 'catCard-ডেন্টাল', keywords: ['ডেন্টাল', 'দাঁত', 'dental'] }, // ডেন্টাল কিওয়ার্ড
+        { id: 'catCard-ডেন্টাল', keywords: ['ডেন্টাল', 'দাঁত', 'dental'] },
         { id: 'catCard-শিক্ষা প্রতিষ্ঠান', keywords: ['শিক্ষা প্রতিষ্ঠান', 'শিক্ষা', 'স্কুল', 'কলেজ', 'মাদরাসা', 'একাডেমি'] },
         { id: 'catCard-সংবাদপত্র', keywords: ['সংবাদপত্র', 'পত্রিকা', 'নিউজ', 'অনলাইন পোর্টাল'] },
         { id: 'catCard-সিনেমা হল', keywords: ['সিনেমা হল', 'সিনেমা', 'প্রেক্ষাগৃহ', 'মুভি'] },
@@ -1351,6 +1341,18 @@
       const chamberBox = document.getElementById('chamberDocsBtnBox');
       const isMedical = (item.category || '').includes('চিকিৎসা') || (item.category || '').includes('ডায়াগনস্টিক') || (item.category || '').includes('হাসপাতাল') || (item.category || '').includes('ডেন্টাল') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল') || (item.name || '').includes('ডেন্টাল');
       chamberBox.style.display = isMedical ? 'block' : 'none';
+
+      // ফিক্সড: ডায়নামিক পরিচিতি ও সুবিধা
+      const descBox = document.getElementById('detailsDescBox');
+      const descText = document.getElementById('detailsDesc');
+      const descContent = item.description || item.desc || item.about || '';
+
+      if (descContent.trim() !== '') {
+        descText.innerText = descContent.trim();
+        descBox.style.display = 'block';
+      } else {
+        descBox.style.display = 'none';
+      }
 
       const callBtn = document.getElementById('detailsCallBtn');
       if (item.phone) {
