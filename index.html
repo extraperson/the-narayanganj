@@ -9,12 +9,9 @@
   <link rel="icon" type="image/png" href="the_narayanganj_clean_rgb_512.png">
   <meta name="theme-color" content="#0F5132">
 
-  <!-- বাংলা ফন্ট -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <style>
@@ -221,7 +218,6 @@
     .theme-bus { background: #CFFAFE; color: #0891B2; }
     .theme-office { background: #F3E8FF; color: #9333EA; }
 
-    /* স্লাইড পেজ ট্রানজিশন ও লেয়ারিং */
     .slide-page {
       position: fixed;
       top: 0;
@@ -242,7 +238,6 @@
       transform: translateX(-50%) translateX(0);
     }
 
-    /* বিস্তারিত পেজের z-index = 1000 */
     .details-view {
       position: fixed;
       top: 0;
@@ -263,14 +258,8 @@
       transform: translateX(-50%) translateX(0);
     }
 
-    /* ডাক্তার তালিকা স্ক্রিন ও ডাক্তার প্রোফাইল পেজের z-index = 1100 (যাতে বিস্তারিত পেজের ওপরে খোলে) */
-    #doctorPage {
-      z-index: 1100;
-    }
-
-    #doctorProfileView {
-      z-index: 1200;
-    }
+    #doctorPage { z-index: 1100; }
+    #doctorProfileView { z-index: 1200; }
 
     .top-sub-header {
       position: sticky;
@@ -306,7 +295,7 @@
     }
 
     .page-listings {
-      padding: 16px 20px 80px;
+      padding: 16px 20px 90px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -420,12 +409,13 @@
       background: #E2E8F0;
     }
 
+    /* ফিক্সড: বটমে পর্যাপ্ত প্যাডিং (১২০ পিক্সেল) */
     .details-content {
       padding: 20px;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      padding-bottom: 90px;
+      padding-bottom: 120px;
     }
 
     .details-title { font-size: 21px; font-weight: 700; color: var(--text); }
@@ -440,7 +430,6 @@
       margin-top: 6px;
     }
 
-    /* ফিক্সড ও সুন্দর ডক্টর লিস্ট বাটন */
     .btn-show-chamber-docs {
       background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
       color: #fff;
@@ -487,6 +476,7 @@
       width: 18px;
     }
 
+    /* ফিক্সড বটম বার */
     .details-fixed-bottom {
       position: fixed;
       bottom: 0;
@@ -494,9 +484,9 @@
       transform: translateX(-50%);
       width: 100%;
       max-width: 440px;
-      background: #fff;
+      background: #ffffff;
       padding: 14px 20px;
-      box-shadow: 0 -4px 15px rgba(0,0,0,0.06);
+      box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.08);
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
@@ -675,7 +665,7 @@
     <div class="page-listings" id="categoryListings"></div>
   </div>
 
-  <!-- ৩. ডাক্তার তালিকা স্ক্রিন (z-index: 1100) -->
+  <!-- ৩. ডাক্তার তালিকা স্ক্রিন -->
   <div class="slide-page" id="doctorPage">
     <div class="top-sub-header">
       <button class="btn-circle" onclick="closeDoctorPage()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -695,7 +685,7 @@
     <div class="page-listings" id="doctorListings"></div>
   </div>
 
-  <!-- ৪. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (z-index: 1000) -->
+  <!-- ৪. প্রতিষ্ঠান বিস্তারিত স্ক্রিন -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -712,7 +702,6 @@
         <span class="details-tag" id="detailsCategory">ক্যাটাগরি</span>
       </div>
 
-      <!-- ডাক্তার তালিকা বোতাম -->
       <div id="chamberDocsBtnBox" style="display: none;">
         <div class="btn-show-chamber-docs" onclick="viewChamberDoctors()">
           <div>
@@ -765,7 +754,7 @@
     </div>
   </div>
 
-  <!-- ৫. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন (z-index: 1200) -->
+  <!-- ৫. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন -->
   <div class="details-view" id="doctorProfileView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDoctorProfile()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -789,7 +778,7 @@
       <span>সিরিয়ালের জন্য নির্ধারিত চেম্বারের নম্বরে কল করুন</span>
     </div>
 
-    <div style="padding: 10px 20px 80px; display: flex; flex-direction: column; gap: 14px;">
+    <div style="padding: 10px 20px 100px; display: flex; flex-direction: column; gap: 14px;">
       <h4 style="font-size: 16px; font-weight: 700; color: var(--text);">চেম্বার ও সময়সূচি</h4>
       <div id="docProfileChambersList" style="display: flex; flex-direction: column; gap: 12px;"></div>
     </div>
@@ -811,7 +800,6 @@
     let activeItem = null;
     let activeDoctor = null;
 
-    // ১. সাধারণ ক্যাটাগরি পেজ
     function openCategoryPage(category, subtitle = '') {
       currentCategory = category;
       document.getElementById('catPageTitle').innerText = category === 'সব' ? 'সকল সেবা ও তথ্য' : category;
@@ -895,7 +883,6 @@
 
     document.getElementById('catSearchInput').addEventListener('input', renderCategoryItems);
 
-    // ২. ডাক্তারদের তালিকা স্ক্রিন (বড় z-index ও মসৃণ লোড)
     function openDoctorList(chamberName = null, title = 'বিশেষজ্ঞ ডাক্তারগণ') {
       currentChamberFilter = chamberName;
       document.getElementById('docPageTitle').innerText = chamberName ? chamberName : title;
@@ -923,7 +910,6 @@
       const filtered = doctorsData.filter(doc => {
         let matchChamber = true;
         if (currentChamberFilter) {
-          // নাম বা চেম্বারের আংশিক মিল চেক করা (যেমন পপুলার)
           const target = currentChamberFilter.toLowerCase().replace('ডায়াগনস্টিক', '').replace('সেন্টার', '').trim();
           matchChamber = (doc.chamber || '').toLowerCase().includes(target);
         }
@@ -977,7 +963,6 @@
 
     document.getElementById('docSearchInput').addEventListener('input', renderDoctorItems);
 
-    // ৩. প্রতিষ্ঠান বিস্তারিত স্ক্রিন
     function openDetails(item) {
       activeItem = item;
       document.getElementById('detailsName').innerText = item.name || 'তথ্য নেই';
@@ -986,7 +971,6 @@
       document.getElementById('detailsTiming').innerText = item.timing || 'খোলা আছে';
       document.getElementById('detailsPhone').innerText = item.phone || 'নম্বর নেই';
 
-      // ডায়াগনস্টিক বা চিকিৎসা হলে বাটনটি দৃশ্যমান হবে
       const chamberBox = document.getElementById('chamberDocsBtnBox');
       const isMedical = (item.category || '').includes('চিকিৎসা') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল');
       chamberBox.style.display = isMedical ? 'block' : 'none';
@@ -1008,7 +992,6 @@
       window.history.pushState({ page: 'details' }, '');
     }
 
-    // বাটন ক্লিকের অ্যাকশন (সরাসরি ডক্টর পেজে পাঠানো)
     function viewChamberDoctors() {
       if (activeItem) {
         openDoctorList(activeItem.name, `${activeItem.name}-এর ডাক্তারগণ`);
@@ -1019,7 +1002,6 @@
       document.getElementById('detailsView').classList.remove('open');
     }
 
-    // ৪. স্বতন্ত্র ডাক্তার প্রোফাইল পেজ
     function openDoctorProfile(doc) {
       activeDoctor = doc;
       document.getElementById('docProfileName').innerText = doc.name || 'ডাক্তারের নাম';
@@ -1080,7 +1062,6 @@
       closeCategoryPage();
     }
 
-    // ব্যাক বাটন নিখুঁত লেয়ার অনুযায়ী বন্ধ হওয়া
     window.onpopstate = function() {
       if (document.getElementById('doctorProfileView').classList.contains('open')) {
         closeDoctorProfile();
