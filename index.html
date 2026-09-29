@@ -21,8 +21,8 @@
       --accent: #E67E22;
       --bg: #F8F9FA;
       --card-bg: #FFFFFF;
-      --text: #2C3E50;
-      --text-muted: #7F8C8D;
+      --text: #1E293B;
+      --text-muted: #64748B;
       --border: #E2E8F0;
       --radius: 14px;
     }
@@ -51,7 +51,6 @@
       flex-direction: column;
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
       position: relative;
-      padding-bottom: 75px;
       overflow-x: hidden;
     }
 
@@ -165,7 +164,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      padding: 0 20px 20px;
+      padding: 0 20px 90px; /* AdMob / Bottom Nav Safe Area */
     }
 
     .home-cat-card {
@@ -218,7 +217,8 @@
     .theme-bus { background: #CFFAFE; color: #0891B2; }
     .theme-office { background: #F3E8FF; color: #9333EA; }
 
-    .slide-page {
+    /* স্লাইড পেজ ট্রানজিশন */
+    .slide-page, .details-view {
       position: fixed;
       top: 0;
       left: 50%;
@@ -234,32 +234,17 @@
       transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
     }
 
-    .slide-page.open {
+    .slide-page.open, .details-view.open {
       transform: translateX(-50%) translateX(0);
     }
 
     .details-view {
-      position: fixed;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%) translateX(100%);
-      width: 100%;
-      max-width: 440px;
-      height: 100vh;
-      background: #fff;
+      background: #FFFFFF;
       z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
-    }
-
-    .details-view.open {
-      transform: translateX(-50%) translateX(0);
     }
 
     #doctorPage { z-index: 1100; }
-    #doctorProfileView { z-index: 1200; }
+    #doctorProfileView { z-index: 1200; background: #FFFFFF; }
 
     .top-sub-header {
       position: sticky;
@@ -295,7 +280,7 @@
     }
 
     .page-listings {
-      padding: 16px 20px 80px;
+      padding: 16px 20px 95px; /* AdMob ব্যানার সুরক্ষিত রাখতে নিরাপদ স্পেস */
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -392,32 +377,47 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 10px 0;
-      border-radius: 8px;
+      padding: 11px 0;
+      border-radius: 10px;
       text-decoration: none;
       font-size: 14px;
       font-weight: 600;
+      transition: all 0.2s;
     }
 
-    .btn-call { background: var(--primary); color: #fff; }
-    .btn-map { background: #F1F5F9; color: var(--text); border: 1px solid var(--border); }
+    .btn-call { 
+      background: var(--primary); 
+      color: #fff;
+      box-shadow: 0 3px 8px rgba(15, 81, 50, 0.2);
+    }
+    .btn-map { 
+      background: #F8FAFC; 
+      color: var(--text); 
+      border: 1px solid var(--border); 
+    }
 
     .details-hero-img {
       width: 100%;
-      height: 190px;
+      height: 180px;
       object-fit: cover;
       background: #E2E8F0;
     }
 
-    /* কনটেন্ট ফ্লো: কোনো ফিক্সড পজিশন নেই, স্বাভাবিক ফ্লোতে সুন্দর নিচে নিচে বসবে */
+    /* নতুন মসৃণ ডিটেইলস লেআউট (ফ্লুয়েন্ট ও কমফোর্ট) */
     .details-content {
-      padding: 20px 20px 40px;
+      padding: 20px 20px 95px; /* AdMob Banner Safe Bottom Space */
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
 
-    .details-title { font-size: 21px; font-weight: 700; color: var(--text); }
+    .details-title { 
+      font-size: 21px; 
+      font-weight: 700; 
+      color: var(--text); 
+      line-height: 1.25;
+    }
+
     .details-tag {
       display: inline-block;
       background: var(--primary-light);
@@ -429,34 +429,49 @@
       margin-top: 6px;
     }
 
-    .btn-show-chamber-docs {
-      background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
-      color: #fff;
-      padding: 15px 16px;
+    /* প্রিমিয়াম ডাক্তার কার্ড (নীল ব্লকের বদলে ক্লিন কার্ড) */
+    .doc-nav-card {
+      background: #F0F9FF;
+      border: 1px solid #BAE6FD;
       border-radius: var(--radius);
+      padding: 14px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 14px;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
       cursor: pointer;
-      user-select: none;
+      transition: all 0.15s ease;
     }
 
-    .btn-show-chamber-docs:active {
-      transform: scale(0.98);
-      opacity: 0.95;
+    .doc-nav-card:active {
+      background: #E0F2FE;
+      transform: scale(0.99);
+    }
+
+    .doc-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .doc-nav-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #0284C7;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
     }
 
     .info-list {
-      background: var(--bg);
+      background: #F8FAFC;
       border-radius: var(--radius);
       padding: 14px 16px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
       border: 1px solid var(--border);
     }
 
@@ -473,14 +488,6 @@
       margin-top: 3px;
       font-size: 16px;
       width: 18px;
-    }
-
-    /* স্বাভাবিক ব্লকে বাটন কনটেইনার (আর ওভারল্যাপ হবে না) */
-    .inline-action-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 2px;
     }
 
     .chamber-card-item {
@@ -675,7 +682,7 @@
     <div class="page-listings" id="doctorListings"></div>
   </div>
 
-  <!-- ৪. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (ওভারল্যাপ ছাড়া স্বাভাবিক ফ্লো) -->
+  <!-- ৪. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (ফ্লুয়েন্ট ও রিফ্রেশিং লুক) -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -687,49 +694,14 @@
     <img src="" id="detailsImg" class="details-hero-img" alt="ছবি" onerror="this.src='https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80'">
 
     <div class="details-content">
+      <!-- শিরোনাম ও ট্যাগ -->
       <div>
         <h2 class="details-title" id="detailsName">...</h2>
         <span class="details-tag" id="detailsCategory">ক্যাটাগরি</span>
       </div>
 
-      <!-- ডাক্তার তালিকা বোতাম -->
-      <div id="chamberDocsBtnBox" style="display: none;">
-        <div class="btn-show-chamber-docs" onclick="viewChamberDoctors()">
-          <div>
-            <div style="font-size: 15px; font-weight: 700;">বিশেষজ্ঞ ডাক্তারদের তালিকা</div>
-            <div style="font-size: 12px; opacity: 0.9;">এই সেন্টারে কোন কোন ডাক্তার বসেন দেখুন</div>
-          </div>
-          <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </div>
-
-      <!-- তথ্য তালিকা -->
-      <div class="info-list">
-        <div class="info-item">
-          <i class="fa-solid fa-location-dot"></i>
-          <div>
-            <strong>ঠিকানা:</strong>
-            <div id="detailsAddress" style="color: #4A5568; margin-top: 2px;">-</div>
-          </div>
-        </div>
-        <div class="info-item">
-          <i class="fa-solid fa-clock"></i>
-          <div>
-            <strong>সময়সূচি:</strong>
-            <div id="detailsTiming" style="color: #4A5568; margin-top: 2px;">সকাল ৮:০০ - রাত ১০:০০</div>
-          </div>
-        </div>
-        <div class="info-item">
-          <i class="fa-solid fa-phone"></i>
-          <div>
-            <strong>হটলাইন / যোগাযোগ:</strong>
-            <div id="detailsPhone" style="color: #4A5568; margin-top: 2px;">-</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- কল ও গুগল ম্যাপ বোতাম (স্বাভাবিক ব্লকে) -->
-      <div class="inline-action-buttons">
+      <!-- টপ অ্যাকশন বাটন (এক ক্লিকে সরাসরি কল ও ম্যাপ) -->
+      <div class="action-buttons" style="margin-top: -2px;">
         <a href="#" id="detailsCallBtn" class="btn-action btn-call">
           <i class="fa-solid fa-phone"></i> কল করুন
         </a>
@@ -738,10 +710,49 @@
         </a>
       </div>
 
-      <!-- পরিচিতি ও সুবিধা বক্স -->
-      <div class="details-desc-box" style="border-top: 1px solid var(--border); padding-top: 14px;">
+      <!-- ডাক্তার নেভিগেশন কার্ড (চিকিৎসা প্রতিষ্ঠানের জন্য প্রিমিয়াম কার্ড) -->
+      <div id="chamberDocsBtnBox" style="display: none;">
+        <div class="doc-nav-card" onclick="viewChamberDoctors()">
+          <div class="doc-nav-left">
+            <div class="doc-nav-icon"><i class="fa-solid fa-user-doctor"></i></div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: #0C4A6E;">বিশেষজ্ঞ ডাক্তারদের তালিকা</div>
+              <div style="font-size: 12px; color: #0284C7;">এই সেন্টারে কোন কোন ডাক্তার বসেন দেখুন</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="color: #0284C7; font-size: 14px;"></i>
+        </div>
+      </div>
+
+      <!-- ঠিকানা ও সময়সূচি তথ্য বক্স -->
+      <div class="info-list">
+        <div class="info-item">
+          <i class="fa-solid fa-location-dot"></i>
+          <div>
+            <strong style="color: var(--text);">ঠিকানা:</strong>
+            <div id="detailsAddress" style="color: var(--text-muted); margin-top: 2px;">-</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fa-solid fa-clock"></i>
+          <div>
+            <strong style="color: var(--text);">সময়সূচি:</strong>
+            <div id="detailsTiming" style="color: var(--text-muted); margin-top: 2px;">সকাল ৮:০০ - রাত ১০:০০</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fa-solid fa-phone"></i>
+          <div>
+            <strong style="color: var(--text);">হটলাইন / সিরিয়াল:</strong>
+            <div id="detailsPhone" style="color: var(--text-muted); margin-top: 2px;">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- পরিচিতি ও সুবিধা -->
+      <div style="border-top: 1px solid var(--border); padding-top: 14px;">
         <h4 style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">পরিচিতি ও সুবিধা</h4>
-        <p id="detailsDesc" style="font-size: 14px; color: #4A5568; line-height: 1.6;">
+        <p id="detailsDesc" style="font-size: 14px; color: #475569; line-height: 1.6;">
           এখানে বিশেষজ্ঞ চিকিৎসকদের নিয়মিত কনসালটেশন, প্যাথলজিক্যাল টেস্ট, ডিজিটাল এক্স-রে ও সার্বক্ষণিক স্বাস্থ্যসেবা পাওয়া যায়।
         </p>
       </div>
@@ -772,7 +783,7 @@
       <span>সিরিয়ালের জন্য নির্ধারিত চেম্বারের নম্বরে কল করুন</span>
     </div>
 
-    <div style="padding: 10px 20px 60px; display: flex; flex-direction: column; gap: 14px;">
+    <div style="padding: 10px 20px 95px; display: flex; flex-direction: column; gap: 14px;">
       <h4 style="font-size: 16px; font-weight: 700; color: var(--text);">চেম্বার ও সময়সূচি</h4>
       <div id="docProfileChambersList" style="display: flex; flex-direction: column; gap: 12px;"></div>
     </div>
