@@ -58,15 +58,6 @@
       overflow-x: hidden;
     }
 
-    /* স্ক্রিন ট্রানজিশন কনটেইনার */
-    .screen {
-      width: 100%;
-      transition: all 0.25s ease;
-    }
-
-    /* =========================================
-       ১ নম্বর স্ক্রিন: ক্লিন হোম পেজ (Home Screen)
-       ========================================= */
     .header {
       background: #fff;
       padding: 16px 20px 12px;
@@ -139,23 +130,15 @@
       align-items: center;
     }
 
-    .banner h3 {
-      font-size: 16px;
-      margin-bottom: 2px;
-    }
+    .banner h3 { font-size: 16px; margin-bottom: 2px; }
+    .banner p { font-size: 12px; opacity: 0.9; }
 
-    .banner p {
-      font-size: 12px;
-      opacity: 0.9;
-    }
-
-    /* Ad Banner Slot Placeholder (বিজ্ঞাপনের জন্য প্রস্তুত জায়গা) */
     .ad-slot-box {
       margin: 14px 20px 5px;
       background: #FFFFFF;
       border: 1px dashed #CBD5E1;
       border-radius: var(--radius);
-      padding: 12px;
+      padding: 11px;
       text-align: center;
       color: var(--text-muted);
       font-size: 12px;
@@ -181,7 +164,6 @@
       font-weight: 600;
     }
 
-    /* হোম পেজ ক্যাটাগরি গ্রিড (২ কলামে বড় ও পরিচ্ছন্ন কার্ড) */
     .home-categories-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -231,20 +213,17 @@
       margin-top: 3px;
     }
 
-    /* কাস্টম কালার থিম */
-    .theme-emergency { background: #FEE2E2; color: #DC2626; }
+    .theme-doctor { background: #E0F2FE; color: #0284C7; }
     .theme-medical { background: #DCFCE7; color: #16A34A; }
+    .theme-emergency { background: #FEE2E2; color: #DC2626; }
     .theme-shop { background: #FEF3C7; color: #D97706; }
     .theme-tour { background: #E0E7FF; color: #4F46E5; }
     .theme-bus { background: #CFFAFE; color: #0891B2; }
     .theme-office { background: #F3E8FF; color: #9333EA; }
     .theme-food { background: #FFEDD5; color: #EA580C; }
-    .theme-other { background: #F1F5F9; color: #475569; }
 
-    /* ========================================================
-       ২ নম্বর স্ক্রিন: ক্যাটাগরি লিস্টিং পেজ (Category List Screen)
-       ======================================================== */
-    .category-page {
+    /* ক্যাটাগরি ও ডক্টর তালিকা স্ক্রিন */
+    .slide-page {
       position: fixed;
       top: 0;
       left: 50%;
@@ -260,7 +239,7 @@
       transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
     }
 
-    .category-page.open {
+    .slide-page.open {
       transform: translateX(-50%) translateX(0);
     }
 
@@ -282,14 +261,29 @@
       color: var(--text);
     }
 
-    .category-listings {
+    .btn-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #F1F5F9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      font-size: 16px;
+      color: var(--text);
+      flex-shrink: 0;
+    }
+
+    .page-listings {
       padding: 16px 20px 80px;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
 
-    .place-card {
+    .place-card, .doctor-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -299,10 +293,6 @@
       gap: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.02);
       cursor: pointer;
-    }
-
-    .place-card:active {
-      transform: scale(0.99);
     }
 
     .place-header {
@@ -341,6 +331,33 @@
       flex-shrink: 0;
     }
 
+    /* ডক্টর কার্ড ডিজাইন */
+    .doc-specialty {
+      font-size: 13px;
+      color: var(--primary);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .doc-degrees {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .doc-chamber-tag {
+      background: #F1F5F9;
+      color: #334155;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      width: fit-content;
+    }
+
     .action-buttons {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -360,20 +377,10 @@
       font-weight: 600;
     }
 
-    .btn-call {
-      background: var(--primary);
-      color: #fff;
-    }
+    .btn-call { background: var(--primary); color: #fff; }
+    .btn-map { background: #F1F5F9; color: var(--text); border: 1px solid var(--border); }
 
-    .btn-map {
-      background: #F1F5F9;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-
-    /* ========================================================
-       ৩ নম্বর স্ক্রিন: ফুল বিস্তারিত পেজ (Single Details Screen)
-       ======================================================== */
+    /* ডিটেইল পেজ */
     .details-view {
       position: fixed;
       top: 0;
@@ -394,33 +401,6 @@
       transform: translateX(-50%) translateX(0);
     }
 
-    .details-header-bar {
-      position: sticky;
-      top: 0;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border);
-      z-index: 10;
-    }
-
-    .btn-circle {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #F1F5F9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      border: none;
-      font-size: 16px;
-      color: var(--text);
-    }
-
     .details-hero-img {
       width: 100%;
       height: 190px;
@@ -436,20 +416,7 @@
       padding-bottom: 90px;
     }
 
-    .details-title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-    }
-
-    .details-title {
-      font-size: 21px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.25;
-    }
-
+    .details-title { font-size: 21px; font-weight: 700; color: var(--text); }
     .details-tag {
       display: inline-block;
       background: var(--primary-light);
@@ -459,6 +426,22 @@
       font-size: 12px;
       font-weight: 600;
       margin-top: 6px;
+    }
+
+    /* ডায়াগনস্টিক ডিটেইলসে স্পেশাল ডক্টর বোতাম */
+    .btn-show-chamber-docs {
+      background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+      color: #fff;
+      padding: 14px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+      cursor: pointer;
     }
 
     .info-list {
@@ -484,24 +467,6 @@
       margin-top: 3px;
       font-size: 16px;
       width: 18px;
-    }
-
-    .details-desc-box {
-      border-top: 1px solid var(--border);
-      padding-top: 16px;
-    }
-
-    .details-desc-box h4 {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-
-    .details-desc-box p {
-      font-size: 14px;
-      color: #4A5568;
-      line-height: 1.6;
     }
 
     .details-fixed-bottom {
@@ -544,24 +509,16 @@
       gap: 3px;
     }
 
-    .nav-item.active {
-      color: var(--primary);
-      font-weight: 700;
-    }
-
-    .nav-item i {
-      font-size: 18px;
-    }
+    .nav-item.active { color: var(--primary); font-weight: 700; }
+    .nav-item i { font-size: 18px; }
   </style>
 </head>
 <body>
 
   <div class="app-container">
     
-    <!-- =======================================
-         ১. হোম স্ক্রিন
-         ======================================= -->
-    <div id="homeScreen" class="screen">
+    <!-- ১. হোম স্ক্রিন -->
+    <div id="homeScreen">
       <header class="header">
         <div class="brand">
           <div class="brand-icon">N</div>
@@ -572,22 +529,21 @@
         </div>
         <div class="search-box">
           <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-          <input type="text" id="homeSearchInput" placeholder="সরাসরি প্রতিষ্ঠান বা সেবা খুঁজুন...">
+          <input type="text" id="homeSearchInput" placeholder="ডাক্তার, হাসপাতাল বা যে কোনো সেবা খুঁজুন...">
         </div>
       </header>
 
       <div class="banner">
         <div>
           <h3>নারায়ণগঞ্জের এ টু জেড</h3>
-          <p>চিকিৎসা, জরুরি সেবা, প্রশাসন ও পর্যটন গাইড</p>
+          <p>ডাক্তার, চিকিৎসা, জরুরি সেবা ও শহরের গাইড</p>
         </div>
         <i class="fa-solid fa-city" style="font-size: 32px; opacity: 0.9;"></i>
       </div>
 
-      <!-- বিজ্ঞাপন ফ্রেম (AdMob / Sponsored Banner) -->
       <div class="ad-slot-box">
         <i class="fa-solid fa-rectangle-ad"></i>
-        <span>আপনার ব্যবসার প্রচার বা বিজ্ঞাপন দিন এখানে</span>
+        <span>আপনার চেম্বার বা ব্যবসার বিজ্ঞাপন দিন এখানে</span>
       </div>
 
       <div class="section-title">
@@ -595,13 +551,21 @@
         <span>বিভাগে ক্লিক করুন <i class="fa-solid fa-chevron-right"></i></span>
       </div>
 
-      <!-- হোম পেজ ক্যাটাগরি গ্রিড -->
+      <!-- ক্যাটাগরি গ্রিড (ডাক্তার ডিরেক্টরি শীর্ষে) -->
       <div class="home-categories-grid">
-        <div class="home-cat-card" onclick="openCategoryPage('চিকিৎসা', 'ডায়াগনস্টিক, হাসপাতাল ও ডাক্তার')">
+        <div class="home-cat-card" onclick="openDoctorList(null, 'সকল বিশেষজ্ঞ চিকিৎসক')">
+          <div class="home-cat-icon theme-doctor"><i class="fa-solid fa-user-doctor"></i></div>
+          <div class="home-cat-info">
+            <h4>বিশেষজ্ঞ ডাক্তার</h4>
+            <p>চেম্বার ও সিরিয়াল</p>
+          </div>
+        </div>
+
+        <div class="home-cat-card" onclick="openCategoryPage('চিকিৎসা', 'ডায়াগনস্টিক সেন্টার ও হাসপাতাল')">
           <div class="home-cat-icon theme-medical"><i class="fa-solid fa-hospital"></i></div>
           <div class="home-cat-info">
-            <h4>চিকিৎসা</h4>
-            <p>ডায়াগনস্টিক ও চেম্বার</p>
+            <h4>ডায়াগনস্টিক</h4>
+            <p>হাসপাতাল ও ল্যাব</p>
           </div>
         </div>
 
@@ -621,7 +585,7 @@
           </div>
         </div>
 
-        <div class="home-cat-card" onclick="openCategoryPage('পর্যটন ও বিনোদন', 'পানাম নগর, জাদুঘর ও ঐতিহাসিক স্থান')">
+        <div class="home-cat-card" onclick="openCategoryPage('পর্যটন ও বিনোদন', 'পানাম নগর, জাদুঘর ও দুর্গ')">
           <div class="home-cat-icon theme-tour"><i class="fa-solid fa-landmark"></i></div>
           <div class="home-cat-info">
             <h4>পর্যটন ও দর্শনীয়</h4>
@@ -629,7 +593,7 @@
           </div>
         </div>
 
-        <div class="home-cat-card" onclick="openCategoryPage('পরিবহন', 'বাস, ট্রেন, লঞ্চ ও লোকাল রুট')">
+        <div class="home-cat-card" onclick="openCategoryPage('পরিবহন', 'বাস, ট্রেন, লঞ্চ ও রুট')">
           <div class="home-cat-icon theme-bus"><i class="fa-solid fa-bus"></i></div>
           <div class="home-cat-info">
             <h4>পরিবহন</h4>
@@ -645,16 +609,8 @@
           </div>
         </div>
 
-        <div class="home-cat-card" onclick="openCategoryPage('খাবার ও রেস্তোরাঁ', 'মিষ্টি, ঐতিহ্যবাহী খাবার ও ক্যাফে')">
-          <div class="home-cat-icon theme-food"><i class="fa-solid fa-utensils"></i></div>
-          <div class="home-cat-info">
-            <h4>খাবার ও হোটেল</h4>
-            <p>জনপ্রিয় মিষ্টি ও রেস্তোরাঁ</p>
-          </div>
-        </div>
-
         <div class="home-cat-card" onclick="openCategoryPage('সব', 'নারায়ণগঞ্জের সকল তালিকা')">
-          <div class="home-cat-icon theme-other"><i class="fa-solid fa-ellipsis"></i></div>
+          <div class="home-cat-icon theme-medical"><i class="fa-solid fa-ellipsis"></i></div>
           <div class="home-cat-info">
             <h4>সকল তথ্য</h4>
             <p>একসাথে সব দেখুন</p>
@@ -666,16 +622,14 @@
     <!-- বটম বার -->
     <nav class="bottom-nav">
       <a href="#" class="nav-item active" onclick="goHome()"><i class="fa-solid fa-house"></i>হোম</a>
-      <a href="#" class="nav-item" onclick="openCategoryPage('সব', 'সকল ডিরেক্টরি তালিকা')"><i class="fa-solid fa-compass"></i>এক্সপ্লোর</a>
-      <a href="#" class="nav-item"><i class="fa-solid fa-bookmark"></i>সংরক্ষণ</a>
-      <a href="#" class="nav-item"><i class="fa-solid fa-circle-info"></i>পরিচিতি</a>
+      <a href="#" class="nav-item" onclick="openDoctorList(null, 'সকল ডাক্তার')"><i class="fa-solid fa-user-doctor"></i>ডাক্তার</a>
+      <a href="#" class="nav-item" onclick="openCategoryPage('সব', 'সকল তালিকা')"><i class="fa-solid fa-compass"></i>এক্সপ্লোর</a>
+      <a href="#" class="nav-item"><i class="fa-solid fa-circle-info"></i>তথ্য</a>
     </nav>
   </div>
 
-  <!-- ========================================================
-       ২. ক্যাটাগরি তালিকা স্ক্রিন (Category Listing Screen)
-       ======================================================== -->
-  <div class="category-page" id="categoryPage">
+  <!-- ২. সাধারণ ক্যাটাগরি লিস্টিং স্ক্রিন -->
+  <div class="slide-page" id="categoryPage">
     <div class="top-sub-header">
       <button class="btn-circle" onclick="closeCategoryPage()"><i class="fa-solid fa-arrow-left"></i></button>
       <div>
@@ -684,7 +638,6 @@
       </div>
     </div>
 
-    <!-- ক্যাটাগরি পেজে সার্চ বক্স -->
     <div style="padding: 14px 20px 4px;">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
@@ -692,39 +645,54 @@
       </div>
     </div>
 
-    <!-- পেজের মাঝে ব্যানার স্পেস (AdMob Banner Opportunity!) -->
-    <div class="ad-slot-box" style="margin: 10px 20px;">
-      <i class="fa-solid fa-bullhorn"></i>
-      <span>নারায়ণগঞ্জের গ্রাহকদের কাছে আপনার সার্ভিস পৌঁছে দিন</span>
-    </div>
-
-    <div class="category-listings" id="categoryListings">
-      <!-- ডায়াগনস্টিক/প্রতিষ্ঠানের কার্ডগুলো এখানে রেন্ডার হবে -->
-    </div>
+    <div class="page-listings" id="categoryListings"></div>
   </div>
 
-  <!-- ========================================================
-       ৩. পূর্ণাঙ্গ বিস্তারিত স্ক্রিন (Details Screen)
-       ======================================================== -->
+  <!-- ৩. ডাক্তার ডিরেক্টরি স্ক্রিন (টু-ওয়ে শেয়ার্ড পেজ) -->
+  <div class="slide-page" id="doctorPage">
+    <div class="top-sub-header">
+      <button class="btn-circle" onclick="closeDoctorPage()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div>
+        <h3 id="docPageTitle">বিশেষজ্ঞ ডাক্তারগণ</h3>
+        <p id="docPageSub" style="font-size: 12px; color: var(--text-muted);">চেম্বার ও সিরিয়াল</p>
+      </div>
+    </div>
+
+    <div style="padding: 14px 20px 4px;">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+        <input type="text" id="docSearchInput" placeholder="নাম, রোগ বা স্পেশালিটি খুঁজুন...">
+      </div>
+    </div>
+
+    <div class="page-listings" id="doctorListings"></div>
+  </div>
+
+  <!-- ৪. পূর্ণাঙ্গ বিস্তারিত স্ক্রিন (প্রতিষ্ঠান) -->
   <div class="details-view" id="detailsView">
-    <div class="details-header-bar">
+    <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
       <div style="display: flex; gap: 8px;">
         <button class="btn-circle" onclick="shareItem()"><i class="fa-solid fa-share-nodes"></i></button>
-        <button class="btn-circle"><i class="fa-regular fa-heart"></i></button>
       </div>
     </div>
 
     <img src="" id="detailsImg" class="details-hero-img" alt="ছবি" onerror="this.src='https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80'">
 
     <div class="details-content">
-      <div class="details-title-row">
-        <div>
-          <h2 class="details-title" id="detailsName">...</h2>
-          <span class="details-tag" id="detailsCategory">ক্যাটাগরি</span>
-        </div>
-        <div class="rating-badge" id="detailsRatingBox">
-          <i class="fa-solid fa-star"></i> <span id="detailsRating">৪.২</span>
+      <div>
+        <h2 class="details-title" id="detailsName">...</h2>
+        <span class="details-tag" id="detailsCategory">ক্যাটাগরি</span>
+      </div>
+
+      <!-- ডায়াগনস্টিক হলে স্পেশাল বাটন ভেসে উঠবে -->
+      <div id="chamberDocsBtnBox" style="display: none;">
+        <div class="btn-show-chamber-docs" onclick="viewChamberDoctors()">
+          <div>
+            <div style="font-size: 15px; font-weight: 700;">বিশেষজ্ঞ ডাক্তারদের তালিকা</div>
+            <div style="font-size: 12px; opacity: 0.9;">এই সেন্টারে কোন কোন ডাক্তার বসেন দেখুন</div>
+          </div>
+          <i class="fa-solid fa-arrow-right"></i>
         </div>
       </div>
 
@@ -746,16 +714,16 @@
         <div class="info-item">
           <i class="fa-solid fa-phone"></i>
           <div>
-            <strong>হটলাইন / সিরিয়াল:</strong>
+            <strong>হটলাইন / যোগাযোগ:</strong>
             <div id="detailsPhone" style="color: #4A5568; margin-top: 2px;">-</div>
           </div>
         </div>
       </div>
 
       <div class="details-desc-box">
-        <h4>পরিচিতি ও বিশেষ সুবিধা</h4>
-        <p id="detailsDesc">
-          এখানে বিশেষজ্ঞ চিকিৎসকদের নিয়মিত কনসালটেশন, প্যাথলজিক্যাল টেস্ট, ডিজিটাল এক্স-রে, আল্ট্রাসনোগ্রাফি ও সার্বক্ষণিক সেবা উপলব্ধ রয়েছে।
+        <h4 style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">পরিচিতি ও সুবিধা</h4>
+        <p id="detailsDesc" style="font-size: 14px; color: #4A5568; line-height: 1.6;">
+          এখানে বিশেষজ্ঞ চিকিৎসকদের নিয়মিত কনসালটেশন, প্যাথলজিক্যাল টেস্ট, ডিজিটাল এক্স-রে ও সার্বক্ষণিক স্বাস্থ্যসেবা পাওয়া যায়।
         </p>
       </div>
     </div>
@@ -775,12 +743,18 @@
       navigator.serviceWorker.register('sw.js');
     }
 
-    const API_URL = "https://opensheet.elk.sh/1ctXswktft11lTCw_TiTbwoF2jgmLsHaf4Zno23QImjQ/Sheet1";
-    let directoryData = [];
+    // Sheet1 (প্রতিষ্ঠান) ও Doctors (ডাক্তার তালিকা) API
+    const SHEET_ID = "1ctXswktft11lTCw_TiTbwoF2jgmLsHaf4Zno23QImjQ";
+    const API_PLACES = `https://opensheet.elk.sh/${SHEET_ID}/Sheet1`;
+    const API_DOCTORS = `https://opensheet.elk.sh/${SHEET_ID}/Doctors`;
+
+    let placesData = [];
+    let doctorsData = [];
     let currentCategory = 'সব';
+    let currentChamberFilter = null;
     let activeItem = null;
 
-    // ১. ক্যাটাগরি পেজ ওপেন করা (Screen 2)
+    // ১. সাধারণ ক্যাটাগরি পেজ
     function openCategoryPage(category, subtitle = '') {
       currentCategory = category;
       document.getElementById('catPageTitle').innerText = category === 'সব' ? 'সকল সেবা ও তথ্য' : category;
@@ -796,26 +770,24 @@
       document.getElementById('categoryPage').classList.remove('open');
     }
 
-    // ক্যাটাগরি অনুযায়ী ফিল্টার ও রেন্ডার
     function renderCategoryItems() {
       const container = document.getElementById('categoryListings');
       container.innerHTML = '';
 
       const query = document.getElementById('catSearchInput').value.toLowerCase().trim();
 
-      const filtered = directoryData.filter(item => {
+      const filtered = placesData.filter(item => {
         const itemCat = (item.category || '').toLowerCase();
         const selectedCat = currentCategory.toLowerCase();
         
         let matchCat = (currentCategory === 'সব');
         if (!matchCat) {
-          if (selectedCat.includes('জরুরি') && itemCat.includes('জরুরি')) matchCat = true;
-          else if (selectedCat.includes('চিকিৎসা') && itemCat.includes('চিকিৎসা')) matchCat = true;
-          else if (selectedCat.includes('শপিং') && (itemCat.includes('শপিং') || itemCat.includes('ব্যবসা') || itemCat.includes('মার্কেট'))) matchCat = true;
-          else if (selectedCat.includes('পর্যটন') && (itemCat.includes('পর্যটন') || itemCat.includes('দর্শনীয়') || itemCat.includes('বিনোদন'))) matchCat = true;
+          if (selectedCat.includes('চিকিৎসা') && itemCat.includes('চিকিৎসা')) matchCat = true;
+          else if (selectedCat.includes('জরুরি') && itemCat.includes('জরুরি')) matchCat = true;
+          else if (selectedCat.includes('শপিং') && (itemCat.includes('শপিং') || itemCat.includes('ব্যবসা'))) matchCat = true;
+          else if (selectedCat.includes('পর্যটন') && (itemCat.includes('পর্যটন') || itemCat.includes('দর্শনীয়'))) matchCat = true;
           else if (selectedCat.includes('পরিবহন') && itemCat.includes('পরিবহন')) matchCat = true;
-          else if (selectedCat.includes('প্রশাসন') && (itemCat.includes('প্রশাসন') || itemCat.includes('সরকারি') || itemCat.includes('অফিস'))) matchCat = true;
-          else if (selectedCat.includes('খাবার') && (itemCat.includes('খাবার') || itemCat.includes('রেস্তোরাঁ') || itemCat.includes('হোটেল'))) matchCat = true;
+          else if (selectedCat.includes('প্রশাসন') && (itemCat.includes('প্রশাসন') || itemCat.includes('অফিস'))) matchCat = true;
           else matchCat = itemCat.includes(selectedCat);
         }
 
@@ -828,7 +800,7 @@
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px 0;">এই বিভাগে এখনো কোনো তথ্য যোগ করা হয়নি।</div>`;
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px 0;">কোনো প্রতিষ্ঠান পাওয়া যায়নি।</div>`;
         return;
       }
 
@@ -849,9 +821,7 @@
               <div class="place-title">${name}</div>
               <div class="place-area"><i class="fa-solid fa-location-dot"></i> ${area}</div>
             </div>
-            <div class="rating-badge">
-              <i class="fa-solid fa-star"></i> ${rating}
-            </div>
+            <div class="rating-badge"><i class="fa-solid fa-star"></i> ${rating}</div>
           </div>
           <div class="action-buttons">
             <a href="${phone ? 'tel:' + phone : '#'}" class="btn-action btn-call" onclick="event.stopPropagation()">
@@ -868,30 +838,86 @@
 
     document.getElementById('catSearchInput').addEventListener('input', renderCategoryItems);
 
-    // ২. হোম পেজ থেকে সরাসরি সার্চ করলে ক্যাটাগরি পেজে নিয়ে যাওয়া
-    document.getElementById('homeSearchInput').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        const val = e.target.value.trim();
-        if (val) {
-          openCategoryPage('সব', `অনুসন্ধান: "${val}"`);
-          document.getElementById('catSearchInput').value = val;
-          renderCategoryItems();
-        }
-      }
-    });
+    // ২. ডাক্তারদের তালিকা স্ক্রিন (টু-ওয়ে ডিরেক্টরি)
+    function openDoctorList(chamberName = null, title = 'বিশেষজ্ঞ ডাক্তারগণ') {
+      currentChamberFilter = chamberName;
+      document.getElementById('docPageTitle').innerText = chamberName ? chamberName : title;
+      document.getElementById('docPageSub').innerText = chamberName ? 'এই সেন্টারের বিশেষজ্ঞ চিকিৎসকগণ' : 'চেম্বার, ভিজিটিং সময় ও সিরিয়াল';
+      document.getElementById('docSearchInput').value = '';
 
-    // ৩. ৩ নম্বর স্ক্রিন: বিস্তারিত পেজ ওপেন করা (Details Screen)
+      renderDoctorItems();
+      document.getElementById('doctorPage').classList.add('open');
+      window.history.pushState({ page: 'doctors' }, '');
+    }
+
+    function closeDoctorPage() {
+      document.getElementById('doctorPage').classList.remove('open');
+    }
+
+    function renderDoctorItems() {
+      const container = document.getElementById('doctorListings');
+      container.innerHTML = '';
+
+      const query = document.getElementById('docSearchInput').value.toLowerCase().trim();
+
+      const filtered = doctorsData.filter(doc => {
+        let matchChamber = true;
+        if (currentChamberFilter) {
+          matchChamber = (doc.chamber || '').toLowerCase().includes(currentChamberFilter.toLowerCase());
+        }
+
+        const matchSearch = 
+          (doc.name || '').toLowerCase().includes(query) ||
+          (doc.specialty || '').toLowerCase().includes(query) ||
+          (doc.chamber || '').toLowerCase().includes(query) ||
+          (doc.degrees || '').toLowerCase().includes(query);
+
+        return matchChamber && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px 0;">কোনো ডাক্তারের তথ্য পাওয়া যায়নি।</div>`;
+        return;
+      }
+
+      filtered.forEach(doc => {
+        const card = document.createElement('div');
+        card.className = 'doctor-card';
+        card.innerHTML = `
+          <div>
+            <div class="place-title" style="color: #0F5132;">${doc.name}</div>
+            <div class="doc-specialty">${doc.specialty || 'বিশেষজ্ঞ চিকিৎসক'}</div>
+            <div class="doc-degrees">${doc.degrees || ''}</div>
+            <div class="doc-chamber-tag"><i class="fa-solid fa-hospital"></i> ${doc.chamber || 'চেম্বার'} (${doc.area || 'চাষাড়া'})</div>
+            <div style="font-size: 12px; color: #475569; margin-top: 6px;">
+              <i class="fa-solid fa-clock" style="color: #10664F;"></i> <strong>সময়:</strong> ${doc.timing || 'নিয়মিত'}
+            </div>
+          </div>
+          <div class="action-buttons" style="grid-template-columns: 1fr;">
+            <a href="${doc.serial_phone ? 'tel:' + doc.serial_phone : '#'}" class="btn-action btn-call">
+              <i class="fa-solid fa-phone"></i> সিরিয়াল দিন (${doc.serial_phone || 'হটলাইন'})
+            </a>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById('docSearchInput').addEventListener('input', renderDoctorItems);
+
+    // ৩. বিস্তারিত পেজ
     function openDetails(item) {
       activeItem = item;
-      document.getElementById('detailsName').innerText = item.name || 'নাম নেই';
+      document.getElementById('detailsName').innerText = item.name || 'তথ্য নেই';
       document.getElementById('detailsCategory').innerText = item.category || 'সেবা';
-      document.getElementById('detailsRating').innerText = item.rating || '৪.০';
       document.getElementById('detailsAddress').innerText = item.address || item.area || 'নারায়ণগঞ্জ';
-      document.getElementById('detailsTiming').innerText = item.timing || 'খোলা আছে (নিয়মিত সময়সূচি)';
-      document.getElementById('detailsPhone').innerText = item.phone || 'নম্বর পাওয়া যায়নি';
-      
-      const heroImg = document.getElementById('detailsImg');
-      heroImg.src = item.image_url || 'https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?w=800&auto=format&fit=crop&q=80';
+      document.getElementById('detailsTiming').innerText = item.timing || 'খোলা আছে';
+      document.getElementById('detailsPhone').innerText = item.phone || 'নম্বর নেই';
+
+      // যদি ক্যাটাগরি চিকিৎসা/ডায়াগনস্টিক হয়, তাহলে "ডাক্তারদের তালিকা" বাটন দেখাবে
+      const chamberBox = document.getElementById('chamberDocsBtnBox');
+      const isMedical = (item.category || '').includes('চিকিৎসা') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল');
+      chamberBox.style.display = isMedical ? 'block' : 'none';
 
       const callBtn = document.getElementById('detailsCallBtn');
       if (item.phone) {
@@ -910,19 +936,28 @@
       window.history.pushState({ page: 'details' }, '');
     }
 
+    function viewChamberDoctors() {
+      if (activeItem) {
+        openDoctorList(activeItem.name, `${activeItem.name}-এর ডাক্তারগণ`);
+      }
+    }
+
     function closeDetails() {
       document.getElementById('detailsView').classList.remove('open');
     }
 
     function goHome() {
       closeDetails();
+      closeDoctorPage();
       closeCategoryPage();
     }
 
-    // অ্যান্ড্রয়েড ফোনের ব্যাক বাটন সাপোর্ট
+    // ব্যাক বাটন কন্ট্রোল
     window.onpopstate = function() {
       if (document.getElementById('detailsView').classList.contains('open')) {
         closeDetails();
+      } else if (document.getElementById('doctorPage').classList.contains('open')) {
+        closeDoctorPage();
       } else if (document.getElementById('categoryPage').classList.contains('open')) {
         closeCategoryPage();
       }
@@ -936,24 +971,25 @@
           url: window.location.href,
         }).catch(() => {});
       } else {
-        alert('লিংক কপি করা হয়েছে!');
+        alert('লিংক কপি করা হয়েছে!');
       }
     }
 
-    // গুগল শিট ফেচ
-    async function fetchSheetData() {
+    // ডাটা লোড
+    async function loadData() {
       try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          directoryData = data;
-        }
+        const [resPlaces, resDocs] = await Promise.all([
+          fetch(API_PLACES),
+          fetch(API_DOCTORS)
+        ]);
+        placesData = await resPlaces.json();
+        doctorsData = await resDocs.json();
       } catch (err) {
-        console.error("ডাটা ফেচ সমস্যা:", err);
+        console.error("ডাটা ফেচিং সমস্যা:", err);
       }
     }
 
-    fetchSheetData();
+    loadData();
   </script>
 </body>
 </html>
