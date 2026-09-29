@@ -115,6 +115,41 @@
       color: var(--text);
     }
 
+    .area-filter-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 8px 20px 6px;
+      white-space: nowrap;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .area-filter-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .area-chip {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 13px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .area-chip.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 6px rgba(15, 81, 50, 0.25);
+    }
+
     .banner {
       margin: 15px 20px 5px;
       background: linear-gradient(135deg, #0F5132 0%, #198754 100%);
@@ -162,7 +197,6 @@
       gap: 8px;
     }
 
-    /* গ্রুপ সেকশন হেডিং */
     .section-title {
       font-size: 15px;
       font-weight: 700;
@@ -173,11 +207,8 @@
       gap: 8px;
     }
 
-    .section-title i {
-      color: var(--primary);
-    }
+    .section-title i { color: var(--primary); }
 
-    /* ২-কলামের প্রিমিয়াম হোম কার্ড গ্রিড */
     .home-categories-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -233,6 +264,7 @@
     .theme-gov-hospital { background: #DCFCE7; color: #16A34A; }
     .theme-pvt-hospital { background: #E0E7FF; color: #4338CA; }
     .theme-diagnostic { background: #CCFBF1; color: #0D9488; }
+    .theme-dental { background: #E0E7FF; color: #2563EB; } /* ডেন্টাল থিম */
     .theme-edu { background: #EDE9FE; color: #7C3AED; }
     .theme-news { background: #E2E8F0; color: #334155; }
     .theme-movie { background: #FDF2F8; color: #DB2777; }
@@ -302,7 +334,7 @@
     .btn-circle.active-heart { color: #E11D48; background: #FFE4E6; }
 
     .page-listings {
-      padding: 16px 20px 95px;
+      padding: 12px 20px 95px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -519,7 +551,6 @@
         <i class="fa-solid fa-city" style="font-size: 32px; opacity: 0.9;"></i>
       </div>
 
-      <!-- প্রতিষ্ঠান যোগ করার বার -->
       <div class="submit-entry-bar" onclick="openSubmitForm()">
         <div class="submit-entry-left">
           <i class="fa-solid fa-plus-circle"></i>
@@ -536,9 +567,7 @@
         <span>আপনার চেম্বার বা ব্যবসার বিজ্ঞাপন দিন এখানে</span>
       </div>
 
-      <!-- ==========================================
-           ১. স্বাস্থ্য সেবা (২ কলাম)
-           ========================================== -->
+      <!-- ১. স্বাস্থ্য সেবা (ডেন্টাল ক্যাটাগরিসহ) -->
       <div id="section-health">
         <div class="section-title"><i class="fa-solid fa-notes-medical"></i> স্বাস্থ্য সেবা</div>
         <div class="home-categories-grid">
@@ -577,16 +606,22 @@
               <p>প্যাথলজি ও টেস্ট ল্যাব</p>
             </div>
           </div>
+
+          <!-- ৫. ডেন্টাল (নতুন ক্যাটাগরি) -->
+          <div class="home-cat-card" id="catCard-ডেন্টাল" style="display: none;" onclick="openCategoryPage('ডেন্টাল', 'ডেন্টাল ক্লিনিক ও দাঁতের বিশেষজ্ঞ')">
+            <div class="home-cat-icon theme-dental"><i class="fa-solid fa-tooth"></i></div>
+            <div class="home-cat-info">
+              <h4>ডেন্টাল ক্লিনিক</h4>
+              <p>দাঁতের ডাক্তার ও চিকিৎসা</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- ==========================================
-           ২. শিক্ষা ও সংবাদ (২ কলাম)
-           ========================================== -->
+      <!-- ২. শিক্ষা ও সংবাদ -->
       <div id="section-edu-news">
         <div class="section-title"><i class="fa-solid fa-graduation-cap"></i> শিক্ষা ও সংবাদ</div>
         <div class="home-categories-grid">
-          <!-- শিক্ষা প্রতিষ্ঠান -->
           <div class="home-cat-card" id="catCard-শিক্ষা প্রতিষ্ঠান" style="display: none;" onclick="openCategoryPage('শিক্ষা প্রতিষ্ঠান', 'কলেজ, স্কুল ও মাদরাসা')">
             <div class="home-cat-icon theme-edu"><i class="fa-solid fa-school"></i></div>
             <div class="home-cat-info">
@@ -595,7 +630,6 @@
             </div>
           </div>
 
-          <!-- সংবাদপত্র -->
           <div class="home-cat-card" id="catCard-সংবাদপত্র" style="display: none;" onclick="openCategoryPage('সংবাদপত্র', 'দৈনিক পত্রিকা ও অনলাইন পোর্টাল')">
             <div class="home-cat-icon theme-news"><i class="fa-solid fa-newspaper"></i></div>
             <div class="home-cat-info">
@@ -606,13 +640,10 @@
         </div>
       </div>
 
-      <!-- ==========================================
-           ৩. বিনোদন (২ কলাম)
-           ========================================== -->
+      <!-- ৩. বিনোদন -->
       <div id="section-entertainment">
         <div class="section-title"><i class="fa-solid fa-film"></i> বিনোদন ও ভ্রমণ</div>
         <div class="home-categories-grid">
-          <!-- সিনেমা হল -->
           <div class="home-cat-card" id="catCard-সিনেমা হল" style="display: none;" onclick="openCategoryPage('সিনেমা হল', 'মুভি থিয়েটার ও প্রেক্ষাগৃহ')">
             <div class="home-cat-icon theme-movie"><i class="fa-solid fa-film"></i></div>
             <div class="home-cat-info">
@@ -621,7 +652,6 @@
             </div>
           </div>
 
-          <!-- দর্শনীয় স্থান -->
           <div class="home-cat-card" id="catCard-দর্শনীয় স্থান" style="display: none;" onclick="openCategoryPage('দর্শনীয় স্থান', 'পানাম নগর, জাদুঘর ও দুর্গ')">
             <div class="home-cat-icon theme-tour"><i class="fa-solid fa-landmark"></i></div>
             <div class="home-cat-info">
@@ -632,9 +662,7 @@
         </div>
       </div>
 
-      <!-- ==========================================
-           ৪. দৈনন্দিন নাগরিক সেবা (২ কলাম)
-           ========================================== -->
+      <!-- ৪. দৈনন্দিন নাগরিক সেবা -->
       <div id="section-citizen">
         <div class="section-title"><i class="fa-solid fa-city"></i> নাগরিক সেবা ও অন্যান্য</div>
         <div class="home-categories-grid">
@@ -670,7 +698,6 @@
             </div>
           </div>
 
-          <!-- সকল তথ্য সবসময় দৃশ্যমান -->
           <div class="home-cat-card" onclick="openCategoryPage('সব', 'নারায়ণগঞ্জের সকল তালিকা')">
             <div class="home-cat-icon theme-all"><i class="fa-solid fa-ellipsis"></i></div>
             <div class="home-cat-info">
@@ -705,8 +732,19 @@
     <div style="padding: 14px 20px 4px;">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-        <input type="text" id="catSearchInput" placeholder="এই বিভাগের মধ্যে খুঁজুন...">
+        <input type="text" id="catSearchInput" placeholder="এই বিভাগের মধ্যে নাম বা ঠিকানা খুঁজুন...">
       </div>
+    </div>
+
+    <div class="area-filter-scroll" id="catAreaFilterBar">
+      <div class="area-chip active" onclick="setCategoryAreaFilter('সব এলাকা', this)"><i class="fa-solid fa-location-dot"></i> সব এলাকা</div>
+      <div class="area-chip" onclick="setCategoryAreaFilter('চাষাড়া', this)">চাষাড়া / সদর</div>
+      <div class="area-chip" onclick="setCategoryAreaFilter('বন্দর', this)">বন্দর</div>
+      <div class="area-chip" onclick="setCategoryAreaFilter('সিদ্ধিরগঞ্জ', this)">সিদ্ধিরগঞ্জ</div>
+      <div class="area-chip" onclick="setCategoryAreaFilter('ফতুল্লা', this)">ফতুল্লা</div>
+      <div class="area-chip" onclick="setCategoryAreaFilter('সোনারগাঁও', this)">সোনারগাঁও</div>
+      <div class="area-chip" onclick="setCategoryAreaFilter('রূপগঞ্জ', this)">রূপগঞ্জ</div>
+      <div class="area-chip" onclick="setCategoryAreaFilter('আড়াইহাজার', this)">আড়াইহাজার</div>
     </div>
 
     <div class="page-listings" id="categoryListings"></div>
@@ -725,14 +763,25 @@
     <div style="padding: 14px 20px 4px;">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-        <input type="text" id="docSearchInput" placeholder="নাম, রোগ বা স্পেশালিটি খুঁজুন...">
+        <input type="text" id="docSearchInput" placeholder="ডাক্তারের নাম, রোগ বা স্পেশালিটি...">
       </div>
+    </div>
+
+    <div class="area-filter-scroll" id="docAreaFilterBar">
+      <div class="area-chip active" onclick="setDoctorAreaFilter('সব এলাকা', this)"><i class="fa-solid fa-location-dot"></i> সব এলাকা</div>
+      <div class="area-chip" onclick="setDoctorAreaFilter('চাষাড়া', this)">চাষাড়া / সদর</div>
+      <div class="area-chip" onclick="setDoctorAreaFilter('বন্দর', this)">বন্দর</div>
+      <div class="area-chip" onclick="setDoctorAreaFilter('সিদ্ধিরগঞ্জ', this)">সিদ্ধিরগঞ্জ</div>
+      <div class="area-chip" onclick="setDoctorAreaFilter('ফতুল্লা', this)">ফতুল্লা</div>
+      <div class="area-chip" onclick="setDoctorAreaFilter('সোনারগাঁও', this)">সোনারগাঁও</div>
+      <div class="area-chip" onclick="setDoctorAreaFilter('রূপগঞ্জ', this)">রূপগঞ্জ</div>
+      <div class="area-chip" onclick="setDoctorAreaFilter('আড়াইহাজার', this)">আড়াইহাজার</div>
     </div>
 
     <div class="page-listings" id="doctorListings"></div>
   </div>
 
-  <!-- ৪. বুকমার্ক / সংরক্ষিত তালিকা স্ক্রিন -->
+  <!-- ৪. বুকমার্ক স্ক্রিন -->
   <div class="slide-page" id="bookmarkPage">
     <div class="top-sub-header">
       <button class="btn-circle" onclick="closeBookmarkPage()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -871,6 +920,8 @@
     let doctorsData = [];
     let currentCategory = 'সব';
     let currentChamberFilter = null;
+    let selectedCatArea = 'সব এলাকা';
+    let selectedDocArea = 'সব এলাকা';
     let activeItem = null;
     let activeDoctor = null;
 
@@ -1000,26 +1051,24 @@
     }
 
     function openSubmitForm() {
-      // আপনার আসল গুগল ফর্ম লিংক এখানে বসানো থাকবে
       const formUrl = "https://forms.gle/sample"; 
       window.open(formUrl, '_blank');
     }
 
     // =========================================================
-    // অটো-হাইড লজিক (নতুন পছন্দের ক্যাটাগরি ম্যাপিং)
+    // অটো-হাইড লজিক (ডেন্টাল ক্যাটাগরি অন্তর্ভুক্ত)
     // =========================================================
     function updateVisibleCategoryCards() {
-      // ডাক্তার চেক
       const docCard = document.getElementById('catCard-doctor');
       if (docCard) {
         docCard.style.display = (doctorsData && doctorsData.length > 0) ? 'flex' : 'none';
       }
 
-      // নতুন ক্যাটাগরি ও কিওয়ার্ড ম্যাপিং
       const categoryChecks = [
         { id: 'catCard-সরকারি হাসপাতাল', keywords: ['সরকারি হাসপাতাল', 'সরকারি স্বাস্থ্য', '৩০০ শয্যা', 'ভিক্টোরিয়া', 'মাতৃসদন'] },
         { id: 'catCard-বেসরকারি হাসপাতাল', keywords: ['বেসরকারি হাসপাতাল', 'প্রাইভেট হাসপাতাল', 'ক্লিনিক'] },
         { id: 'catCard-ডায়াগনস্টিক', keywords: ['ডায়াগনস্টিক', 'কনসালটেশন', 'ল্যাব', 'প্যাথলজি'] },
+        { id: 'catCard-ডেন্টাল', keywords: ['ডেন্টাল', 'দাঁত', 'dental'] }, // ডেন্টাল কিওয়ার্ড
         { id: 'catCard-শিক্ষা প্রতিষ্ঠান', keywords: ['শিক্ষা প্রতিষ্ঠান', 'শিক্ষা', 'স্কুল', 'কলেজ', 'মাদরাসা', 'একাডেমি'] },
         { id: 'catCard-সংবাদপত্র', keywords: ['সংবাদপত্র', 'পত্রিকা', 'নিউজ', 'অনলাইন পোর্টাল'] },
         { id: 'catCard-সিনেমা হল', keywords: ['সিনেমা হল', 'সিনেমা', 'প্রেক্ষাগৃহ', 'মুভি'] },
@@ -1042,9 +1091,8 @@
         el.style.display = hasData ? 'flex' : 'none';
       });
 
-      // সেকশন হেডারের অটো-হাইড
       const sections = [
-        { id: 'section-health', checkIds: ['catCard-doctor', 'catCard-সরকারি হাসপাতাল', 'catCard-বেসরকারি হাসপাতাল', 'catCard-ডায়াগনস্টিক'] },
+        { id: 'section-health', checkIds: ['catCard-doctor', 'catCard-সরকারি হাসপাতাল', 'catCard-বেসরকারি হাসপাতাল', 'catCard-ডায়াগনস্টিক', 'catCard-ডেন্টাল'] },
         { id: 'section-edu-news', checkIds: ['catCard-শিক্ষা প্রতিষ্ঠান', 'catCard-সংবাদপত্র'] },
         { id: 'section-entertainment', checkIds: ['catCard-সিনেমা হল', 'catCard-দর্শনীয় স্থান'] }
       ];
@@ -1061,11 +1109,34 @@
       });
     }
 
+    function setCategoryAreaFilter(areaName, chipElement) {
+      selectedCatArea = areaName;
+      const bar = document.getElementById('catAreaFilterBar');
+      bar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+      chipElement.classList.add('active');
+      renderCategoryItems();
+    }
+
+    function setDoctorAreaFilter(areaName, chipElement) {
+      selectedDocArea = areaName;
+      const bar = document.getElementById('docAreaFilterBar');
+      bar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+      chipElement.classList.add('active');
+      renderDoctorItems();
+    }
+
     function openCategoryPage(category, subtitle = '') {
       currentCategory = category;
       document.getElementById('catPageTitle').innerText = category === 'সব' ? 'সকল সেবা ও তথ্য' : category;
       document.getElementById('catPageSub').innerText = subtitle || 'তালিকা থেকে প্রতিষ্ঠান বেছে নিন';
       document.getElementById('catSearchInput').value = '';
+
+      selectedCatArea = 'সব এলাকা';
+      const catBar = document.getElementById('catAreaFilterBar');
+      if (catBar) {
+        catBar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+        catBar.querySelector('.area-chip').classList.add('active');
+      }
 
       renderCategoryItems();
       document.getElementById('categoryPage').classList.add('open');
@@ -1084,6 +1155,8 @@
 
       const filtered = placesData.filter(item => {
         const itemCat = ((item.category || '') + ' ' + (item.name || '')).toLowerCase();
+        const itemArea = (item.area || '').toLowerCase();
+        const itemAddress = (item.address || '').toLowerCase();
         const selectedCat = currentCategory.toLowerCase();
         
         let matchCat = (currentCategory === 'সব');
@@ -1091,6 +1164,7 @@
           if (selectedCat.includes('সরকারি হাসপাতাল') && (itemCat.includes('সরকারি') || itemCat.includes('৩০০ শয্যা') || itemCat.includes('ভিক্টোরিয়া'))) matchCat = true;
           else if (selectedCat.includes('বেসরকারি হাসপাতাল') && (itemCat.includes('বেসরকারি') || itemCat.includes('প্রাইভেট হাসপাতাল') || itemCat.includes('ক্লিনিক'))) matchCat = true;
           else if (selectedCat.includes('ডায়াগনস্টিক') && (itemCat.includes('ডায়াগনস্টিক') || itemCat.includes('কনসালটেশন') || itemCat.includes('ল্যাব'))) matchCat = true;
+          else if (selectedCat.includes('ডেন্টাল') && (itemCat.includes('ডেন্টাল') || itemCat.includes('দাঁত') || itemCat.includes('dental'))) matchCat = true;
           else if (selectedCat.includes('শিক্ষা') && (itemCat.includes('শিক্ষা') || itemCat.includes('স্কুল') || itemCat.includes('কলেজ') || itemCat.includes('মাদরাসা'))) matchCat = true;
           else if (selectedCat.includes('সংবাদ') && (itemCat.includes('সংবাদপত্র') || itemCat.includes('পত্রিকা') || itemCat.includes('নিউজ'))) matchCat = true;
           else if (selectedCat.includes('সিনেমা') && (itemCat.includes('সিনেমা') || itemCat.includes('মুভি') || itemCat.includes('হল'))) matchCat = true;
@@ -1102,13 +1176,20 @@
           else matchCat = itemCat.includes(selectedCat);
         }
 
+        let matchArea = (selectedCatArea === 'সব এলাকা');
+        if (!matchArea) {
+          const targetArea = selectedCatArea.toLowerCase();
+          matchArea = itemArea.includes(targetArea) || itemAddress.includes(targetArea);
+          if (targetArea === 'চাষাড়া' && (itemArea.includes('সদর') || itemAddress.includes('সদর'))) matchArea = true;
+        }
+
         const matchSearch = 
           (item.name || '').toLowerCase().includes(query) ||
-          (item.area || '').toLowerCase().includes(query) ||
-          (item.address || '').toLowerCase().includes(query) ||
+          itemArea.includes(query) ||
+          itemAddress.includes(query) ||
           (item.landmark || '').toLowerCase().includes(query);
 
-        return matchCat && matchSearch;
+        return matchCat && matchArea && matchSearch;
       });
 
       if (filtered.length === 0) {
@@ -1156,6 +1237,14 @@
       document.getElementById('docPageSub').innerText = chamberName ? 'এই সেন্টারের বিশেষজ্ঞ চিকিৎসকগণ' : 'চেম্বার, ভিজিটিং সময় ও সিরিয়াল';
       document.getElementById('docSearchInput').value = '';
 
+      selectedDocArea = 'সব এলাকা';
+      const docBar = document.getElementById('docAreaFilterBar');
+      if (docBar) {
+        docBar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+        docBar.querySelector('.area-chip').classList.add('active');
+        docBar.style.display = chamberName ? 'none' : 'flex';
+      }
+
       renderDoctorItems();
       
       const docPage = document.getElementById('doctorPage');
@@ -1181,13 +1270,23 @@
           matchChamber = (doc.chamber || '').toLowerCase().includes(target);
         }
 
+        let matchArea = (selectedDocArea === 'সব এলাকা');
+        if (!matchArea) {
+          const targetArea = selectedDocArea.toLowerCase();
+          const docArea = (doc.area || '').toLowerCase();
+          const docChamber = (doc.chamber || '').toLowerCase();
+          matchArea = docArea.includes(targetArea) || docChamber.includes(targetArea);
+          if (targetArea === 'চাষাড়া' && (docArea.includes('সদর') || docChamber.includes('সদর'))) matchArea = true;
+        }
+
         const matchSearch = 
           (doc.name || '').toLowerCase().includes(query) ||
           (doc.specialty || '').toLowerCase().includes(query) ||
           (doc.chamber || '').toLowerCase().includes(query) ||
+          (doc.area || '').toLowerCase().includes(query) ||
           (doc.degrees || '').toLowerCase().includes(query);
 
-        return matchChamber && matchSearch;
+        return matchChamber && matchArea && matchSearch;
       });
 
       if (filtered.length === 0) {
@@ -1250,7 +1349,7 @@
       }
 
       const chamberBox = document.getElementById('chamberDocsBtnBox');
-      const isMedical = (item.category || '').includes('চিকিৎসা') || (item.category || '').includes('ডায়াগনস্টিক') || (item.category || '').includes('হাসপাতাল') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল');
+      const isMedical = (item.category || '').includes('চিকিৎসা') || (item.category || '').includes('ডায়াগনস্টিক') || (item.category || '').includes('হাসপাতাল') || (item.category || '').includes('ডেন্টাল') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল') || (item.name || '').includes('ডেন্টাল');
       chamberBox.style.display = isMedical ? 'block' : 'none';
 
       const callBtn = document.getElementById('detailsCallBtn');
