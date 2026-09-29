@@ -787,7 +787,7 @@
     <div class="page-listings" id="bookmarkListings"></div>
   </div>
 
-  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (ডায়নামিক ডেসক্রিপশনসহ ফিক্সড) -->
+  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (অপ্রয়োজনীয় টেক্সট সম্পূর্ণ ডিলিট করা হয়েছে) -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -848,7 +848,7 @@
           <i class="fa-solid fa-clock"></i>
           <div>
             <strong style="color: var(--text);">সময়সূচি:</strong>
-            <div id="detailsTiming" style="color: var(--text-muted); margin-top: 2px;">সকাল ৮:০০ - রাত ১০:০০</div>
+            <div id="detailsTiming" style="color: var(--text-muted); margin-top: 2px;">খোলা আছে</div>
           </div>
         </div>
         <div class="info-item">
@@ -860,10 +860,10 @@
         </div>
       </div>
 
-      <!-- ফিক্সড: পরিচিতি ও সুবিধা বক্স (ডাটা না থাকলে সম্পূর্ণ লুকানো থাকবে) -->
+      <!-- শিটে description ঘরে কিছু লিখলে শুধু সেটাই দেখাবে, নয়তো সম্পূর্ণ অদৃশ্য থাকবে -->
       <div id="detailsDescBox" style="border-top: 1px solid var(--border); padding-top: 14px; display: none;">
-        <h4 style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">পরিচিতি ও সুবিধা</h4>
-        <p id="detailsDesc" style="font-size: 14px; color: #475569; line-height: 1.6;">-</p>
+        <h4 style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">পরিচিতি ও বিবরণ</h4>
+        <p id="detailsDesc" style="font-size: 14px; color: #475569; line-height: 1.6;"></p>
       </div>
     </div>
   </div>
@@ -1342,15 +1342,16 @@
       const isMedical = (item.category || '').includes('চিকিৎসা') || (item.category || '').includes('ডায়াগনস্টিক') || (item.category || '').includes('হাসপাতাল') || (item.category || '').includes('ডেন্টাল') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল') || (item.name || '').includes('ডেন্টাল');
       chamberBox.style.display = isMedical ? 'block' : 'none';
 
-      // ফিক্সড: ডায়নামিক পরিচিতি ও সুবিধা
+      // পরিচিতি ও সুবিধা: শিটে কিছু থাকলে দেখাবে, না থাকলে সম্পূর্ণ হাইড
       const descBox = document.getElementById('detailsDescBox');
       const descText = document.getElementById('detailsDesc');
-      const descContent = item.description || item.desc || item.about || '';
+      const descContent = (item.description || item.desc || item.about || '').trim();
 
-      if (descContent.trim() !== '') {
-        descText.innerText = descContent.trim();
+      if (descContent !== '') {
+        descText.innerText = descContent;
         descBox.style.display = 'block';
       } else {
+        descText.innerText = '';
         descBox.style.display = 'none';
       }
 
