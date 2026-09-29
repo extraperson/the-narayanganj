@@ -1,0 +1,17 @@
+{
+  "name": "The Narayanganj",
+  "short_name": "Narayanganj",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F9FA",
+  "theme_color": "#0F5132",
+  "description": "The Narayanganj - শহরের সবকিছু এক ঠিকানায়",
+  "icons": [
+    {
+      "src": "the_narayanganj_clean_rgb_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
