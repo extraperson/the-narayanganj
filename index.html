@@ -129,7 +129,6 @@
     .banner h3 { font-size: 16px; margin-bottom: 2px; }
     .banner p { font-size: 12px; opacity: 0.9; }
 
-    /* অ্যাডমিশন বা লিস্ট সাবমিট বাটন */
     .submit-entry-bar {
       margin: 10px 20px 0;
       background: #F0FDF4;
@@ -622,8 +621,11 @@
         <span>বিভাগে ক্লিক করুন <i class="fa-solid fa-chevron-right"></i></span>
       </div>
 
+      <!-- স্মার্ট ডায়নামিক ক্যাটাগরি গ্রিড (ডেটা না থাকলে হাইড থাকবে) -->
       <div class="home-categories-grid">
-        <div class="home-cat-card" onclick="openDoctorList(null, 'সকল বিশেষজ্ঞ চিকিৎসক')">
+
+        <!-- ১. বিশেষজ্ঞ ডাক্তার -->
+        <div class="home-cat-card" id="catCard-doctor" style="display: none;" onclick="openDoctorList(null, 'সকল বিশেষজ্ঞ চিকিৎসক')">
           <div class="home-cat-icon theme-doctor"><i class="fa-solid fa-user-doctor"></i></div>
           <div class="home-cat-info">
             <h4>বিশেষজ্ঞ ডাক্তার</h4>
@@ -631,7 +633,8 @@
           </div>
         </div>
 
-        <div class="home-cat-card" onclick="openCategoryPage('চিকিৎসা', 'ডায়াগনস্টিক সেন্টার ও হাসপাতাল')">
+        <!-- ২. ডায়াগনস্টিক ও ক্লিনিক -->
+        <div class="home-cat-card" id="catCard-চিকিৎসা" style="display: none;" onclick="openCategoryPage('চিকিৎসা', 'ডায়াগনস্টিক সেন্টার ও হাসপাতাল')">
           <div class="home-cat-icon theme-medical"><i class="fa-solid fa-hospital"></i></div>
           <div class="home-cat-info">
             <h4>ডায়াগনস্টিক</h4>
@@ -639,7 +642,17 @@
           </div>
         </div>
 
-        <div class="home-cat-card" onclick="openCategoryPage('জরুরি সেবা', 'থানা, অ্যাম্বুলেন্স ও ফায়ার সার্ভিস')">
+        <!-- ৩. রক্তদান ও ব্লাড ব্যাংক -->
+        <div class="home-cat-card" id="catCard-রক্তদান" style="display: none;" onclick="openCategoryPage('রক্তদান', 'ব্লাড ব্যাংক ও স্বেচ্ছাসেবী রক্তদাতা')">
+          <div class="home-cat-icon" style="background: #FEE2E2; color: #DC2626;"><i class="fa-solid fa-droplet"></i></div>
+          <div class="home-cat-info">
+            <h4>রক্তদান সেবা</h4>
+            <p>ব্লাড ব্যাংক ও ডোনার</p>
+          </div>
+        </div>
+
+        <!-- ৪. জরুরি সেবা -->
+        <div class="home-cat-card" id="catCard-জরুরি সেবা" style="display: none;" onclick="openCategoryPage('জরুরি সেবা', 'থানা, অ্যাম্বুলেন্স ও ফায়ার সার্ভিস')">
           <div class="home-cat-icon theme-emergency"><i class="fa-solid fa-truck-medical"></i></div>
           <div class="home-cat-info">
             <h4>জরুরি সেবা</h4>
@@ -647,23 +660,35 @@
           </div>
         </div>
 
-        <div class="home-cat-card" onclick="openCategoryPage('শপিং ও ব্যবসা', 'টানবাজার, মার্কেট ও পাইকারি আড়ত')">
-          <div class="home-cat-icon theme-shop"><i class="fa-solid fa-bag-shopping"></i></div>
+        <!-- ৫. সংবাদপত্র ও মিডিয়া (নতুন) -->
+        <div class="home-cat-card" id="catCard-সংবাদপত্র" style="display: none;" onclick="openCategoryPage('সংবাদপত্র', 'দৈনিক পত্রিকা ও অনলাইন পোর্টাল')">
+          <div class="home-cat-icon" style="background: #E2E8F0; color: #1E293B;"><i class="fa-solid fa-newspaper"></i></div>
           <div class="home-cat-info">
-            <h4>শপিং ও ব্যবসা</h4>
-            <p>মার্কেট ও পাইকারি শপ</p>
+            <h4>সংবাদপত্র</h4>
+            <p>পত্রিকা ও অনলাইন পোর্টাল</p>
           </div>
         </div>
 
-        <div class="home-cat-card" onclick="openCategoryPage('পর্যটন ও বিনোদন', 'পানাম নগর, জাদুঘর ও দুর্গ')">
-          <div class="home-cat-icon theme-tour"><i class="fa-solid fa-landmark"></i></div>
+        <!-- ৬. সিনেমা হল (নতুন) -->
+        <div class="home-cat-card" id="catCard-সিনেমা হল" style="display: none;" onclick="openCategoryPage('সিনেমা হল', 'মুভি থিয়েটার ও শো-টাইম')">
+          <div class="home-cat-icon" style="background: #FDF2F8; color: #DB2777;"><i class="fa-solid fa-film"></i></div>
           <div class="home-cat-info">
-            <h4>পর্যটন ও দর্শনীয়</h4>
-            <p>সোনারগাঁও ও দুর্গ</p>
+            <h4>সিনেমা হল</h4>
+            <p>মুভি ও প্রেক্ষাগৃহ</p>
           </div>
         </div>
 
-        <div class="home-cat-card" onclick="openCategoryPage('পরিবহন', 'বাস, ট্রেন, লঞ্চ ও রুট')">
+        <!-- ৭. শিক্ষা প্রতিষ্ঠান (সংশোধিত নাম) -->
+        <div class="home-cat-card" id="catCard-শিক্ষা প্রতিষ্ঠান" style="display: none;" onclick="openCategoryPage('শিক্ষা প্রতিষ্ঠান', 'কলেজ, স্কুল ও মাদরাসা')">
+          <div class="home-cat-icon" style="background: #EDE9FE; color: #7C3AED;"><i class="fa-solid fa-graduation-cap"></i></div>
+          <div class="home-cat-info">
+            <h4>শিক্ষা প্রতিষ্ঠান</h4>
+            <p>কলেজ, স্কুল ও একাডেমি</p>
+          </div>
+        </div>
+
+        <!-- ৮. পরিবহন -->
+        <div class="home-cat-card" id="catCard-পরিবহন" style="display: none;" onclick="openCategoryPage('পরিবহন', 'বাস, ট্রেন, লঞ্চ ও লোকাল রুট')">
           <div class="home-cat-icon theme-bus"><i class="fa-solid fa-bus"></i></div>
           <div class="home-cat-info">
             <h4>পরিবহন</h4>
@@ -671,7 +696,53 @@
           </div>
         </div>
 
-        <div class="home-cat-card" onclick="openCategoryPage('প্রশাসন ও অফিস', 'ডিসি, এসপি ও সিটি কর্পোরেশন')">
+        <!-- ৯. মিষ্টি ও খাবার -->
+        <div class="home-cat-card" id="catCard-মিষ্টি ও খাবার" style="display: none;" onclick="openCategoryPage('মিষ্টি ও খাবার', 'বিখ্যাত মিষ্টি, রেস্তোরাঁ ও ক্যাফে')">
+          <div class="home-cat-icon" style="background: #FFEDD5; color: #EA580C;"><i class="fa-solid fa-utensils"></i></div>
+          <div class="home-cat-info">
+            <h4>মিষ্টি ও খাবার</h4>
+            <p>জয় গোবিন্দ ও রেস্তোরাঁ</p>
+          </div>
+        </div>
+
+        <!-- ১০. শপিং ও ব্যবসা -->
+        <div class="home-cat-card" id="catCard-শপিং ও ব্যবসা" style="display: none;" onclick="openCategoryPage('শপিং ও ব্যবসা', 'টানবাজার, মার্কেট ও পাইকারি আড়ত')">
+          <div class="home-cat-icon theme-shop"><i class="fa-solid fa-bag-shopping"></i></div>
+          <div class="home-cat-info">
+            <h4>শপিং ও ব্যবসা</h4>
+            <p>মার্কেট ও পাইকারি শপ</p>
+          </div>
+        </div>
+
+        <!-- ১১. আইনজীবী ও নোটারি -->
+        <div class="home-cat-card" id="catCard-আইনজীবী" style="display: none;" onclick="openCategoryPage('আইনজীবী', 'জজ কোর্ট অ্যাডভোকেট ও নোটারি সেবা')">
+          <div class="home-cat-icon" style="background: #FEF9C3; color: #CA8A04;"><i class="fa-solid fa-scale-balanced"></i></div>
+          <div class="home-cat-info">
+            <h4>আইনজীবী ও কোর্ট</h4>
+            <p>অ্যাডভোকেট ও নোটারি</p>
+          </div>
+        </div>
+
+        <!-- ১২. হোম সার্ভিস ও টেকনিশিয়ান -->
+        <div class="home-cat-card" id="catCard-হোম সার্ভিস" style="display: none;" onclick="openCategoryPage('হোম সার্ভিস', 'এসি রিপেয়ার, ইলেকট্রিশিয়ান ও প্লাম্বার')">
+          <div class="home-cat-icon" style="background: #E0F2FE; color: #0369A1;"><i class="fa-solid fa-wrench"></i></div>
+          <div class="home-cat-info">
+            <h4>হোম সার্ভিস</h4>
+            <p>এসি, মিস্ত্রি ও প্লাম্বার</p>
+          </div>
+        </div>
+
+        <!-- ১৩. পর্যটন ও বিনোদন -->
+        <div class="home-cat-card" id="catCard-পর্যটন ও বিনোদন" style="display: none;" onclick="openCategoryPage('পর্যটন ও বিনোদন', 'পানাম নগর, জাদুঘর ও দুর্গ')">
+          <div class="home-cat-icon theme-tour"><i class="fa-solid fa-landmark"></i></div>
+          <div class="home-cat-info">
+            <h4>দর্শনীয় স্থান</h4>
+            <p>সোনারগাঁও ও দুর্গ</p>
+          </div>
+        </div>
+
+        <!-- ১৪. প্রশাসন ও অফিস -->
+        <div class="home-cat-card" id="catCard-প্রশাসন ও অফিস" style="display: none;" onclick="openCategoryPage('প্রশাসন ও অফিস', 'ডিসি, এসপি ও সিটি কর্পোরেশন')">
           <div class="home-cat-icon theme-office"><i class="fa-solid fa-building-columns"></i></div>
           <div class="home-cat-info">
             <h4>প্রশাসন</h4>
@@ -679,6 +750,16 @@
           </div>
         </div>
 
+        <!-- ১৫. বাসাভাড়া ও টু-লেট -->
+        <div class="home-cat-card" id="catCard-বাসাভাড়া" style="display: none;" onclick="openCategoryPage('বাসাভাড়া', 'ফ্ল্যাট, সাবলেট ও দোকান ভাড়া')">
+          <div class="home-cat-icon" style="background: #F1F5F9; color: #475569;"><i class="fa-solid fa-house-chimney"></i></div>
+          <div class="home-cat-info">
+            <h4>বাসাভাড়া ও টু-লেট</h4>
+            <p>ফ্ল্যাট ও দোকান ভাড়া</p>
+          </div>
+        </div>
+
+        <!-- ১৬. সকল তালিকা (সবসময় ভিজিবল থাকবে) -->
         <div class="home-cat-card" onclick="openCategoryPage('সব', 'নারায়ণগঞ্জের সকল তালিকা')">
           <div class="home-cat-icon theme-medical"><i class="fa-solid fa-ellipsis"></i></div>
           <div class="home-cat-info">
@@ -880,7 +961,6 @@
     let activeItem = null;
     let activeDoctor = null;
 
-    // বুকমার্ক স্টোরেজ
     let bookmarks = JSON.parse(localStorage.getItem('narayanganj_bookmarks') || '{"places":[], "doctors":[]}');
 
     function saveBookmarks() {
@@ -931,7 +1011,6 @@
       saveBookmarks();
     }
 
-    // বুকমার্ক পেজ
     function openBookmarkPage() {
       const container = document.getElementById('bookmarkListings');
       container.innerHTML = '';
@@ -946,7 +1025,6 @@
           </div>
         `;
       } else {
-        // ডাক্তাররা
         if (bookmarks.doctors.length > 0) {
           const docTitle = document.createElement('h4');
           docTitle.innerText = "সংরক্ষিত ডাক্তারগণ";
@@ -976,7 +1054,6 @@
           });
         }
 
-        // প্রতিষ্ঠান
         if (bookmarks.places.length > 0) {
           const placeTitle = document.createElement('h4');
           placeTitle.innerText = "সংরক্ষিত প্রতিষ্ঠান ও সেবা";
@@ -1009,17 +1086,56 @@
       document.getElementById('bookmarkPage').classList.remove('open');
     }
 
-    // নতুন প্রতিষ্ঠান সাবমিট ফরম (Google Form বা ডিরেক্ট ডায়ালগ)
     function openSubmitForm() {
-      // এখানে আপনার নিজস্ব গুগল ফর্মের লিংক বসিয়ে দিতে পারেন
       const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSc-PLACEHOLDER/viewform";
-      const confirmed = confirm("আপনার প্রতিষ্ঠান, দোকান বা চেম্বারের তথ্য নারায়ণগঞ্জ অ্যাপে যুক্ত করতে চান?\n\n'ঠিক আছে' চাপলে ফর্মটি খুলবে।");
+      const confirmed = confirm("আপনার প্রতিষ্ঠান, দোকান বা সেবার তথ্য নারায়ণগঞ্জ অ্যাপে যুক্ত করতে চান?\n\n'ঠিক আছে' চাপলে ফর্মটি খুলবে।");
       if (confirmed) {
         window.open(formUrl, '_blank');
       }
     }
 
-    // ১. সাধারণ ক্যাটাগরি পেজ
+    // =========================================================
+    // অটো-হাইড লজিক: যে ক্যাটাগরিতে ডেটা থাকবে শুধু সেটাই শো করবে
+    // =========================================================
+    function updateVisibleCategoryCards() {
+      // ১. ডাক্তার কার্ড চেক
+      const docCard = document.getElementById('catCard-doctor');
+      if (docCard) {
+        docCard.style.display = (doctorsData && doctorsData.length > 0) ? 'flex' : 'none';
+      }
+
+      // ২. বাকি সব ক্যাটাগরি ম্যাপিং
+      const categoryChecks = [
+        { id: 'catCard-চিকিৎসা', keywords: ['চিকিৎসা', 'ডায়াগনস্টিক', 'হাসপাতাল'] },
+        { id: 'catCard-রক্তদান', keywords: ['রক্তদান', 'ব্লাড', 'রক্ত'] },
+        { id: 'catCard-জরুরি সেবা', keywords: ['জরুরি'] },
+        { id: 'catCard-সংবাদপত্র', keywords: ['সংবাদপত্র', 'পত্রিকা', 'নিউজ', 'অনলাইন পোর্টাল'] },
+        { id: 'catCard-সিনেমা হল', keywords: ['সিনেমা', 'প্রেক্ষাগৃহ', 'মুভি'] },
+        { id: 'catCard-শিক্ষা প্রতিষ্ঠান', keywords: ['শিক্ষা', 'স্কুল', 'কলেজ', 'মাদরাসা', 'একাডেমি'] },
+        { id: 'catCard-পরিবহন', keywords: ['পরিবহন', 'বাস', 'ট্রেন'] },
+        { id: 'catCard-মিষ্টি ও খাবার', keywords: ['মিষ্টি', 'খাবার', 'রেস্তোরাঁ', 'হোটেল', 'ক্যাফে'] },
+        { id: 'catCard-শপিং ও ব্যবসা', keywords: ['শপিং', 'ব্যবসা', 'মার্কেট', 'দোকান'] },
+        { id: 'catCard-আইনজীবী', keywords: ['আইনজীবী', 'কোর্ট', 'অ্যাডভোকেট', 'নোটারি'] },
+        { id: 'catCard-হোম সার্ভিস', keywords: ['সার্ভিস', 'মিস্ত্রি', 'রিপেয়ার', 'প্লাম্বার', 'ইলেকট্রিশিয়ান'] },
+        { id: 'catCard-পর্যটন ও বিনোদন', keywords: ['পর্যটন', 'দর্শনীয়', 'বিনোদন', 'পার্ক'] },
+        { id: 'catCard-প্রশাসন ও অফিস', keywords: ['প্রশাসন', 'অফিস', 'সরকারি', 'থানা'] },
+        { id: 'catCard-বাসাভাড়া', keywords: ['ভাড়া', 'টু-লেট', 'ফ্ল্যাট', 'মেস'] }
+      ];
+
+      categoryChecks.forEach(item => {
+        const el = document.getElementById(item.id);
+        if (!el) return;
+
+        // চেক করা শিটের কোনো রো-এর ক্যাটাগরির সাথে মিল আছে কি না
+        const hasData = placesData.some(p => {
+          const rowCat = (p.category || '').toLowerCase();
+          return item.keywords.some(k => rowCat.includes(k.toLowerCase()));
+        });
+
+        el.style.display = hasData ? 'flex' : 'none';
+      });
+    }
+
     function openCategoryPage(category, subtitle = '') {
       currentCategory = category;
       document.getElementById('catPageTitle').innerText = category === 'সব' ? 'সকল সেবা ও তথ্য' : category;
@@ -1048,8 +1164,16 @@
         let matchCat = (currentCategory === 'সব');
         if (!matchCat) {
           if (selectedCat.includes('চিকিৎসা') && itemCat.includes('চিকিৎসা')) matchCat = true;
+          else if (selectedCat.includes('রক্ত') && (itemCat.includes('রক্ত') || itemCat.includes('ব্লাড'))) matchCat = true;
           else if (selectedCat.includes('জরুরি') && itemCat.includes('জরুরি')) matchCat = true;
-          else if (selectedCat.includes('শপিং') && (itemCat.includes('শপিং') || itemCat.includes('ব্যবসা'))) matchCat = true;
+          else if (selectedCat.includes('সংবাদ') && (itemCat.includes('সংবাদপত্র') || itemCat.includes('পত্রিকা') || itemCat.includes('নিউজ'))) matchCat = true;
+          else if (selectedCat.includes('সিনেমা') && (itemCat.includes('সিনেমা') || itemCat.includes('মুভি') || itemCat.includes('প্রেক্ষাগৃহ'))) matchCat = true;
+          else if (selectedCat.includes('শিক্ষা') && (itemCat.includes('শিক্ষা') || itemCat.includes('স্কুল') || itemCat.includes('কলেজ') || itemCat.includes('মাদরাসা'))) matchCat = true;
+          else if (selectedCat.includes('আইন') && (itemCat.includes('আইন') || itemCat.includes('কোর্ট') || itemCat.includes('অ্যাডভোকেট'))) matchCat = true;
+          else if (selectedCat.includes('মিষ্টি') && (itemCat.includes('মিষ্টি') || itemCat.includes('খাবার') || itemCat.includes('রেস্তোরাঁ'))) matchCat = true;
+          else if (selectedCat.includes('সার্ভিস') && (itemCat.includes('সার্ভিস') || itemCat.includes('মিস্ত্রি') || itemCat.includes('রিপেয়ার'))) matchCat = true;
+          else if (selectedCat.includes('ভাড়া') && (itemCat.includes('ভাড়া') || itemCat.includes('টু-লেট') || itemCat.includes('ফ্ল্যাট'))) matchCat = true;
+          else if (selectedCat.includes('শপিং') && (itemCat.includes('শপিং') || itemCat.includes('ব্যবসা') || itemCat.includes('মার্কেট'))) matchCat = true;
           else if (selectedCat.includes('পর্যটন') && (itemCat.includes('পর্যটন') || itemCat.includes('দর্শনীয়'))) matchCat = true;
           else if (selectedCat.includes('পরিবহন') && itemCat.includes('পরিবহন')) matchCat = true;
           else if (selectedCat.includes('প্রশাসন') && (itemCat.includes('প্রশাসন') || itemCat.includes('অফিস'))) matchCat = true;
@@ -1335,15 +1459,15 @@
       }
     }
 
-    // অফলাইন ফার্স্ট ডাটা ক্যাশিং
+    // অফলাইন ফার্স্ট ডাটা ক্যাশিং ও ভিজিবল ক্যাটাগরি আপডেট
     async function loadData() {
-      // প্রথমে লোকাল স্টোরেজ থেকে ডাটা লোড করে সাথে সাথে অ্যাপ সচল করা
       const cachedPlaces = localStorage.getItem('cached_places');
       const cachedDocs = localStorage.getItem('cached_docs');
       if (cachedPlaces) placesData = JSON.parse(cachedPlaces);
       if (cachedDocs) doctorsData = JSON.parse(cachedDocs);
 
-      // ব্যাকগ্রাউন্ডে নেটওয়ার্ক থেকে ফ্রেশ ডাটা আনা ও ক্যাশ আপডেট করা
+      updateVisibleCategoryCards();
+
       try {
         const [resPlaces, resDocs] = await Promise.all([
           fetch(API_PLACES),
@@ -1360,8 +1484,11 @@
           doctorsData = freshDocs;
           localStorage.setItem('cached_docs', JSON.stringify(freshDocs));
         }
+
+        // নতুন ডাটা লোড হওয়ার সাথে সাথে হোম কার্ডের ভিজিবিলিটি রিফ্রেশ
+        updateVisibleCategoryCards();
       } catch (err) {
-        console.warn("অফলাইন মোডে চলছে (ক্যাশড ডাটা ব্যবহৃত হচ্ছে):", err);
+        console.warn("অফলাইন মোডে চলছে:", err);
       }
     }
 
