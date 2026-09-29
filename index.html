@@ -222,7 +222,7 @@
     .theme-office { background: #F3E8FF; color: #9333EA; }
     .theme-food { background: #FFEDD5; color: #EA580C; }
 
-    /* ক্যাটাগরি ও ডক্টর তালিকা স্ক্রিন */
+    /* স্লাইড পেজ ট্রানজিশন */
     .slide-page {
       position: fixed;
       top: 0;
@@ -293,6 +293,11 @@
       gap: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.02);
       cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .place-card:active, .doctor-card:active {
+      transform: scale(0.99);
     }
 
     .place-header {
@@ -331,7 +336,6 @@
       flex-shrink: 0;
     }
 
-    /* ডক্টর কার্ড ডিজাইন */
     .doc-specialty {
       font-size: 13px;
       color: var(--primary);
@@ -380,7 +384,7 @@
     .btn-call { background: var(--primary); color: #fff; }
     .btn-map { background: #F1F5F9; color: var(--text); border: 1px solid var(--border); }
 
-    /* ডিটেইল পেজ */
+    /* ডিটেইল ভিউ */
     .details-view {
       position: fixed;
       top: 0;
@@ -428,7 +432,6 @@
       margin-top: 6px;
     }
 
-    /* ডায়াগনস্টিক ডিটেইলসে স্পেশাল ডক্টর বোতাম */
     .btn-show-chamber-docs {
       background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
       color: #fff;
@@ -437,7 +440,6 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      text-decoration: none;
       font-weight: 600;
       font-size: 14px;
       box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
@@ -485,6 +487,17 @@
       z-index: 20;
     }
 
+    /* ডাক্তার প্রোফাইল পেজের চেম্বার কার্ড */
+    .chamber-card-item {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -529,7 +542,7 @@
         </div>
         <div class="search-box">
           <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-          <input type="text" id="homeSearchInput" placeholder="ডাক্তার, হাসপাতাল বা যে কোনো সেবা খুঁজুন...">
+          <input type="text" id="homeSearchInput" placeholder="ডাক্তার, হাসপাতাল বা সেবা খুঁজুন...">
         </div>
       </header>
 
@@ -551,7 +564,6 @@
         <span>বিভাগে ক্লিক করুন <i class="fa-solid fa-chevron-right"></i></span>
       </div>
 
-      <!-- ক্যাটাগরি গ্রিড (ডাক্তার ডিরেক্টরি শীর্ষে) -->
       <div class="home-categories-grid">
         <div class="home-cat-card" onclick="openDoctorList(null, 'সকল বিশেষজ্ঞ চিকিৎসক')">
           <div class="home-cat-icon theme-doctor"><i class="fa-solid fa-user-doctor"></i></div>
@@ -648,7 +660,7 @@
     <div class="page-listings" id="categoryListings"></div>
   </div>
 
-  <!-- ৩. ডাক্তার ডিরেক্টরি স্ক্রিন (টু-ওয়ে শেয়ার্ড পেজ) -->
+  <!-- ৩. ডাক্তারদের তালিকা স্ক্রিন -->
   <div class="slide-page" id="doctorPage">
     <div class="top-sub-header">
       <button class="btn-circle" onclick="closeDoctorPage()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -668,7 +680,7 @@
     <div class="page-listings" id="doctorListings"></div>
   </div>
 
-  <!-- ৪. পূর্ণাঙ্গ বিস্তারিত স্ক্রিন (প্রতিষ্ঠান) -->
+  <!-- ৪. প্রতিষ্ঠান বিস্তারিত স্ক্রিন -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -685,7 +697,6 @@
         <span class="details-tag" id="detailsCategory">ক্যাটাগরি</span>
       </div>
 
-      <!-- ডায়াগনস্টিক হলে স্পেশাল বাটন ভেসে উঠবে -->
       <div id="chamberDocsBtnBox" style="display: none;">
         <div class="btn-show-chamber-docs" onclick="viewChamberDoctors()">
           <div>
@@ -738,12 +749,44 @@
     </div>
   </div>
 
+  <!-- ৫. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন (Doctor Profile Screen with Multi-Chamber) -->
+  <div class="details-view" id="doctorProfileView">
+    <div class="top-sub-header" style="justify-content: space-between;">
+      <button class="btn-circle" onclick="closeDoctorProfile()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-circle" onclick="shareDoctor()"><i class="fa-solid fa-share-nodes"></i></button>
+      </div>
+    </div>
+
+    <div style="padding: 24px 20px 16px; background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%); text-align: center;">
+      <div style="width: 76px; height: 76px; border-radius: 50%; background: #0284C7; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 12px; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);">
+        <i class="fa-solid fa-user-doctor"></i>
+      </div>
+      <h2 id="docProfileName" style="font-size: 20px; font-weight: 700; color: #0C4A6E; line-height: 1.2;">ডাক্তারের নাম</h2>
+      <div id="docProfileSpecialty" style="font-size: 14px; font-weight: 600; color: #0284C7; margin-top: 4px;">স্পেশালিটি</div>
+      <div id="docProfileDegrees" style="font-size: 12px; color: #475569; margin-top: 2px;">ডিগ্রি সমূহ</div>
+      <div id="docProfileFee" style="font-size: 13px; font-weight: 600; color: #0F5132; margin-top: 6px; background: #DCFCE7; display: inline-block; padding: 2px 10px; border-radius: 20px;">ভিজিট ফি: -</div>
+    </div>
+
+    <!-- বিজ্ঞাপনের সুযোগ (AdMob Opportunity Inside Doctor Profile!) -->
+    <div class="ad-slot-box" style="margin: 14px 20px 6px;">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>সিরিয়ালের জন্য নির্ধারিত চেম্বারের নম্বরে কল করুন</span>
+    </div>
+
+    <div style="padding: 10px 20px 80px; display: flex; flex-direction: column; gap: 14px;">
+      <h4 style="font-size: 16px; font-weight: 700; color: var(--text);">চেম্বার ও সময়সূচি</h4>
+      
+      <!-- চেম্বারগুলোর ডায়নামিক তালিকা -->
+      <div id="docProfileChambersList" style="display: flex; flex-direction: column; gap: 12px;"></div>
+    </div>
+  </div>
+
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
     }
 
-    // Sheet1 (প্রতিষ্ঠান) ও Doctors (ডাক্তার তালিকা) API
     const SHEET_ID = "1ctXswktft11lTCw_TiTbwoF2jgmLsHaf4Zno23QImjQ";
     const API_PLACES = `https://opensheet.elk.sh/${SHEET_ID}/Sheet1`;
     const API_DOCTORS = `https://opensheet.elk.sh/${SHEET_ID}/Doctors`;
@@ -753,6 +796,7 @@
     let currentCategory = 'সব';
     let currentChamberFilter = null;
     let activeItem = null;
+    let activeDoctor = null;
 
     // ১. সাধারণ ক্যাটাগরি পেজ
     function openCategoryPage(category, subtitle = '') {
@@ -838,7 +882,7 @@
 
     document.getElementById('catSearchInput').addEventListener('input', renderCategoryItems);
 
-    // ২. ডাক্তারদের তালিকা স্ক্রিন (টু-ওয়ে ডিরেক্টরি)
+    // ২. ডাক্তারদের তালিকা স্ক্রিন
     function openDoctorList(chamberName = null, title = 'বিশেষজ্ঞ ডাক্তারগণ') {
       currentChamberFilter = chamberName;
       document.getElementById('docPageTitle').innerText = chamberName ? chamberName : title;
@@ -883,19 +927,31 @@
       filtered.forEach(doc => {
         const card = document.createElement('div');
         card.className = 'doctor-card';
+        // পুরো কার্ডে ক্লিক করলে ডক্টরের নিজস্ব প্রোফাইল পেজ খুলবে
+        card.onclick = () => openDoctorProfile(doc);
+
+        const firstPhone = (doc.serial_phone || '').split(',')[0].trim();
+        const firstChamber = (doc.chamber || '').split(',')[0].trim();
+        const firstArea = (doc.area || 'চাষাড়া').split(',')[0].trim();
+        const firstTiming = (doc.timing || 'নিয়মিত').split(',')[0].trim();
+
         card.innerHTML = `
           <div>
-            <div class="place-title" style="color: #0F5132;">${doc.name}</div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div class="place-title" style="color: #0F5132;">${doc.name}</div>
+              <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 13px; margin-top: 4px;"></i>
+            </div>
             <div class="doc-specialty">${doc.specialty || 'বিশেষজ্ঞ চিকিৎসক'}</div>
             <div class="doc-degrees">${doc.degrees || ''}</div>
-            <div class="doc-chamber-tag"><i class="fa-solid fa-hospital"></i> ${doc.chamber || 'চেম্বার'} (${doc.area || 'চাষাড়া'})</div>
+            <div class="doc-chamber-tag"><i class="fa-solid fa-hospital"></i> ${firstChamber} (${firstArea})</div>
             <div style="font-size: 12px; color: #475569; margin-top: 6px;">
-              <i class="fa-solid fa-clock" style="color: #10664F;"></i> <strong>সময়:</strong> ${doc.timing || 'নিয়মিত'}
+              <i class="fa-solid fa-clock" style="color: #10664F;"></i> <strong>সময়:</strong> ${firstTiming}
             </div>
           </div>
           <div class="action-buttons" style="grid-template-columns: 1fr;">
-            <a href="${doc.serial_phone ? 'tel:' + doc.serial_phone : '#'}" class="btn-action btn-call">
-              <i class="fa-solid fa-phone"></i> সিরিয়াল দিন (${doc.serial_phone || 'হটলাইন'})
+            <!-- সিরিয়াল বাটনটিতে ক্লিক করলে ইভেন্ট বন্ধ হয়ে সরাসরি ডায়াল প্যাড আসবে -->
+            <a href="${firstPhone ? 'tel:' + firstPhone : '#'}" class="btn-action btn-call" onclick="event.stopPropagation()">
+              <i class="fa-solid fa-phone"></i> সিরিয়াল দিন (${firstPhone || 'হটলাইন'})
             </a>
           </div>
         `;
@@ -905,7 +961,74 @@
 
     document.getElementById('docSearchInput').addEventListener('input', renderDoctorItems);
 
-    // ৩. বিস্তারিত পেজ
+    // ৩. স্বতন্ত্র ডাক্তার প্রোফাইল পেজ (Doctor Profile with Multi-Chamber Support)
+    function openDoctorProfile(doc) {
+      activeDoctor = doc;
+      document.getElementById('docProfileName').innerText = doc.name || 'ডাক্তারের নাম';
+      document.getElementById('docProfileSpecialty').innerText = doc.specialty || 'বিশেষজ্ঞ চিকিৎসক';
+      document.getElementById('docProfileDegrees').innerText = doc.degrees || '';
+      document.getElementById('docProfileFee').innerText = doc.fee ? `ভিজিট ফি: ${doc.fee}` : 'ভিজিট ফি: চেম্বারে যোগাযোগ করুন';
+
+      // একাধিক চেম্বার পার্সিং (কমা সেপারেটেড)
+      const chambers = (doc.chamber || '').split(',').map(s => s.trim()).filter(Boolean);
+      const areas = (doc.area || '').split(',').map(s => s.trim());
+      const timings = (doc.timing || '').split(',').map(s => s.trim());
+      const phones = (doc.serial_phone || '').split(',').map(s => s.trim());
+
+      const listContainer = document.getElementById('docProfileChambersList');
+      listContainer.innerHTML = '';
+
+      if (chambers.length === 0) {
+        listContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 14px;">চেম্বারের তথ্য দেওয়া নেই।</div>';
+      } else {
+        chambers.forEach((ch, idx) => {
+          const area = areas[idx] || areas[0] || 'চাষাড়া, নারায়ণগঞ্জ';
+          const time = timings[idx] || timings[0] || 'নিয়মিত সময়সূচি';
+          const ph = phones[idx] || phones[0] || '';
+
+          const item = document.createElement('div');
+          item.className = 'chamber-card-item';
+          item.innerHTML = `
+            <div style="font-weight: 700; font-size: 15px; color: #0F5132;">
+              <i class="fa-solid fa-hospital" style="color: #0284C7;"></i> ${ch}
+            </div>
+            <div style="font-size: 13px; color: #475569;">
+              <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> ${area}
+            </div>
+            <div style="font-size: 13px; color: #475569;">
+              <i class="fa-solid fa-clock" style="color: var(--primary);"></i> ${time}
+            </div>
+            <div style="margin-top: 4px;">
+              <a href="${ph ? 'tel:' + ph : '#'}" class="btn-action btn-call" style="width: 100%; border-radius: 8px;">
+                <i class="fa-solid fa-phone"></i> সিরিয়াল কল (${ph || 'নম্বর নেই'})
+              </a>
+            </div>
+          `;
+          listContainer.appendChild(item);
+        });
+      }
+
+      document.getElementById('doctorProfileView').classList.add('open');
+      window.history.pushState({ page: 'docProfile' }, '');
+    }
+
+    function closeDoctorProfile() {
+      document.getElementById('doctorProfileView').classList.remove('open');
+    }
+
+    function shareDoctor() {
+      if (navigator.share && activeDoctor) {
+        navigator.share({
+          title: activeDoctor.name,
+          text: `${activeDoctor.name} - ${activeDoctor.specialty} (${activeDoctor.chamber}, নারায়ণগঞ্জ)। সিরিয়াল: ${activeDoctor.serial_phone}`,
+          url: window.location.href,
+        }).catch(() => {});
+      } else {
+        alert('লিংক কপি করা হয়েছে!');
+      }
+    }
+
+    // ৪. প্রতিষ্ঠান বিস্তারিত স্ক্রিন
     function openDetails(item) {
       activeItem = item;
       document.getElementById('detailsName').innerText = item.name || 'তথ্য নেই';
@@ -914,7 +1037,6 @@
       document.getElementById('detailsTiming').innerText = item.timing || 'খোলা আছে';
       document.getElementById('detailsPhone').innerText = item.phone || 'নম্বর নেই';
 
-      // যদি ক্যাটাগরি চিকিৎসা/ডায়াগনস্টিক হয়, তাহলে "ডাক্তারদের তালিকা" বাটন দেখাবে
       const chamberBox = document.getElementById('chamberDocsBtnBox');
       const isMedical = (item.category || '').includes('চিকিৎসা') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল');
       chamberBox.style.display = isMedical ? 'block' : 'none';
@@ -947,14 +1069,17 @@
     }
 
     function goHome() {
+      closeDoctorProfile();
       closeDetails();
       closeDoctorPage();
       closeCategoryPage();
     }
 
-    // ব্যাক বাটন কন্ট্রোল
+    // ফোনের ফিজিক্যাল ব্যাক বাটন কন্ট্রোল
     window.onpopstate = function() {
-      if (document.getElementById('detailsView').classList.contains('open')) {
+      if (document.getElementById('doctorProfileView').classList.contains('open')) {
+        closeDoctorProfile();
+      } else if (document.getElementById('detailsView').classList.contains('open')) {
         closeDetails();
       } else if (document.getElementById('doctorPage').classList.contains('open')) {
         closeDoctorPage();
@@ -975,7 +1100,7 @@
       }
     }
 
-    // ডাটা লোড
+    // ডেটা লোড
     async function loadData() {
       try {
         const [resPlaces, resDocs] = await Promise.all([
