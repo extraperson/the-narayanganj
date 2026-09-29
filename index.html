@@ -4,17 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>The Narayanganj - শহরের সবকিছু এক ঠিকানায়</title>
-
+  
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="the_narayanganj_clean_rgb_512.png">
   <meta name="theme-color" content="#0F5132">
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
-  </script>
-  
   <!-- বাংলা ফন্ট -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,8 +55,10 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
       position: relative;
       padding-bottom: 75px;
+      overflow-x: hidden;
     }
 
+    /* হোম পেজের স্টাইল */
     .header {
       background: #fff;
       padding: 16px 20px 12px;
@@ -90,7 +86,6 @@
       justify-content: center;
       font-size: 22px;
       font-weight: 700;
-      box-shadow: 0 3px 8px rgba(15, 81, 50, 0.25);
     }
 
     .brand-title {
@@ -98,7 +93,6 @@
       font-weight: 700;
       color: var(--primary);
       line-height: 1.1;
-      letter-spacing: -0.3px;
     }
 
     .brand-subtitle {
@@ -154,7 +148,6 @@
       color: var(--text);
     }
 
-    /* ক্যাটাগরি গ্রিড (৮টি মূল বিভাগ) */
     .categories-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -209,6 +202,12 @@
       flex-direction: column;
       gap: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .place-card:active {
+      transform: scale(0.99);
     }
 
     .place-header {
@@ -264,11 +263,6 @@
       text-decoration: none;
       font-size: 13px;
       font-weight: 600;
-      transition: opacity 0.2s;
-    }
-
-    .btn-action:active {
-      opacity: 0.8;
     }
 
     .btn-call {
@@ -280,19 +274,6 @@
       background: #F1F5F9;
       color: var(--text);
       border: 1px solid var(--border);
-    }
-
-    .loading-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-muted);
-      font-size: 14px;
-    }
-
-    .loading-state i {
-      font-size: 26px;
-      color: var(--primary);
-      margin-bottom: 10px;
     }
 
     .bottom-nav {
@@ -327,11 +308,161 @@
     .nav-item i {
       font-size: 18px;
     }
+
+    /* ========================================================
+       ৩ নম্বর স্ক্রিন: ফুল-স্ক্রিন বিস্তারিত পেজ (Details View)
+       ======================================================== */
+    .details-view {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%) translateX(100%);
+      width: 100%;
+      max-width: 440px;
+      height: 100vh;
+      background: #fff;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+    }
+
+    .details-view.open {
+      transform: translateX(-50%) translateX(0);
+    }
+
+    .details-header-bar {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+
+    .btn-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #F1F5F9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    .details-hero-img {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      background: #E2E8F0;
+    }
+
+    .details-content {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 90px;
+    }
+
+    .details-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .details-title {
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.25;
+    }
+
+    .details-tag {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    .info-list {
+      background: var(--bg);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .info-item i {
+      color: var(--primary);
+      margin-top: 3px;
+      font-size: 16px;
+      width: 18px;
+    }
+
+    .details-desc-box {
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+
+    .details-desc-box h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .details-desc-box p {
+      font-size: 14px;
+      color: #4A5568;
+      line-height: 1.6;
+    }
+
+    .details-fixed-bottom {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 440px;
+      background: #fff;
+      padding: 14px 20px;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.06);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      z-index: 20;
+    }
   </style>
 </head>
 <body>
 
   <div class="app-container">
+    <!-- হোম হেডার -->
     <header class="header">
       <div class="brand">
         <div class="brand-icon">N</div>
@@ -354,6 +485,7 @@
       <i class="fa-solid fa-city" style="font-size: 32px; opacity: 0.9;"></i>
     </div>
 
+    <!-- ক্যাটাগরি -->
     <h4 class="section-title">বিভাগ সমূহ</h4>
     <div class="categories-grid" id="categoryContainer">
       <div class="cat-btn active" onclick="filterCategory('সব')">
@@ -390,14 +522,16 @@
       </div>
     </div>
 
+    <!-- তালিকা -->
     <h4 class="section-title" id="listTitle">সকল তথ্য</h4>
     <div class="listings-container" id="listings">
-      <div class="loading-state">
-        <i class="fa-solid fa-circle-notch fa-spin"></i>
-        <div>লোড হচ্ছে...</div>
+      <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+        <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 24px; color: var(--primary);"></i>
+        <div style="margin-top: 10px;">ডাটা লোড হচ্ছে...</div>
       </div>
     </div>
 
+    <!-- নিচে হোম নেভিগেশন বার -->
     <nav class="bottom-nav">
       <a href="#" class="nav-item active"><i class="fa-solid fa-house"></i>হোম</a>
       <a href="#" class="nav-item"><i class="fa-solid fa-compass"></i>এক্সপ্লোর</a>
@@ -406,21 +540,93 @@
     </nav>
   </div>
 
+  <!-- ৩ নম্বর স্ক্রিন: পূর্ণাঙ্গ বিস্তারিত পেজ (Modal/Full View) -->
+  <div class="details-view" id="detailsView">
+    <div class="details-header-bar">
+      <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-circle" onclick="shareItem()"><i class="fa-solid fa-share-nodes"></i></button>
+        <button class="btn-circle"><i class="fa-regular fa-heart"></i></button>
+      </div>
+    </div>
+
+    <img src="" id="detailsImg" class="details-hero-img" alt="ছবি" onerror="this.src='https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80'">
+
+    <div class="details-content">
+      <div class="details-title-row">
+        <div>
+          <h2 class="details-title" id="detailsName">...</h2>
+          <span class="details-tag" id="detailsCategory">ক্যাটাগরি</span>
+        </div>
+        <div class="rating-badge" id="detailsRatingBox">
+          <i class="fa-solid fa-star"></i> <span id="detailsRating">৪.২</span>
+        </div>
+      </div>
+
+      <div class="info-list">
+        <div class="info-item">
+          <i class="fa-solid fa-location-dot"></i>
+          <div>
+            <strong>ঠিকানা:</strong>
+            <div id="detailsAddress" style="color: #4A5568; margin-top: 2px;">-</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fa-solid fa-clock"></i>
+          <div>
+            <strong>সময়সূচি:</strong>
+            <div id="detailsTiming" style="color: #4A5568; margin-top: 2px;">সকাল ৮:০০ - রাত ১০:০০</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fa-solid fa-phone"></i>
+          <div>
+            <strong>হটলাইন / সিরিয়াল:</strong>
+            <div id="detailsPhone" style="color: #4A5568; margin-top: 2px;">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="details-desc-box">
+        <h4>পরিচিতি ও বিশেষ সেবা</h4>
+        <p id="detailsDesc">
+          এখানে বিশেষজ্ঞ চিকিৎসকদের নিয়মিত কনসালটেশন, প্যাথলজিক্যাল টেস্ট, ডিজিটাল এক্স-রে, ইউএসজি ও আধুনিক ডায়াগনস্টিক সুবিধা উপলব্ধ রয়েছে।
+        </p>
+      </div>
+    </div>
+
+    <!-- ফিক্সড ডায়াল ও ম্যাপ বাটন -->
+    <div class="details-fixed-bottom">
+      <a href="#" id="detailsCallBtn" class="btn-action btn-call">
+        <i class="fa-solid fa-phone"></i> কল করুন
+      </a>
+      <a href="#" id="detailsMapBtn" target="_blank" rel="noopener noreferrer" class="btn-action btn-map">
+        <i class="fa-solid fa-diamond-turn-right"></i> গুগল ম্যাপ
+      </a>
+    </div>
+  </div>
+
   <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+
     const API_URL = "https://opensheet.elk.sh/1ctXswktft11lTCw_TiTbwoF2jgmLsHaf4Zno23QImjQ/Sheet1";
     let directoryData = [];
     let currentCategory = 'সব';
+    let activeItem = null;
 
+    // কার্ড রেন্ডার করা
     function renderList(items) {
       const container = document.getElementById('listings');
       container.innerHTML = '';
 
       if (!items || items.length === 0) {
-        container.innerHTML = `<div class="loading-state">কোনো তথ্য খুঁজে পাওয়া যায়নি!</div>`;
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px 0;">কোনো তথ্য খুঁজে পাওয়া যায়নি!</div>`;
         return;
       }
 
-      items.forEach(item => {
+      items.forEach((item, index) => {
         const name = item.name || 'তথ্য নেই';
         const area = item.area || 'নারায়ণগঞ্জ';
         const rating = item.rating || '৪.০';
@@ -429,6 +635,9 @@
 
         const card = document.createElement('div');
         card.className = 'place-card';
+        // কার্ডে ক্লিক করলে ৩ নম্বর স্ক্রিন (Details) খুলবে
+        card.onclick = () => openDetails(item);
+
         card.innerHTML = `
           <div class="place-header">
             <div>
@@ -440,16 +649,73 @@
             </div>
           </div>
           <div class="action-buttons">
-            <a href="${phone ? 'tel:' + phone : '#'}" class="btn-action btn-call" ${!phone ? 'style="opacity:0.5;pointer-events:none;"' : ''}>
+            <a href="${phone ? 'tel:' + phone : '#'}" class="btn-action btn-call" onclick="event.stopPropagation()">
               <i class="fa-solid fa-phone"></i> ${phone ? 'কল করুন' : 'নম্বর নেই'}
             </a>
-            <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="btn-action btn-map">
+            <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="btn-action btn-map" onclick="event.stopPropagation()">
               <i class="fa-solid fa-diamond-turn-right"></i> ম্যাপ
             </a>
           </div>
         `;
         container.appendChild(card);
       });
+    }
+
+    // বিস্তারিত পেজ ওপেন করা (Details Screen)
+    function openDetails(item) {
+      activeItem = item;
+      document.getElementById('detailsName').innerText = item.name || 'নাম নেই';
+      document.getElementById('detailsCategory').innerText = item.category || 'সেবা';
+      document.getElementById('detailsRating').innerText = item.rating || '৪.০';
+      document.getElementById('detailsAddress').innerText = item.address || item.area || 'নারায়ণগঞ্জ';
+      document.getElementById('detailsTiming').innerText = item.timing || 'খোলা আছে (নিয়মিত সময়সূচি)';
+      document.getElementById('detailsPhone').innerText = item.phone || 'নম্বর পাওয়া যায়নি';
+      
+      // ছবি সেট করা
+      const heroImg = document.getElementById('detailsImg');
+      heroImg.src = item.image_url || 'https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?w=800&auto=format&fit=crop&q=80';
+
+      // কল ও ম্যাপ বাটন আপডেট
+      const callBtn = document.getElementById('detailsCallBtn');
+      if (item.phone) {
+        callBtn.href = `tel:${item.phone}`;
+        callBtn.style.opacity = '1';
+        callBtn.style.pointerEvents = 'auto';
+      } else {
+        callBtn.removeAttribute('href');
+        callBtn.style.opacity = '0.5';
+      }
+
+      const mapBtn = document.getElementById('detailsMapBtn');
+      mapBtn.href = item.map_url || `https://maps.google.com/?q=${encodeURIComponent(item.name + ' ' + (item.area || 'নারায়ণগঞ্জ'))}`;
+
+      // স্লাইড ওপেন
+      document.getElementById('detailsView').classList.add('open');
+      // ব্যাক বাটনে কাজ করার জন্য ব্রাউজার হিস্ট্রি পুশ
+      window.history.pushState({ page: 'details' }, '');
+    }
+
+    function closeDetails() {
+      document.getElementById('detailsView').classList.remove('open');
+    }
+
+    // অ্যান্ড্রয়েডের ফিজিক্যাল ব্যাক বাটন হ্যান্ডেল করা
+    window.onpopstate = function() {
+      if (document.getElementById('detailsView').classList.contains('open')) {
+        closeDetails();
+      }
+    };
+
+    function shareItem() {
+      if (navigator.share && activeItem) {
+        navigator.share({
+          title: activeItem.name,
+          text: `${activeItem.name} - ${activeItem.area}, নারায়ণগঞ্জ। ফোন: ${activeItem.phone}`,
+          url: window.location.href,
+        }).catch(() => {});
+      } else {
+        alert('লিংক কপি করা হয়েছে!');
+      }
     }
 
     function filterCategory(cat) {
@@ -470,7 +736,6 @@
         
         let matchCat = (currentCategory === 'সব');
         if (!matchCat) {
-          // পার্সিয়াল ম্যাচিং যাতে ক্যাটাগরি ফ্লেক্সিবল থাকে
           if (selectedCat.includes('জরুরি') && itemCat.includes('জরুরি')) matchCat = true;
           else if (selectedCat.includes('চিকিৎসা') && itemCat.includes('চিকিৎসা')) matchCat = true;
           else if (selectedCat.includes('শপিং') && (itemCat.includes('শপিং') || itemCat.includes('ব্যবসা') || itemCat.includes('মার্কেট'))) matchCat = true;
@@ -499,22 +764,17 @@
       try {
         const res = await fetch(API_URL);
         const data = await res.json();
-        
         if (Array.isArray(data) && data.length > 0) {
           directoryData = data;
           renderList(directoryData);
         } else {
           document.getElementById('listings').innerHTML = `
-            <div class="loading-state">
-              শিটে এখনো কোনো তথ্য পাওয়া যায়নি। অনুগ্রহ করে গুগল শিটে ডাটা যোগ করুন।
+            <div style="text-align: center; color: var(--text-muted); padding: 40px 0;">
+              শিটে কোনো তথ্য পাওয়া যায়নি। অনুগ্রহ করে গুগল শিটে ডাটা যোগ করুন।
             </div>`;
         }
       } catch (err) {
         console.error("ডাটা ফেচ সমস্যা:", err);
-        document.getElementById('listings').innerHTML = `
-          <div class="loading-state" style="color: #c0392b;">
-            ডাটা লোড করতে সমস্যা হয়েছে। অনুগ্রহ করে ইন্টারনেট সংযোগ চেক করুন।
-          </div>`;
       }
     }
 
