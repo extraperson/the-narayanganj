@@ -220,9 +220,8 @@
     .theme-tour { background: #E0E7FF; color: #4F46E5; }
     .theme-bus { background: #CFFAFE; color: #0891B2; }
     .theme-office { background: #F3E8FF; color: #9333EA; }
-    .theme-food { background: #FFEDD5; color: #EA580C; }
 
-    /* স্লাইড পেজ ট্রানজিশন */
+    /* স্লাইড পেজ ট্রানজিশন ও লেয়ারিং */
     .slide-page {
       position: fixed;
       top: 0;
@@ -241,6 +240,36 @@
 
     .slide-page.open {
       transform: translateX(-50%) translateX(0);
+    }
+
+    /* বিস্তারিত পেজের z-index = 1000 */
+    .details-view {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%) translateX(100%);
+      width: 100%;
+      max-width: 440px;
+      height: 100vh;
+      background: #fff;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+    }
+
+    .details-view.open {
+      transform: translateX(-50%) translateX(0);
+    }
+
+    /* ডাক্তার তালিকা স্ক্রিন ও ডাক্তার প্রোফাইল পেজের z-index = 1100 (যাতে বিস্তারিত পেজের ওপরে খোলে) */
+    #doctorPage {
+      z-index: 1100;
+    }
+
+    #doctorProfileView {
+      z-index: 1200;
     }
 
     .top-sub-header {
@@ -384,27 +413,6 @@
     .btn-call { background: var(--primary); color: #fff; }
     .btn-map { background: #F1F5F9; color: var(--text); border: 1px solid var(--border); }
 
-    /* ডিটেইল ভিউ */
-    .details-view {
-      position: fixed;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%) translateX(100%);
-      width: 100%;
-      max-width: 440px;
-      height: 100vh;
-      background: #fff;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      transition: transform 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
-    }
-
-    .details-view.open {
-      transform: translateX(-50%) translateX(0);
-    }
-
     .details-hero-img {
       width: 100%;
       height: 190px;
@@ -432,18 +440,26 @@
       margin-top: 6px;
     }
 
+    /* ফিক্সড ও সুন্দর ডক্টর লিস্ট বাটন */
     .btn-show-chamber-docs {
       background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
       color: #fff;
-      padding: 14px;
+      padding: 15px 16px;
       border-radius: var(--radius);
       display: flex;
       align-items: center;
       justify-content: space-between;
+      text-decoration: none;
       font-weight: 600;
       font-size: 14px;
       box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
       cursor: pointer;
+      user-select: none;
+    }
+
+    .btn-show-chamber-docs:active {
+      transform: scale(0.98);
+      opacity: 0.95;
     }
 
     .info-list {
@@ -487,7 +503,6 @@
       z-index: 20;
     }
 
-    /* ডাক্তার প্রোফাইল পেজের চেম্বার কার্ড */
     .chamber-card-item {
       background: #F8FAFC;
       border: 1px solid #E2E8F0;
@@ -640,7 +655,7 @@
     </nav>
   </div>
 
-  <!-- ২. সাধারণ ক্যাটাগরি লিস্টিং স্ক্রিন -->
+  <!-- ২. ক্যাটাগরি তালিকা স্ক্রিন -->
   <div class="slide-page" id="categoryPage">
     <div class="top-sub-header">
       <button class="btn-circle" onclick="closeCategoryPage()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -660,7 +675,7 @@
     <div class="page-listings" id="categoryListings"></div>
   </div>
 
-  <!-- ৩. ডাক্তারদের তালিকা স্ক্রিন -->
+  <!-- ৩. ডাক্তার তালিকা স্ক্রিন (z-index: 1100) -->
   <div class="slide-page" id="doctorPage">
     <div class="top-sub-header">
       <button class="btn-circle" onclick="closeDoctorPage()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -680,7 +695,7 @@
     <div class="page-listings" id="doctorListings"></div>
   </div>
 
-  <!-- ৪. প্রতিষ্ঠান বিস্তারিত স্ক্রিন -->
+  <!-- ৪. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (z-index: 1000) -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -697,6 +712,7 @@
         <span class="details-tag" id="detailsCategory">ক্যাটাগরি</span>
       </div>
 
+      <!-- ডাক্তার তালিকা বোতাম -->
       <div id="chamberDocsBtnBox" style="display: none;">
         <div class="btn-show-chamber-docs" onclick="viewChamberDoctors()">
           <div>
@@ -749,7 +765,7 @@
     </div>
   </div>
 
-  <!-- ৫. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন (Doctor Profile Screen with Multi-Chamber) -->
+  <!-- ৫. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন (z-index: 1200) -->
   <div class="details-view" id="doctorProfileView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDoctorProfile()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -768,7 +784,6 @@
       <div id="docProfileFee" style="font-size: 13px; font-weight: 600; color: #0F5132; margin-top: 6px; background: #DCFCE7; display: inline-block; padding: 2px 10px; border-radius: 20px;">ভিজিট ফি: -</div>
     </div>
 
-    <!-- বিজ্ঞাপনের সুযোগ (AdMob Opportunity Inside Doctor Profile!) -->
     <div class="ad-slot-box" style="margin: 14px 20px 6px;">
       <i class="fa-solid fa-circle-info"></i>
       <span>সিরিয়ালের জন্য নির্ধারিত চেম্বারের নম্বরে কল করুন</span>
@@ -776,8 +791,6 @@
 
     <div style="padding: 10px 20px 80px; display: flex; flex-direction: column; gap: 14px;">
       <h4 style="font-size: 16px; font-weight: 700; color: var(--text);">চেম্বার ও সময়সূচি</h4>
-      
-      <!-- চেম্বারগুলোর ডায়নামিক তালিকা -->
       <div id="docProfileChambersList" style="display: flex; flex-direction: column; gap: 12px;"></div>
     </div>
   </div>
@@ -882,7 +895,7 @@
 
     document.getElementById('catSearchInput').addEventListener('input', renderCategoryItems);
 
-    // ২. ডাক্তারদের তালিকা স্ক্রিন
+    // ২. ডাক্তারদের তালিকা স্ক্রিন (বড় z-index ও মসৃণ লোড)
     function openDoctorList(chamberName = null, title = 'বিশেষজ্ঞ ডাক্তারগণ') {
       currentChamberFilter = chamberName;
       document.getElementById('docPageTitle').innerText = chamberName ? chamberName : title;
@@ -890,7 +903,10 @@
       document.getElementById('docSearchInput').value = '';
 
       renderDoctorItems();
-      document.getElementById('doctorPage').classList.add('open');
+      
+      const docPage = document.getElementById('doctorPage');
+      docPage.classList.add('open');
+      docPage.scrollTop = 0;
       window.history.pushState({ page: 'doctors' }, '');
     }
 
@@ -907,7 +923,9 @@
       const filtered = doctorsData.filter(doc => {
         let matchChamber = true;
         if (currentChamberFilter) {
-          matchChamber = (doc.chamber || '').toLowerCase().includes(currentChamberFilter.toLowerCase());
+          // নাম বা চেম্বারের আংশিক মিল চেক করা (যেমন পপুলার)
+          const target = currentChamberFilter.toLowerCase().replace('ডায়াগনস্টিক', '').replace('সেন্টার', '').trim();
+          matchChamber = (doc.chamber || '').toLowerCase().includes(target);
         }
 
         const matchSearch = 
@@ -927,7 +945,6 @@
       filtered.forEach(doc => {
         const card = document.createElement('div');
         card.className = 'doctor-card';
-        // পুরো কার্ডে ক্লিক করলে ডক্টরের নিজস্ব প্রোফাইল পেজ খুলবে
         card.onclick = () => openDoctorProfile(doc);
 
         const firstPhone = (doc.serial_phone || '').split(',')[0].trim();
@@ -949,7 +966,6 @@
             </div>
           </div>
           <div class="action-buttons" style="grid-template-columns: 1fr;">
-            <!-- সিরিয়াল বাটনটিতে ক্লিক করলে ইভেন্ট বন্ধ হয়ে সরাসরি ডায়াল প্যাড আসবে -->
             <a href="${firstPhone ? 'tel:' + firstPhone : '#'}" class="btn-action btn-call" onclick="event.stopPropagation()">
               <i class="fa-solid fa-phone"></i> সিরিয়াল দিন (${firstPhone || 'হটলাইন'})
             </a>
@@ -961,7 +977,49 @@
 
     document.getElementById('docSearchInput').addEventListener('input', renderDoctorItems);
 
-    // ৩. স্বতন্ত্র ডাক্তার প্রোফাইল পেজ (Doctor Profile with Multi-Chamber Support)
+    // ৩. প্রতিষ্ঠান বিস্তারিত স্ক্রিন
+    function openDetails(item) {
+      activeItem = item;
+      document.getElementById('detailsName').innerText = item.name || 'তথ্য নেই';
+      document.getElementById('detailsCategory').innerText = item.category || 'সেবা';
+      document.getElementById('detailsAddress').innerText = item.address || item.area || 'নারায়ণগঞ্জ';
+      document.getElementById('detailsTiming').innerText = item.timing || 'খোলা আছে';
+      document.getElementById('detailsPhone').innerText = item.phone || 'নম্বর নেই';
+
+      // ডায়াগনস্টিক বা চিকিৎসা হলে বাটনটি দৃশ্যমান হবে
+      const chamberBox = document.getElementById('chamberDocsBtnBox');
+      const isMedical = (item.category || '').includes('চিকিৎসা') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল');
+      chamberBox.style.display = isMedical ? 'block' : 'none';
+
+      const callBtn = document.getElementById('detailsCallBtn');
+      if (item.phone) {
+        callBtn.href = `tel:${item.phone}`;
+        callBtn.style.opacity = '1';
+        callBtn.style.pointerEvents = 'auto';
+      } else {
+        callBtn.removeAttribute('href');
+        callBtn.style.opacity = '0.5';
+      }
+
+      const mapBtn = document.getElementById('detailsMapBtn');
+      mapBtn.href = item.map_url || `https://maps.google.com/?q=${encodeURIComponent(item.name + ' ' + (item.area || 'নারায়ণগঞ্জ'))}`;
+
+      document.getElementById('detailsView').classList.add('open');
+      window.history.pushState({ page: 'details' }, '');
+    }
+
+    // বাটন ক্লিকের অ্যাকশন (সরাসরি ডক্টর পেজে পাঠানো)
+    function viewChamberDoctors() {
+      if (activeItem) {
+        openDoctorList(activeItem.name, `${activeItem.name}-এর ডাক্তারগণ`);
+      }
+    }
+
+    function closeDetails() {
+      document.getElementById('detailsView').classList.remove('open');
+    }
+
+    // ৪. স্বতন্ত্র ডাক্তার প্রোফাইল পেজ
     function openDoctorProfile(doc) {
       activeDoctor = doc;
       document.getElementById('docProfileName').innerText = doc.name || 'ডাক্তারের নাম';
@@ -969,7 +1027,6 @@
       document.getElementById('docProfileDegrees').innerText = doc.degrees || '';
       document.getElementById('docProfileFee').innerText = doc.fee ? `ভিজিট ফি: ${doc.fee}` : 'ভিজিট ফি: চেম্বারে যোগাযোগ করুন';
 
-      // একাধিক চেম্বার পার্সিং (কমা সেপারেটেড)
       const chambers = (doc.chamber || '').split(',').map(s => s.trim()).filter(Boolean);
       const areas = (doc.area || '').split(',').map(s => s.trim());
       const timings = (doc.timing || '').split(',').map(s => s.trim());
@@ -1016,6 +1073,26 @@
       document.getElementById('doctorProfileView').classList.remove('open');
     }
 
+    function goHome() {
+      closeDoctorProfile();
+      closeDoctorPage();
+      closeDetails();
+      closeCategoryPage();
+    }
+
+    // ব্যাক বাটন নিখুঁত লেয়ার অনুযায়ী বন্ধ হওয়া
+    window.onpopstate = function() {
+      if (document.getElementById('doctorProfileView').classList.contains('open')) {
+        closeDoctorProfile();
+      } else if (document.getElementById('doctorPage').classList.contains('open')) {
+        closeDoctorPage();
+      } else if (document.getElementById('detailsView').classList.contains('open')) {
+        closeDetails();
+      } else if (document.getElementById('categoryPage').classList.contains('open')) {
+        closeCategoryPage();
+      }
+    };
+
     function shareDoctor() {
       if (navigator.share && activeDoctor) {
         navigator.share({
@@ -1027,66 +1104,6 @@
         alert('লিংক কপি করা হয়েছে!');
       }
     }
-
-    // ৪. প্রতিষ্ঠান বিস্তারিত স্ক্রিন
-    function openDetails(item) {
-      activeItem = item;
-      document.getElementById('detailsName').innerText = item.name || 'তথ্য নেই';
-      document.getElementById('detailsCategory').innerText = item.category || 'সেবা';
-      document.getElementById('detailsAddress').innerText = item.address || item.area || 'নারায়ণগঞ্জ';
-      document.getElementById('detailsTiming').innerText = item.timing || 'খোলা আছে';
-      document.getElementById('detailsPhone').innerText = item.phone || 'নম্বর নেই';
-
-      const chamberBox = document.getElementById('chamberDocsBtnBox');
-      const isMedical = (item.category || '').includes('চিকিৎসা') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল');
-      chamberBox.style.display = isMedical ? 'block' : 'none';
-
-      const callBtn = document.getElementById('detailsCallBtn');
-      if (item.phone) {
-        callBtn.href = `tel:${item.phone}`;
-        callBtn.style.opacity = '1';
-        callBtn.style.pointerEvents = 'auto';
-      } else {
-        callBtn.removeAttribute('href');
-        callBtn.style.opacity = '0.5';
-      }
-
-      const mapBtn = document.getElementById('detailsMapBtn');
-      mapBtn.href = item.map_url || `https://maps.google.com/?q=${encodeURIComponent(item.name + ' ' + (item.area || 'নারায়ণগঞ্জ'))}`;
-
-      document.getElementById('detailsView').classList.add('open');
-      window.history.pushState({ page: 'details' }, '');
-    }
-
-    function viewChamberDoctors() {
-      if (activeItem) {
-        openDoctorList(activeItem.name, `${activeItem.name}-এর ডাক্তারগণ`);
-      }
-    }
-
-    function closeDetails() {
-      document.getElementById('detailsView').classList.remove('open');
-    }
-
-    function goHome() {
-      closeDoctorProfile();
-      closeDetails();
-      closeDoctorPage();
-      closeCategoryPage();
-    }
-
-    // ফোনের ফিজিক্যাল ব্যাক বাটন কন্ট্রোল
-    window.onpopstate = function() {
-      if (document.getElementById('doctorProfileView').classList.contains('open')) {
-        closeDoctorProfile();
-      } else if (document.getElementById('detailsView').classList.contains('open')) {
-        closeDetails();
-      } else if (document.getElementById('doctorPage').classList.contains('open')) {
-        closeDoctorPage();
-      } else if (document.getElementById('categoryPage').classList.contains('open')) {
-        closeCategoryPage();
-      }
-    };
 
     function shareItem() {
       if (navigator.share && activeItem) {
@@ -1100,7 +1117,6 @@
       }
     }
 
-    // ডেটা লোড
     async function loadData() {
       try {
         const [resPlaces, resDocs] = await Promise.all([
