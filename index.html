@@ -164,7 +164,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      padding: 0 20px 90px; /* AdMob / Bottom Nav Safe Area */
+      padding: 0 20px 90px;
     }
 
     .home-cat-card {
@@ -217,7 +217,6 @@
     .theme-bus { background: #CFFAFE; color: #0891B2; }
     .theme-office { background: #F3E8FF; color: #9333EA; }
 
-    /* স্লাইড পেজ ট্রানজিশন */
     .slide-page, .details-view {
       position: fixed;
       top: 0;
@@ -280,7 +279,7 @@
     }
 
     .page-listings {
-      padding: 16px 20px 95px; /* AdMob ব্যানার সুরক্ষিত রাখতে নিরাপদ স্পেস */
+      padding: 16px 20px 95px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -403,9 +402,8 @@
       background: #E2E8F0;
     }
 
-    /* নতুন মসৃণ ডিটেইলস লেআউট (ফ্লুয়েন্ট ও কমফোর্ট) */
     .details-content {
-      padding: 20px 20px 95px; /* AdMob Banner Safe Bottom Space */
+      padding: 20px 20px 95px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -429,7 +427,6 @@
       margin-top: 6px;
     }
 
-    /* প্রিমিয়াম ডাক্তার কার্ড (নীল ব্লকের বদলে ক্লিন কার্ড) */
     .doc-nav-card {
       background: #F0F9FF;
       border: 1px solid #BAE6FD;
@@ -682,7 +679,7 @@
     <div class="page-listings" id="doctorListings"></div>
   </div>
 
-  <!-- ৪. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (ফ্লুয়েন্ট ও রিফ্রেশিং লুক) -->
+  <!-- ৪. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (ল্যান্ডমার্ক / বিস্তারিত ঠিকানা অপশনসহ) -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -694,13 +691,12 @@
     <img src="" id="detailsImg" class="details-hero-img" alt="ছবি" onerror="this.src='https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80'">
 
     <div class="details-content">
-      <!-- শিরোনাম ও ট্যাগ -->
       <div>
         <h2 class="details-title" id="detailsName">...</h2>
         <span class="details-tag" id="detailsCategory">ক্যাটাগরি</span>
       </div>
 
-      <!-- টপ অ্যাকশন বাটন (এক ক্লিকে সরাসরি কল ও ম্যাপ) -->
+      <!-- টপ অ্যাকশন বাটন -->
       <div class="action-buttons" style="margin-top: -2px;">
         <a href="#" id="detailsCallBtn" class="btn-action btn-call">
           <i class="fa-solid fa-phone"></i> কল করুন
@@ -710,7 +706,7 @@
         </a>
       </div>
 
-      <!-- ডাক্তার নেভিগেশন কার্ড (চিকিৎসা প্রতিষ্ঠানের জন্য প্রিমিয়াম কার্ড) -->
+      <!-- ডাক্তার নেভিগেশন কার্ড -->
       <div id="chamberDocsBtnBox" style="display: none;">
         <div class="doc-nav-card" onclick="viewChamberDoctors()">
           <div class="doc-nav-left">
@@ -724,7 +720,7 @@
         </div>
       </div>
 
-      <!-- ঠিকানা ও সময়সূচি তথ্য বক্স -->
+      <!-- তথ্য বক্স (ঠিকানা + বিস্তারিত ঠিকানা/ল্যান্ডমার্ক) -->
       <div class="info-list">
         <div class="info-item">
           <i class="fa-solid fa-location-dot"></i>
@@ -733,6 +729,16 @@
             <div id="detailsAddress" style="color: var(--text-muted); margin-top: 2px;">-</div>
           </div>
         </div>
+
+        <!-- ডায়নামিক বিস্তারিত ঠিকানা / ল্যান্ডমার্ক রো (ডাটা থাকলে দেখাবে, না থাকলে লুকানো থাকবে) -->
+        <div class="info-item" id="detailsLandmarkBox" style="display: none;">
+          <i class="fa-solid fa-map-pin" style="color: #D97706;"></i>
+          <div>
+            <strong style="color: var(--text);">বিস্তারিত অবস্থান / ল্যান্ডমার্ক:</strong>
+            <div id="detailsLandmark" style="color: #D97706; font-weight: 500; margin-top: 2px;">-</div>
+          </div>
+        </div>
+
         <div class="info-item">
           <i class="fa-solid fa-clock"></i>
           <div>
@@ -743,7 +749,7 @@
         <div class="info-item">
           <i class="fa-solid fa-phone"></i>
           <div>
-            <strong style="color: var(--text);">হটলাইন / সিরিয়াল:</strong>
+            <strong style="color: var(--text);">হটলাইন / যোগাযোগ:</strong>
             <div id="detailsPhone" style="color: var(--text-muted); margin-top: 2px;">-</div>
           </div>
         </div>
@@ -844,7 +850,8 @@
         const matchSearch = 
           (item.name || '').toLowerCase().includes(query) ||
           (item.area || '').toLowerCase().includes(query) ||
-          (item.address || '').toLowerCase().includes(query);
+          (item.address || '').toLowerCase().includes(query) ||
+          (item.landmark || '').toLowerCase().includes(query);
 
         return matchCat && matchSearch;
       });
@@ -975,6 +982,16 @@
       document.getElementById('detailsAddress').innerText = item.address || item.area || 'নারায়ণগঞ্জ';
       document.getElementById('detailsTiming').innerText = item.timing || 'খোলা আছে';
       document.getElementById('detailsPhone').innerText = item.phone || 'নম্বর নেই';
+
+      // ল্যান্ডমার্ক / বিস্তারিত ঠিকানা হ্যান্ডলিং
+      const landmarkBox = document.getElementById('detailsLandmarkBox');
+      const landmarkText = document.getElementById('detailsLandmark');
+      if (item.landmark && item.landmark.trim() !== '') {
+        landmarkText.innerText = item.landmark.trim();
+        landmarkBox.style.display = 'flex';
+      } else {
+        landmarkBox.style.display = 'none';
+      }
 
       const chamberBox = document.getElementById('chamberDocsBtnBox');
       const isMedical = (item.category || '').includes('চিকিৎসা') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল');
