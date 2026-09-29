@@ -894,6 +894,18 @@
   </div>
 
   <script>
+// পুরোনো ক্যাশ এবং সার্ভিস ওয়ার্কার আন-রেজিস্টার করা (ফোর্স রিফ্রেশ)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+      registration.unregister();
+    }
+  });
+}
+// পুরোনো ক্যাশ করা শিটের ডাটা এককালীন পরিষ্কার করা
+localStorage.removeItem('cached_places');
+localStorage.removeItem('cached_docs');
+    
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
     }
