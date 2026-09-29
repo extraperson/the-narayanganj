@@ -4,6 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>The Narayanganj - শহরের সবকিছু এক ঠিকানায়</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="the_narayanganj_clean_rgb_512.png">
+  <meta name="theme-color" content="#0F5132">
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
   
   <!-- বাংলা ফন্ট -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
