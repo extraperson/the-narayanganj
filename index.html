@@ -129,8 +129,47 @@
     .banner h3 { font-size: 16px; margin-bottom: 2px; }
     .banner p { font-size: 12px; opacity: 0.9; }
 
+    /* অ্যাডমিশন বা লিস্ট সাবমিট বাটন */
+    .submit-entry-bar {
+      margin: 10px 20px 0;
+      background: #F0FDF4;
+      border: 1px dashed #86EFAC;
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .submit-entry-bar:active {
+      background: #DCFCE7;
+    }
+
+    .submit-entry-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .submit-entry-left i {
+      font-size: 18px;
+      color: var(--primary);
+    }
+
+    .submit-entry-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: #166534;
+    }
+
+    .submit-entry-sub {
+      font-size: 11px;
+      color: #15803D;
+    }
+
     .ad-slot-box {
-      margin: 14px 20px 5px;
+      margin: 12px 20px 5px;
       background: #FFFFFF;
       border: 1px dashed #CBD5E1;
       border-radius: var(--radius);
@@ -164,7 +203,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      padding: 0 20px 90px;
+      padding: 0 20px 95px;
     }
 
     .home-cat-card {
@@ -244,6 +283,7 @@
 
     #doctorPage { z-index: 1100; }
     #doctorProfileView { z-index: 1200; background: #FFFFFF; }
+    #bookmarkPage { z-index: 1300; }
 
     .top-sub-header {
       position: sticky;
@@ -276,6 +316,12 @@
       font-size: 16px;
       color: var(--text);
       flex-shrink: 0;
+      transition: color 0.15s;
+    }
+
+    .btn-circle.active-heart {
+      color: #E11D48;
+      background: #FFE4E6;
     }
 
     .page-listings {
@@ -519,6 +565,7 @@
       font-size: 11px;
       font-weight: 500;
       gap: 3px;
+      cursor: pointer;
     }
 
     .nav-item.active { color: var(--primary); font-weight: 700; }
@@ -551,6 +598,18 @@
           <p>ডাক্তার, চিকিৎসা, জরুরি সেবা ও শহরের গাইড</p>
         </div>
         <i class="fa-solid fa-city" style="font-size: 32px; opacity: 0.9;"></i>
+      </div>
+
+      <!-- প্রতিষ্ঠান যোগ করার বার -->
+      <div class="submit-entry-bar" onclick="openSubmitForm()">
+        <div class="submit-entry-left">
+          <i class="fa-solid fa-plus-circle"></i>
+          <div>
+            <div class="submit-entry-text">আপনার ব্যবসা বা সেবা যোগ করুন</div>
+            <div class="submit-entry-sub">ফ্রিতে অ্যাপে লিস্টিং পেতে এখানে ক্লিক করুন</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-arrow-right" style="color: #166534; font-size: 14px;"></i>
       </div>
 
       <div class="ad-slot-box">
@@ -632,10 +691,10 @@
 
     <!-- বটম বার -->
     <nav class="bottom-nav">
-      <a href="#" class="nav-item active" onclick="goHome()"><i class="fa-solid fa-house"></i>হোম</a>
-      <a href="#" class="nav-item" onclick="openDoctorList(null, 'সকল ডাক্তার')"><i class="fa-solid fa-user-doctor"></i>ডাক্তার</a>
-      <a href="#" class="nav-item" onclick="openCategoryPage('সব', 'সকল তালিকা')"><i class="fa-solid fa-compass"></i>এক্সপ্লোর</a>
-      <a href="#" class="nav-item"><i class="fa-solid fa-circle-info"></i>তথ্য</a>
+      <div class="nav-item active" onclick="goHome()"><i class="fa-solid fa-house"></i>হোম</div>
+      <div class="nav-item" onclick="openDoctorList(null, 'সকল ডাক্তার')"><i class="fa-solid fa-user-doctor"></i>ডাক্তার</div>
+      <div class="nav-item" onclick="openBookmarkPage()"><i class="fa-solid fa-bookmark"></i>সংরক্ষণ</div>
+      <div class="nav-item" onclick="openCategoryPage('সব', 'সকল তালিকা')"><i class="fa-solid fa-compass"></i>এক্সপ্লোর</div>
     </nav>
   </div>
 
@@ -679,12 +738,26 @@
     <div class="page-listings" id="doctorListings"></div>
   </div>
 
-  <!-- ৪. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (ল্যান্ডমার্ক / বিস্তারিত ঠিকানা অপশনসহ) -->
+  <!-- ৪. বুকমার্ক / সংরক্ষিত তালিকা স্ক্রিন -->
+  <div class="slide-page" id="bookmarkPage">
+    <div class="top-sub-header">
+      <button class="btn-circle" onclick="closeBookmarkPage()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div>
+        <h3>সংরক্ষিত তালিকা</h3>
+        <p style="font-size: 12px; color: var(--text-muted);">আপনার প্রিয় ও প্রয়োজনীয় সেবা</p>
+      </div>
+    </div>
+
+    <div class="page-listings" id="bookmarkListings"></div>
+  </div>
+
+  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
       <div style="display: flex; gap: 8px;">
         <button class="btn-circle" onclick="shareItem()"><i class="fa-solid fa-share-nodes"></i></button>
+        <button class="btn-circle" id="detailsHeartBtn" onclick="toggleBookmarkActiveItem()"><i class="fa-regular fa-heart"></i></button>
       </div>
     </div>
 
@@ -696,7 +769,6 @@
         <span class="details-tag" id="detailsCategory">ক্যাটাগরি</span>
       </div>
 
-      <!-- টপ অ্যাকশন বাটন -->
       <div class="action-buttons" style="margin-top: -2px;">
         <a href="#" id="detailsCallBtn" class="btn-action btn-call">
           <i class="fa-solid fa-phone"></i> কল করুন
@@ -706,7 +778,6 @@
         </a>
       </div>
 
-      <!-- ডাক্তার নেভিগেশন কার্ড -->
       <div id="chamberDocsBtnBox" style="display: none;">
         <div class="doc-nav-card" onclick="viewChamberDoctors()">
           <div class="doc-nav-left">
@@ -720,7 +791,6 @@
         </div>
       </div>
 
-      <!-- তথ্য বক্স (ঠিকানা + বিস্তারিত ঠিকানা/ল্যান্ডমার্ক) -->
       <div class="info-list">
         <div class="info-item">
           <i class="fa-solid fa-location-dot"></i>
@@ -730,7 +800,6 @@
           </div>
         </div>
 
-        <!-- ডায়নামিক বিস্তারিত ঠিকানা / ল্যান্ডমার্ক রো (ডাটা থাকলে দেখাবে, না থাকলে লুকানো থাকবে) -->
         <div class="info-item" id="detailsLandmarkBox" style="display: none;">
           <i class="fa-solid fa-map-pin" style="color: #D97706;"></i>
           <div>
@@ -755,7 +824,6 @@
         </div>
       </div>
 
-      <!-- পরিচিতি ও সুবিধা -->
       <div style="border-top: 1px solid var(--border); padding-top: 14px;">
         <h4 style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">পরিচিতি ও সুবিধা</h4>
         <p id="detailsDesc" style="font-size: 14px; color: #475569; line-height: 1.6;">
@@ -765,12 +833,13 @@
     </div>
   </div>
 
-  <!-- ৫. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন -->
+  <!-- ৬. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন -->
   <div class="details-view" id="doctorProfileView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDoctorProfile()"><i class="fa-solid fa-arrow-left"></i></button>
       <div style="display: flex; gap: 8px;">
         <button class="btn-circle" onclick="shareDoctor()"><i class="fa-solid fa-share-nodes"></i></button>
+        <button class="btn-circle" id="docHeartBtn" onclick="toggleBookmarkActiveDoctor()"><i class="fa-regular fa-heart"></i></button>
       </div>
     </div>
 
@@ -811,6 +880,146 @@
     let activeItem = null;
     let activeDoctor = null;
 
+    // বুকমার্ক স্টোরেজ
+    let bookmarks = JSON.parse(localStorage.getItem('narayanganj_bookmarks') || '{"places":[], "doctors":[]}');
+
+    function saveBookmarks() {
+      localStorage.setItem('narayanganj_bookmarks', JSON.stringify(bookmarks));
+    }
+
+    function isItemBookmarked(name) {
+      return bookmarks.places.some(p => p.name === name);
+    }
+
+    function isDocBookmarked(name) {
+      return bookmarks.doctors.some(d => d.name === name);
+    }
+
+    function updateHeartIcon(btnElement, isActive) {
+      if (isActive) {
+        btnElement.classList.add('active-heart');
+        btnElement.innerHTML = '<i class="fa-solid fa-heart"></i>';
+      } else {
+        btnElement.classList.remove('active-heart');
+        btnElement.innerHTML = '<i class="fa-regular fa-heart"></i>';
+      }
+    }
+
+    function toggleBookmarkActiveItem() {
+      if (!activeItem) return;
+      const idx = bookmarks.places.findIndex(p => p.name === activeItem.name);
+      if (idx > -1) {
+        bookmarks.places.splice(idx, 1);
+        updateHeartIcon(document.getElementById('detailsHeartBtn'), false);
+      } else {
+        bookmarks.places.push(activeItem);
+        updateHeartIcon(document.getElementById('detailsHeartBtn'), true);
+      }
+      saveBookmarks();
+    }
+
+    function toggleBookmarkActiveDoctor() {
+      if (!activeDoctor) return;
+      const idx = bookmarks.doctors.findIndex(d => d.name === activeDoctor.name);
+      if (idx > -1) {
+        bookmarks.doctors.splice(idx, 1);
+        updateHeartIcon(document.getElementById('docHeartBtn'), false);
+      } else {
+        bookmarks.doctors.push(activeDoctor);
+        updateHeartIcon(document.getElementById('docHeartBtn'), true);
+      }
+      saveBookmarks();
+    }
+
+    // বুকমার্ক পেজ
+    function openBookmarkPage() {
+      const container = document.getElementById('bookmarkListings');
+      container.innerHTML = '';
+
+      const total = bookmarks.places.length + bookmarks.doctors.length;
+      if (total === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); padding: 50px 20px;">
+            <i class="fa-regular fa-bookmark" style="font-size: 38px; color: #CBD5E1; margin-bottom: 12px;"></i>
+            <p>আপনার সংরক্ষিত তালিকায় এখনো কিছু নেই।</p>
+            <p style="font-size: 12px; margin-top: 4px;">যেকোনো ডাক্তার বা প্রতিষ্ঠানের পেজে গিয়ে হার্ট আইকনে চাপ দিলে এখানে সেভ থাকবে।</p>
+          </div>
+        `;
+      } else {
+        // ডাক্তাররা
+        if (bookmarks.doctors.length > 0) {
+          const docTitle = document.createElement('h4');
+          docTitle.innerText = "সংরক্ষিত ডাক্তারগণ";
+          docTitle.style.cssText = "font-size: 15px; color: var(--primary); margin: 6px 0 2px;";
+          container.appendChild(docTitle);
+
+          bookmarks.doctors.forEach(doc => {
+            const card = document.createElement('div');
+            card.className = 'doctor-card';
+            card.onclick = () => openDoctorProfile(doc);
+            const firstPhone = (doc.serial_phone || '').split(',')[0].trim();
+            card.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                  <div class="place-title" style="color: #0F5132;">${doc.name}</div>
+                  <div class="doc-specialty">${doc.specialty || ''}</div>
+                </div>
+                <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 13px;"></i>
+              </div>
+              <div class="action-buttons" style="grid-template-columns: 1fr;">
+                <a href="${firstPhone ? 'tel:' + firstPhone : '#'}" class="btn-action btn-call" onclick="event.stopPropagation()">
+                  <i class="fa-solid fa-phone"></i> সিরিয়াল দিন (${firstPhone || 'কল'})
+                </a>
+              </div>
+            `;
+            container.appendChild(card);
+          });
+        }
+
+        // প্রতিষ্ঠান
+        if (bookmarks.places.length > 0) {
+          const placeTitle = document.createElement('h4');
+          placeTitle.innerText = "সংরক্ষিত প্রতিষ্ঠান ও সেবা";
+          placeTitle.style.cssText = "font-size: 15px; color: var(--primary); margin: 12px 0 2px;";
+          container.appendChild(placeTitle);
+
+          bookmarks.places.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'place-card';
+            card.onclick = () => openDetails(item);
+            card.innerHTML = `
+              <div class="place-header">
+                <div>
+                  <div class="place-title">${item.name}</div>
+                  <div class="place-area"><i class="fa-solid fa-location-dot"></i> ${item.area || ''}</div>
+                </div>
+                <div class="rating-badge"><i class="fa-solid fa-star"></i> ${item.rating || '৪.০'}</div>
+              </div>
+            `;
+            container.appendChild(card);
+          });
+        }
+      }
+
+      document.getElementById('bookmarkPage').classList.add('open');
+      window.history.pushState({ page: 'bookmarks' }, '');
+    }
+
+    function closeBookmarkPage() {
+      document.getElementById('bookmarkPage').classList.remove('open');
+    }
+
+    // নতুন প্রতিষ্ঠান সাবমিট ফরম (Google Form বা ডিরেক্ট ডায়ালগ)
+    function openSubmitForm() {
+      // এখানে আপনার নিজস্ব গুগল ফর্মের লিংক বসিয়ে দিতে পারেন
+      const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSc-PLACEHOLDER/viewform";
+      const confirmed = confirm("আপনার প্রতিষ্ঠান, দোকান বা চেম্বারের তথ্য নারায়ণগঞ্জ অ্যাপে যুক্ত করতে চান?\n\n'ঠিক আছে' চাপলে ফর্মটি খুলবে।");
+      if (confirmed) {
+        window.open(formUrl, '_blank');
+      }
+    }
+
+    // ১. সাধারণ ক্যাটাগরি পেজ
     function openCategoryPage(category, subtitle = '') {
       currentCategory = category;
       document.getElementById('catPageTitle').innerText = category === 'সব' ? 'সকল সেবা ও তথ্য' : category;
@@ -983,7 +1192,8 @@
       document.getElementById('detailsTiming').innerText = item.timing || 'খোলা আছে';
       document.getElementById('detailsPhone').innerText = item.phone || 'নম্বর নেই';
 
-      // ল্যান্ডমার্ক / বিস্তারিত ঠিকানা হ্যান্ডলিং
+      updateHeartIcon(document.getElementById('detailsHeartBtn'), isItemBookmarked(item.name));
+
       const landmarkBox = document.getElementById('detailsLandmarkBox');
       const landmarkText = document.getElementById('detailsLandmark');
       if (item.landmark && item.landmark.trim() !== '') {
@@ -1030,6 +1240,8 @@
       document.getElementById('docProfileSpecialty').innerText = doc.specialty || 'বিশেষজ্ঞ চিকিৎসক';
       document.getElementById('docProfileDegrees').innerText = doc.degrees || '';
       document.getElementById('docProfileFee').innerText = doc.fee ? `ভিজিট ফি: ${doc.fee}` : 'ভিজিট ফি: চেম্বারে যোগাযোগ করুন';
+
+      updateHeartIcon(document.getElementById('docHeartBtn'), isDocBookmarked(doc.name));
 
       const chambers = (doc.chamber || '').split(',').map(s => s.trim()).filter(Boolean);
       const areas = (doc.area || '').split(',').map(s => s.trim());
@@ -1080,6 +1292,7 @@
     function goHome() {
       closeDoctorProfile();
       closeDoctorPage();
+      closeBookmarkPage();
       closeDetails();
       closeCategoryPage();
     }
@@ -1087,6 +1300,8 @@
     window.onpopstate = function() {
       if (document.getElementById('doctorProfileView').classList.contains('open')) {
         closeDoctorProfile();
+      } else if (document.getElementById('bookmarkPage').classList.contains('open')) {
+        closeBookmarkPage();
       } else if (document.getElementById('doctorPage').classList.contains('open')) {
         closeDoctorPage();
       } else if (document.getElementById('detailsView').classList.contains('open')) {
@@ -1120,16 +1335,33 @@
       }
     }
 
+    // অফলাইন ফার্স্ট ডাটা ক্যাশিং
     async function loadData() {
+      // প্রথমে লোকাল স্টোরেজ থেকে ডাটা লোড করে সাথে সাথে অ্যাপ সচল করা
+      const cachedPlaces = localStorage.getItem('cached_places');
+      const cachedDocs = localStorage.getItem('cached_docs');
+      if (cachedPlaces) placesData = JSON.parse(cachedPlaces);
+      if (cachedDocs) doctorsData = JSON.parse(cachedDocs);
+
+      // ব্যাকগ্রাউন্ডে নেটওয়ার্ক থেকে ফ্রেশ ডাটা আনা ও ক্যাশ আপডেট করা
       try {
         const [resPlaces, resDocs] = await Promise.all([
           fetch(API_PLACES),
           fetch(API_DOCTORS)
         ]);
-        placesData = await resPlaces.json();
-        doctorsData = await resDocs.json();
+        const freshPlaces = await resPlaces.json();
+        const freshDocs = await resDocs.json();
+
+        if (Array.isArray(freshPlaces) && freshPlaces.length > 0) {
+          placesData = freshPlaces;
+          localStorage.setItem('cached_places', JSON.stringify(freshPlaces));
+        }
+        if (Array.isArray(freshDocs) && freshDocs.length > 0) {
+          doctorsData = freshDocs;
+          localStorage.setItem('cached_docs', JSON.stringify(freshDocs));
+        }
       } catch (err) {
-        console.error("ডাটা ফেচিং সমস্যা:", err);
+        console.warn("অফলাইন মোডে চলছে (ক্যাশড ডাটা ব্যবহৃত হচ্ছে):", err);
       }
     }
 
