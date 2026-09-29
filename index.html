@@ -163,91 +163,87 @@
     }
 
     /* গ্রুপ সেকশন হেডিং */
-    .group-section-title {
-      font-size: 14px;
+    .section-title {
+      font-size: 15px;
       font-weight: 700;
       margin: 18px 20px 10px;
-      color: #334155;
+      color: #1E293B;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .group-section-title i {
+    .section-title i {
       color: var(--primary);
-      font-size: 15px;
     }
 
-    /* ৩-কলাম বিশিষ্ট গ্রিড লেআউট */
-    .grid-3-col {
+    /* ২-কলামের প্রিমিয়াম হোম কার্ড গ্রিড */
+    .home-categories-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
       padding: 0 20px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
-    .grid-item-card {
+    .home-cat-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 6px 12px;
+      border-radius: var(--radius);
+      padding: 14px 12px;
       cursor: pointer;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      text-align: center;
-      gap: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-      transition: all 0.15s ease;
+      gap: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      transition: all 0.2s ease;
     }
 
-    .grid-item-card:active {
-      transform: scale(0.96);
+    .home-cat-card:active {
+      transform: scale(0.97);
       background: var(--primary-light);
     }
 
-    .grid-item-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
+    .home-cat-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 19px;
+      flex-shrink: 0;
     }
 
-    .grid-item-title {
-      font-size: 12px;
-      font-weight: 600;
+    .home-cat-info h4 {
+      font-size: 14px;
+      font-weight: 700;
       color: var(--text);
       line-height: 1.25;
-      white-space: normal;
-      word-break: break-word;
     }
 
-    /* বিভিন্ন আইকন থিম কালার */
-    .theme-doc { background: #E0F2FE; color: #0284C7; }
-    .theme-gov { background: #DCFCE7; color: #16A34A; }
-    .theme-pvt { background: #E0E7FF; color: #4338CA; }
-    .theme-blood { background: #FEE2E2; color: #DC2626; }
-    .theme-police { background: #CFFAFE; color: #0891B2; }
-    .theme-fire { background: #FFEDD5; color: #EA580C; }
-    .theme-amb { background: #FCE7F3; color: #BE185D; }
-    .theme-bus { background: #F1F5F9; color: #334155; }
-    .theme-train { background: #FEF3C7; color: #D97706; }
-    .theme-admin { background: #F3E8FF; color: #9333EA; }
-    .theme-law { background: #FEF9C3; color: #CA8A04; }
-    .theme-edu { background: #EDE9FE; color: #7C3AED; }
-    .theme-news { background: #E2E8F0; color: #1E293B; }
-    .theme-movie { background: #FDF2F8; color: #DB2777; }
-    .theme-tour { background: #E0E7FF; color: #4F46E5; }
-    .theme-shop { background: #FEF3C7; color: #B45309; }
-    .theme-food { background: #FFEDD5; color: #C2410C; }
-    .theme-srv { background: #E0F2FE; color: #0369A1; }
-    .theme-rent { background: #F1F5F9; color: #475569; }
+    .home-cat-info p {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
 
-    /* স্লাইড পেজ ট্রানজিশন */
+    /* থিম কালার */
+    .theme-doctor { background: #E0F2FE; color: #0284C7; }
+    .theme-gov-hospital { background: #DCFCE7; color: #16A34A; }
+    .theme-pvt-hospital { background: #E0E7FF; color: #4338CA; }
+    .theme-diagnostic { background: #CCFBF1; color: #0D9488; }
+    .theme-edu { background: #EDE9FE; color: #7C3AED; }
+    .theme-news { background: #E2E8F0; color: #334155; }
+    .theme-movie { background: #FDF2F8; color: #DB2777; }
+    .theme-tour { background: #FEF3C7; color: #D97706; }
+    .theme-emergency { background: #FEE2E2; color: #DC2626; }
+    .theme-bus { background: #CFFAFE; color: #0891B2; }
+    .theme-shop { background: #FEF3C7; color: #B45309; }
+    .theme-food { background: #FFEDD5; color: #EA580C; }
+    .theme-all { background: #F1F5F9; color: #475569; }
+
+    /* স্লাইড পেজ */
     .slide-page, .details-view {
       position: fixed;
       top: 0;
@@ -541,152 +537,146 @@
       </div>
 
       <!-- ==========================================
-           গ্রুপ ১: স্বাস্থ্য সেবা (Health & Medical)
+           ১. স্বাস্থ্য সেবা (২ কলাম)
            ========================================== -->
       <div id="section-health">
-        <div class="group-section-title"><i class="fa-solid fa-notes-medical"></i> স্বাস্থ্য সেবা</div>
-        <div class="grid-3-col">
-          <!-- বিশেষজ্ঞ ডাক্তার -->
-          <div class="grid-item-card" id="catCard-doctor" style="display: none;" onclick="openDoctorList(null, 'সকল বিশেষজ্ঞ চিকিৎসক')">
-            <div class="grid-item-icon theme-doc"><i class="fa-solid fa-user-doctor"></i></div>
-            <div class="grid-item-title">বিশেষজ্ঞ ডাক্তার</div>
+        <div class="section-title"><i class="fa-solid fa-notes-medical"></i> স্বাস্থ্য সেবা</div>
+        <div class="home-categories-grid">
+          <!-- ১. বিশেষজ্ঞ ডাক্তার -->
+          <div class="home-cat-card" id="catCard-doctor" style="display: none;" onclick="openDoctorList(null, 'সকল বিশেষজ্ঞ চিকিৎসক')">
+            <div class="home-cat-icon theme-doctor"><i class="fa-solid fa-user-doctor"></i></div>
+            <div class="home-cat-info">
+              <h4>বিশেষজ্ঞ ডাক্তার</h4>
+              <p>চেম্বার ও সিরিয়াল</p>
+            </div>
           </div>
 
-          <!-- সরকারি হাসপাতাল (বিভাজন ৫) -->
-          <div class="grid-item-card" id="catCard-সরকারি হাসপাতাল" style="display: none;" onclick="openCategoryPage('সরকারি হাসপাতাল', 'সরকারি হাসপাতাল ও স্বাস্থ্য কেন্দ্র')">
-            <div class="grid-item-icon theme-gov"><i class="fa-solid fa-hospital-user"></i></div>
-            <div class="grid-item-title">সরকারি হাসপাতাল</div>
+          <!-- ২. সরকারি হাসপাতাল -->
+          <div class="home-cat-card" id="catCard-সরকারি হাসপাতাল" style="display: none;" onclick="openCategoryPage('সরকারি হাসপাতাল', 'সরকারি হাসপাতাল ও স্বাস্থ্য কেন্দ্র')">
+            <div class="home-cat-icon theme-gov-hospital"><i class="fa-solid fa-hospital-user"></i></div>
+            <div class="home-cat-info">
+              <h4>সরকারি হাসপাতাল</h4>
+              <p>৩০০ শয্যা ও ভিক্টোরিয়া</p>
+            </div>
           </div>
 
-          <!-- প্রাইভেট ও ডায়াগনস্টিক (বিভাজন ৫) -->
-          <div class="grid-item-card" id="catCard-চিকিৎসা" style="display: none;" onclick="openCategoryPage('চিকিৎসা', 'প্রাইভেট ক্লিনিক ও ডায়াগনস্টিক')">
-            <div class="grid-item-icon theme-pvt"><i class="fa-solid fa-hospital"></i></div>
-            <div class="grid-item-title">প্রাইভেট ক্লিনিক ও ল্যাব</div>
+          <!-- ৩. বেসরকারি হাসপাতাল -->
+          <div class="home-cat-card" id="catCard-বেসরকারি হাসপাতাল" style="display: none;" onclick="openCategoryPage('বেসরকারি হাসপাতাল', 'প্রাইভেট হাসপাতাল ও ক্লিনিক')">
+            <div class="home-cat-icon theme-pvt-hospital"><i class="fa-solid fa-square-h"></i></div>
+            <div class="home-cat-info">
+              <h4>বেসরকারি হাসপাতাল</h4>
+              <p>প্রাইভেট ক্লিনিক ও সেবা</p>
+            </div>
           </div>
 
-          <!-- রক্তদান সেবা -->
-          <div class="grid-item-card" id="catCard-রক্তদান" style="display: none;" onclick="openCategoryPage('রক্তদান', 'ব্লাড ব্যাংক ও স্বেচ্ছাসেবী রক্তদাতা')">
-            <div class="grid-item-icon theme-blood"><i class="fa-solid fa-droplet"></i></div>
-            <div class="grid-item-title">রক্তদান সেবা</div>
+          <!-- ৪. ডায়াগনস্টিক ও কনসালটেশন -->
+          <div class="home-cat-card" id="catCard-ডায়াগনস্টিক" style="display: none;" onclick="openCategoryPage('ডায়াগনস্টিক', 'ল্যাব টেস্ট ও কনসালটেশন সেন্টার')">
+            <div class="home-cat-icon theme-diagnostic"><i class="fa-solid fa-hospital"></i></div>
+            <div class="home-cat-info">
+              <h4>ডায়াগনস্টিক সেন্টার</h4>
+              <p>প্যাথলজি ও টেস্ট ল্যাব</p>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- ==========================================
-           গ্রুপ ২: জরুরি সেবা (Emergency 24/7)
+           ২. শিক্ষা ও সংবাদ (২ কলাম)
            ========================================== -->
-      <div id="section-emergency">
-        <div class="group-section-title"><i class="fa-solid fa-triangle-exclamation"></i> জরুরি সেবা</div>
-        <div class="grid-3-col">
-          <!-- থানা ও পুলিশ -->
-          <div class="grid-item-card" id="catCard-পুলিশ" style="display: none;" onclick="openCategoryPage('থানা ও পুলিশ', 'থানা, পুলিশ ও কন্ট্রোল রুম')">
-            <div class="grid-item-icon theme-police"><i class="fa-solid fa-shield-halved"></i></div>
-            <div class="grid-item-title">থানা ও পুলিশ</div>
+      <div id="section-edu-news">
+        <div class="section-title"><i class="fa-solid fa-graduation-cap"></i> শিক্ষা ও সংবাদ</div>
+        <div class="home-categories-grid">
+          <!-- শিক্ষা প্রতিষ্ঠান -->
+          <div class="home-cat-card" id="catCard-শিক্ষা প্রতিষ্ঠান" style="display: none;" onclick="openCategoryPage('শিক্ষা প্রতিষ্ঠান', 'কলেজ, স্কুল ও মাদরাসা')">
+            <div class="home-cat-icon theme-edu"><i class="fa-solid fa-school"></i></div>
+            <div class="home-cat-info">
+              <h4>শিক্ষা প্রতিষ্ঠান</h4>
+              <p>কলেজ, স্কুল ও একাডেমি</p>
+            </div>
           </div>
 
-          <!-- ফায়ার সার্ভিস -->
-          <div class="grid-item-card" id="catCard-ফায়ার সার্ভিস" style="display: none;" onclick="openCategoryPage('ফায়ার সার্ভিস', 'দমকল ও উদ্ধারকারী দল')">
-            <div class="grid-item-icon theme-fire"><i class="fa-solid fa-fire-extinguisher"></i></div>
-            <div class="grid-item-title">ফায়ার সার্ভিস</div>
-          </div>
-
-          <!-- জরুরি অ্যাম্বুলেন্স -->
-          <div class="grid-item-card" id="catCard-জরুরি সেবা" style="display: none;" onclick="openCategoryPage('জরুরি সেবা', 'অ্যাম্বুলেন্স ও সার্বক্ষণিক হটলাইন')">
-            <div class="grid-item-icon theme-amb"><i class="fa-solid fa-truck-medical"></i></div>
-            <div class="grid-item-title">অ্যাম্বুলেন্স ও হেল্প</div>
+          <!-- সংবাদপত্র -->
+          <div class="home-cat-card" id="catCard-সংবাদপত্র" style="display: none;" onclick="openCategoryPage('সংবাদপত্র', 'দৈনিক পত্রিকা ও অনলাইন পোর্টাল')">
+            <div class="home-cat-icon theme-news"><i class="fa-solid fa-newspaper"></i></div>
+            <div class="home-cat-info">
+              <h4>সংবাদপত্র</h4>
+              <p>স্থানীয় পত্রিকা ও খবর</p>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- ==========================================
-           গ্রুপ ৩: যোগাযোগ ও পরিবহন
+           ৩. বিনোদন (২ কলাম)
            ========================================== -->
-      <div id="section-transport">
-        <div class="group-section-title"><i class="fa-solid fa-bus-simple"></i> যোগাযোগ ও পরিবহন</div>
-        <div class="grid-3-col">
-          <div class="grid-item-card" id="catCard-পরিবহন" style="display: none;" onclick="openCategoryPage('পরিবহন', 'ঢাকা-নারায়ণগঞ্জ বাস সার্ভিস')">
-            <div class="grid-item-icon theme-bus"><i class="fa-solid fa-bus"></i></div>
-            <div class="grid-item-title">বাস সার্ভিস</div>
+      <div id="section-entertainment">
+        <div class="section-title"><i class="fa-solid fa-film"></i> বিনোদন ও ভ্রমণ</div>
+        <div class="home-categories-grid">
+          <!-- সিনেমা হল -->
+          <div class="home-cat-card" id="catCard-সিনেমা হল" style="display: none;" onclick="openCategoryPage('সিনেমা হল', 'মুভি থিয়েটার ও প্রেক্ষাগৃহ')">
+            <div class="home-cat-icon theme-movie"><i class="fa-solid fa-film"></i></div>
+            <div class="home-cat-info">
+              <h4>সিনেমা হল</h4>
+              <p>মুভি ও প্রেক্ষাগৃহ</p>
+            </div>
           </div>
-          <div class="grid-item-card" id="catCard-রেলওয়ে" style="display: none;" onclick="openCategoryPage('ট্রেন', 'নারায়ণগঞ্জ-ঢাকা ট্রেন শিডিউল')">
-            <div class="grid-item-icon theme-train"><i class="fa-solid fa-train"></i></div>
-            <div class="grid-item-title">ট্রেন সময়সূচি</div>
-          </div>
-          <div class="grid-item-card" id="catCard-লঞ্চ" style="display: none;" onclick="openCategoryPage('লঞ্চ', 'নদীবন্দর ও লঞ্চ ঘাট')">
-            <div class="grid-item-icon theme-police"><i class="fa-solid fa-ship"></i></div>
-            <div class="grid-item-title">লঞ্চ ও ঘাট</div>
+
+          <!-- দর্শনীয় স্থান -->
+          <div class="home-cat-card" id="catCard-দর্শনীয় স্থান" style="display: none;" onclick="openCategoryPage('দর্শনীয় স্থান', 'পানাম নগর, জাদুঘর ও দুর্গ')">
+            <div class="home-cat-icon theme-tour"><i class="fa-solid fa-landmark"></i></div>
+            <div class="home-cat-info">
+              <h4>দর্শনীয় স্থান</h4>
+              <p>সোনারগাঁও, দুর্গ ও পার্ক</p>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- ==========================================
-           গ্রুপ ৪: প্রশাসন ও আইন
+           ৪. দৈনন্দিন নাগরিক সেবা (২ কলাম)
            ========================================== -->
-      <div id="section-admin">
-        <div class="group-section-title"><i class="fa-solid fa-building-columns"></i> প্রশাসন ও আইন</div>
-        <div class="grid-3-col">
-          <div class="grid-item-card" id="catCard-প্রশাসন ও অফিস" style="display: none;" onclick="openCategoryPage('প্রশাসন ও অফিস', 'ডিসি, এসপি ও সিটি কর্পোরেশন')">
-            <div class="grid-item-icon theme-admin"><i class="fa-solid fa-landmark-dome"></i></div>
-            <div class="grid-item-title">সরকারি অফিস</div>
+      <div id="section-citizen">
+        <div class="section-title"><i class="fa-solid fa-city"></i> নাগরিক সেবা ও অন্যান্য</div>
+        <div class="home-categories-grid">
+          <div class="home-cat-card" id="catCard-জরুরি সেবা" style="display: none;" onclick="openCategoryPage('জরুরি সেবা', 'থানা, অ্যাম্বুলেন্স ও ফায়ার সার্ভিস')">
+            <div class="home-cat-icon theme-emergency"><i class="fa-solid fa-truck-medical"></i></div>
+            <div class="home-cat-info">
+              <h4>জরুরি সেবা</h4>
+              <p>২৪/৭ হেল্পলাইন নম্বর</p>
+            </div>
           </div>
-          <div class="grid-item-card" id="catCard-আইনজীবী" style="display: none;" onclick="openCategoryPage('আইনজীবী', 'জজ কোর্ট অ্যাডভোকেট ও নোটারি')">
-            <div class="grid-item-icon theme-law"><i class="fa-solid fa-scale-balanced"></i></div>
-            <div class="grid-item-title">আইনজীবী ও নোটারি</div>
-          </div>
-        </div>
-      </div>
 
-      <!-- ==========================================
-           গ্রুপ ৫: শিক্ষা, খবর ও বিনোদন
-           ========================================== -->
-      <div id="section-edu-ent">
-        <div class="group-section-title"><i class="fa-solid fa-graduation-cap"></i> শিক্ষা ও বিনোদন</div>
-        <div class="grid-3-col">
-          <div class="grid-item-card" id="catCard-শিক্ষা প্রতিষ্ঠান" style="display: none;" onclick="openCategoryPage('শিক্ষা প্রতিষ্ঠান', 'কলেজ, স্কুল ও মাদরাসা')">
-            <div class="grid-item-icon theme-edu"><i class="fa-solid fa-school"></i></div>
-            <div class="grid-item-title">শিক্ষা প্রতিষ্ঠান</div>
+          <div class="home-cat-card" id="catCard-পরিবহন" style="display: none;" onclick="openCategoryPage('পরিবহন', 'বাস, ট্রেন, লঞ্চ ও রুট')">
+            <div class="home-cat-icon theme-bus"><i class="fa-solid fa-bus"></i></div>
+            <div class="home-cat-info">
+              <h4>পরিবহন</h4>
+              <p>উৎসব, বন্ধন ও ট্রেন</p>
+            </div>
           </div>
-          <div class="grid-item-card" id="catCard-সংবাদপত্র" style="display: none;" onclick="openCategoryPage('সংবাদপত্র', 'দৈনিক পত্রিকা ও অনলাইন পোর্টাল')">
-            <div class="grid-item-icon theme-news"><i class="fa-solid fa-newspaper"></i></div>
-            <div class="grid-item-title">সংবাদপত্র</div>
-          </div>
-          <div class="grid-item-card" id="catCard-সিনেমা হল" style="display: none;" onclick="openCategoryPage('সিনেমা হল', 'মুভি থিয়েটার ও শো-টাইম')">
-            <div class="grid-item-icon theme-movie"><i class="fa-solid fa-film"></i></div>
-            <div class="grid-item-title">সিনেমা হল</div>
-          </div>
-          <div class="grid-item-card" id="catCard-পর্যটন ও বিনোদন" style="display: none;" onclick="openCategoryPage('পর্যটন ও বিনোদন', 'পানাম নগর, জাদুঘর ও দুর্গ')">
-            <div class="grid-item-icon theme-tour"><i class="fa-solid fa-monument"></i></div>
-            <div class="grid-item-title">দর্শনীয় স্থান</div>
-          </div>
-        </div>
-      </div>
 
-      <!-- ==========================================
-           গ্রুপ ৬: নাগরিক সেবা ও বাণিজ্য
-           ========================================== -->
-      <div id="section-commercial">
-        <div class="group-section-title"><i class="fa-solid fa-bag-shopping"></i> বাণিজ্য ও নাগরিক সেবা</div>
-        <div class="grid-3-col">
-          <div class="grid-item-card" id="catCard-শপিং ও ব্যবসা" style="display: none;" onclick="openCategoryPage('শপিং ও ব্যবসা', 'টানবাজার, মার্কেট ও পাইকারি আড়ত')">
-            <div class="grid-item-icon theme-shop"><i class="fa-solid fa-basket-shopping"></i></div>
-            <div class="grid-item-title">শপিং ও মোকাম</div>
+          <div class="home-cat-card" id="catCard-শপিং ও ব্যবসা" style="display: none;" onclick="openCategoryPage('শপিং ও ব্যবসা', 'টানবাজার, মার্কেট ও মোকাম')">
+            <div class="home-cat-icon theme-shop"><i class="fa-solid fa-bag-shopping"></i></div>
+            <div class="home-cat-info">
+              <h4>শপিং ও ব্যবসা</h4>
+              <p>মার্কেট ও পাইকারি আড়ত</p>
+            </div>
           </div>
-          <div class="grid-item-card" id="catCard-মিষ্টি ও খাবার" style="display: none;" onclick="openCategoryPage('মিষ্টি ও খাবার', 'বিখ্যাত মিষ্টি, রেস্তোরাঁ ও ক্যাফে')">
-            <div class="grid-item-icon theme-food"><i class="fa-solid fa-utensils"></i></div>
-            <div class="grid-item-title">মিষ্টি ও খাবার</div>
+
+          <div class="home-cat-card" id="catCard-মিষ্টি ও খাবার" style="display: none;" onclick="openCategoryPage('মিষ্টি ও খাবার', 'বিখ্যাত মিষ্টি, রেস্তোরাঁ ও ক্যাফে')">
+            <div class="home-cat-icon theme-food"><i class="fa-solid fa-utensils"></i></div>
+            <div class="home-cat-info">
+              <h4>মিষ্টি ও খাবার</h4>
+              <p>ঐতিহ্যবাহী মিষ্টি ও খাবার</p>
+            </div>
           </div>
-          <div class="grid-item-card" id="catCard-হোম সার্ভিস" style="display: none;" onclick="openCategoryPage('হোম সার্ভিস', 'এসি, ইলেকট্রিশিয়ান ও প্লাম্বার')">
-            <div class="grid-item-icon theme-srv"><i class="fa-solid fa-wrench"></i></div>
-            <div class="grid-item-title">হোম সার্ভিস</div>
-          </div>
-          <div class="grid-item-card" id="catCard-বাসাভাড়া" style="display: none;" onclick="openCategoryPage('বাসাভাড়া', 'ফ্ল্যাট, দোকান ও মেস ভাড়া')">
-            <div class="grid-item-icon theme-rent"><i class="fa-solid fa-house-chimney"></i></div>
-            <div class="grid-item-title">বাসাভাড়া টু-লেট</div>
-          </div>
+
           <!-- সকল তথ্য সবসময় দৃশ্যমান -->
-          <div class="grid-item-card" onclick="openCategoryPage('সব', 'নারায়ণগঞ্জের সকল তালিকা')">
-            <div class="grid-item-icon theme-pvt"><i class="fa-solid fa-ellipsis"></i></div>
-            <div class="grid-item-title">সকল তথ্য</div>
+          <div class="home-cat-card" onclick="openCategoryPage('সব', 'নারায়ণগঞ্জের সকল তালিকা')">
+            <div class="home-cat-icon theme-all"><i class="fa-solid fa-ellipsis"></i></div>
+            <div class="home-cat-info">
+              <h4>সকল তথ্য</h4>
+              <p>একসাথে সব দেখুন</p>
+            </div>
           </div>
         </div>
       </div>
@@ -1010,15 +1000,13 @@
     }
 
     function openSubmitForm() {
-      const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSc-PLACEHOLDER/viewform";
-      const confirmed = confirm("আপনার প্রতিষ্ঠান, দোকান বা সেবার তথ্য নারায়ণগঞ্জ অ্যাপে যুক্ত করতে চান?\n\n'ঠিক আছে' চাপলে ফর্মটি খুলবে।");
-      if (confirmed) {
-        window.open(formUrl, '_blank');
-      }
+      // আপনার আসল গুগল ফর্ম লিংক এখানে বসানো থাকবে
+      const formUrl = "https://forms.gle/sample"; 
+      window.open(formUrl, '_blank');
     }
 
     // =========================================================
-    // অটো-হাইড ও গ্রুপিং লজিক
+    // অটো-হাইড লজিক (নতুন পছন্দের ক্যাটাগরি ম্যাপিং)
     // =========================================================
     function updateVisibleCategoryCards() {
       // ডাক্তার চেক
@@ -1027,27 +1015,19 @@
         docCard.style.display = (doctorsData && doctorsData.length > 0) ? 'flex' : 'none';
       }
 
-      // বাকি সব ক্যাটাগরি ম্যাপিং
+      // নতুন ক্যাটাগরি ও কিওয়ার্ড ম্যাপিং
       const categoryChecks = [
         { id: 'catCard-সরকারি হাসপাতাল', keywords: ['সরকারি হাসপাতাল', 'সরকারি স্বাস্থ্য', '৩০০ শয্যা', 'ভিক্টোরিয়া', 'মাতৃসদন'] },
-        { id: 'catCard-চিকিৎসা', keywords: ['চিকিৎসা', 'ডায়াগনস্টিক', 'ক্লিনিক', 'ল্যাব'] },
-        { id: 'catCard-রক্তদান', keywords: ['রক্তদান', 'ব্লাড', 'রক্ত'] },
-        { id: 'catCard-পুলিশ', keywords: ['পুলিশ', 'থানা', 'কন্ট্রোল রুম', 'ফাঁড়ি'] },
-        { id: 'catCard-ফায়ার সার্ভিস', keywords: ['ফায়ার সার্ভিস', 'দমকল'] },
-        { id: 'catCard-জরুরি সেবা', keywords: ['জরুরি', 'অ্যাম্বুলেন্স', 'হেল্পলাইন'] },
-        { id: 'catCard-পরিবহন', keywords: ['পরিবহন', 'বাস', 'উৎসব', 'বন্ধন'] },
-        { id: 'catCard-রেলওয়ে', keywords: ['ট্রেন', 'রেল', 'স্টেশন'] },
-        { id: 'catCard-লঞ্চ', keywords: ['লঞ্চ', 'ঘাট', 'নদীবন্দর'] },
-        { id: 'catCard-প্রশাসন ও অফিস', keywords: ['প্রশাসন', 'অফিস', 'ডিসি', 'এসপি', 'সিটি কর্পোরেশন'] },
-        { id: 'catCard-আইনজীবী', keywords: ['আইনজীবী', 'কোর্ট', 'অ্যাডভোকেট', 'নোটারি'] },
-        { id: 'catCard-শিক্ষা প্রতিষ্ঠান', keywords: ['শিক্ষা', 'স্কুল', 'কলেজ', 'মাদরাসা', 'একাডেমি'] },
+        { id: 'catCard-বেসরকারি হাসপাতাল', keywords: ['বেসরকারি হাসপাতাল', 'প্রাইভেট হাসপাতাল', 'ক্লিনিক'] },
+        { id: 'catCard-ডায়াগনস্টিক', keywords: ['ডায়াগনস্টিক', 'কনসালটেশন', 'ল্যাব', 'প্যাথলজি'] },
+        { id: 'catCard-শিক্ষা প্রতিষ্ঠান', keywords: ['শিক্ষা প্রতিষ্ঠান', 'শিক্ষা', 'স্কুল', 'কলেজ', 'মাদরাসা', 'একাডেমি'] },
         { id: 'catCard-সংবাদপত্র', keywords: ['সংবাদপত্র', 'পত্রিকা', 'নিউজ', 'অনলাইন পোর্টাল'] },
-        { id: 'catCard-সিনেমা হল', keywords: ['সিনেমা', 'প্রেক্ষাগৃহ', 'মুভি'] },
-        { id: 'catCard-পর্যটন ও বিনোদন', keywords: ['পর্যটন', 'দর্শনীয়', 'বিনোদন', 'পার্ক', 'দুর্গ'] },
+        { id: 'catCard-সিনেমা হল', keywords: ['সিনেমা হল', 'সিনেমা', 'প্রেক্ষাগৃহ', 'মুভি'] },
+        { id: 'catCard-দর্শনীয় স্থান', keywords: ['দর্শনীয় স্থান', 'দর্শনীয়', 'পর্যটন', 'বিনোদন', 'পার্ক', 'দুর্গ', 'পানাম'] },
+        { id: 'catCard-জরুরি সেবা', keywords: ['জরুরি', 'অ্যাম্বুলেন্স', 'পুলিশ', 'থানা', 'ফায়ার'] },
+        { id: 'catCard-পরিবহন', keywords: ['পরিবহন', 'বাস', 'ট্রেন', 'লঞ্চ'] },
         { id: 'catCard-শপিং ও ব্যবসা', keywords: ['শপিং', 'ব্যবসা', 'মার্কেট', 'মোকাম', 'দোকান'] },
-        { id: 'catCard-মিষ্টি ও খাবার', keywords: ['মিষ্টি', 'খাবার', 'রেস্তোরাঁ', 'হোটেল', 'ক্যাফে'] },
-        { id: 'catCard-হোম সার্ভিস', keywords: ['সার্ভিস', 'মিস্ত্রি', 'রিপেয়ার', 'প্লাম্বার', 'ইলেকট্রিশিয়ান'] },
-        { id: 'catCard-বাসাভাড়া', keywords: ['ভাড়া', 'টু-লেট', 'ফ্ল্যাট', 'মেস'] }
+        { id: 'catCard-মিষ্টি ও খাবার', keywords: ['মিষ্টি', 'খাবার', 'রেস্তোরাঁ', 'হোটেল', 'ক্যাফে'] }
       ];
 
       categoryChecks.forEach(item => {
@@ -1062,27 +1042,21 @@
         el.style.display = hasData ? 'flex' : 'none';
       });
 
-      // প্রতিটি সেকশন অটো-হাইড (যদি সেই গ্রুপের কোনো কার্ডই দৃশ্যমান না থাকে)
+      // সেকশন হেডারের অটো-হাইড
       const sections = [
-        { id: 'section-health', checkIds: ['catCard-doctor', 'catCard-সরকারি হাসপাতাল', 'catCard-চিকিৎসা', 'catCard-রক্তদান'] },
-        { id: 'section-emergency', checkIds: ['catCard-পুলিশ', 'catCard-ফায়ার সার্ভিস', 'catCard-জরুরি সেবা'] },
-        { id: 'section-transport', checkIds: ['catCard-পরিবহন', 'catCard-রেলওয়ে', 'catCard-লঞ্চ'] },
-        { id: 'section-admin', checkIds: ['catCard-প্রশাসন ও অফিস', 'catCard-আইনজীবী'] },
-        { id: 'section-edu-ent', checkIds: ['catCard-শিক্ষা প্রতিষ্ঠান', 'catCard-সংবাদপত্র', 'catCard-সিনেমা হল', 'catCard-পর্যটন ও বিনোদন'] },
-        { id: 'section-commercial', checkIds: ['catCard-শপিং ও ব্যবসা', 'catCard-মিষ্টি ও খাবার', 'catCard-হোম সার্ভিস', 'catCard-বাসাভাড়া'] }
+        { id: 'section-health', checkIds: ['catCard-doctor', 'catCard-সরকারি হাসপাতাল', 'catCard-বেসরকারি হাসপাতাল', 'catCard-ডায়াগনস্টিক'] },
+        { id: 'section-edu-news', checkIds: ['catCard-শিক্ষা প্রতিষ্ঠান', 'catCard-সংবাদপত্র'] },
+        { id: 'section-entertainment', checkIds: ['catCard-সিনেমা হল', 'catCard-দর্শনীয় স্থান'] }
       ];
 
       sections.forEach(sec => {
         const secEl = document.getElementById(sec.id);
         if (secEl) {
-          const hasAnyVisibleCard = sec.checkIds.some(cid => {
+          const hasAny = sec.checkIds.some(cid => {
             const cEl = document.getElementById(cid);
             return cEl && cEl.style.display !== 'none';
           });
-          // বাণিজ্যিক সেকশনে "সকল তথ্য" থাকায় সেটি সবসময় থাকবে, বাকিগুলো শর্তসাপেক্ষ
-          if (sec.id !== 'section-commercial') {
-            secEl.style.display = hasAnyVisibleCard ? 'block' : 'none';
-          }
+          secEl.style.display = hasAny ? 'block' : 'none';
         }
       });
     }
@@ -1115,24 +1089,16 @@
         let matchCat = (currentCategory === 'সব');
         if (!matchCat) {
           if (selectedCat.includes('সরকারি হাসপাতাল') && (itemCat.includes('সরকারি') || itemCat.includes('৩০০ শয্যা') || itemCat.includes('ভিক্টোরিয়া'))) matchCat = true;
-          else if (selectedCat.includes('চিকিৎসা') && (itemCat.includes('চিকিৎসা') || itemCat.includes('ডায়াগনস্টিক') || itemCat.includes('ক্লিনিক'))) matchCat = true;
-          else if (selectedCat.includes('রক্ত') && (itemCat.includes('রক্ত') || itemCat.includes('ব্লাড'))) matchCat = true;
-          else if (selectedCat.includes('পুলিশ') && (itemCat.includes('পুলিশ') || itemCat.includes('থানা'))) matchCat = true;
-          else if (selectedCat.includes('ফায়ার') && itemCat.includes('ফায়ার')) matchCat = true;
-          else if (selectedCat.includes('জরুরি') && (itemCat.includes('জরুরি') || itemCat.includes('অ্যাম্বুলেন্স'))) matchCat = true;
+          else if (selectedCat.includes('বেসরকারি হাসপাতাল') && (itemCat.includes('বেসরকারি') || itemCat.includes('প্রাইভেট হাসপাতাল') || itemCat.includes('ক্লিনিক'))) matchCat = true;
+          else if (selectedCat.includes('ডায়াগনস্টিক') && (itemCat.includes('ডায়াগনস্টিক') || itemCat.includes('কনসালটেশন') || itemCat.includes('ল্যাব'))) matchCat = true;
+          else if (selectedCat.includes('শিক্ষা') && (itemCat.includes('শিক্ষা') || itemCat.includes('স্কুল') || itemCat.includes('কলেজ') || itemCat.includes('মাদরাসা'))) matchCat = true;
           else if (selectedCat.includes('সংবাদ') && (itemCat.includes('সংবাদপত্র') || itemCat.includes('পত্রিকা') || itemCat.includes('নিউজ'))) matchCat = true;
           else if (selectedCat.includes('সিনেমা') && (itemCat.includes('সিনেমা') || itemCat.includes('মুভি') || itemCat.includes('হল'))) matchCat = true;
-          else if (selectedCat.includes('শিক্ষা') && (itemCat.includes('শিক্ষা') || itemCat.includes('স্কুল') || itemCat.includes('কলেজ') || itemCat.includes('মাদরাসা'))) matchCat = true;
-          else if (selectedCat.includes('আইন') && (itemCat.includes('আইন') || itemCat.includes('কোর্ট') || itemCat.includes('অ্যাডভোকেট'))) matchCat = true;
-          else if (selectedCat.includes('মিষ্টি') && (itemCat.includes('মিষ্টি') || itemCat.includes('খাবার') || itemCat.includes('রেস্তোরাঁ'))) matchCat = true;
-          else if (selectedCat.includes('সার্ভিস') && (itemCat.includes('সার্ভিস') || itemCat.includes('মিস্ত্রি') || itemCat.includes('রিপেয়ার'))) matchCat = true;
-          else if (selectedCat.includes('ভাড়া') && (itemCat.includes('ভাড়া') || itemCat.includes('টু-লেট') || itemCat.includes('ফ্ল্যাট'))) matchCat = true;
+          else if (selectedCat.includes('দর্শনীয়') && (itemCat.includes('দর্শনীয়') || itemCat.includes('পর্যটন') || itemCat.includes('দুর্গ') || itemCat.includes('পানাম'))) matchCat = true;
+          else if (selectedCat.includes('জরুরি') && (itemCat.includes('জরুরি') || itemCat.includes('পুলিশ') || itemCat.includes('ফায়ার') || itemCat.includes('অ্যাম্বুলেন্স'))) matchCat = true;
+          else if (selectedCat.includes('পরিবহন') && (itemCat.includes('পরিবহন') || itemCat.includes('বাস') || itemCat.includes('ট্রেন') || itemCat.includes('লঞ্চ'))) matchCat = true;
           else if (selectedCat.includes('শপিং') && (itemCat.includes('শপিং') || itemCat.includes('ব্যবসা') || itemCat.includes('মার্কেট'))) matchCat = true;
-          else if (selectedCat.includes('পর্যটন') && (itemCat.includes('পর্যটন') || itemCat.includes('দর্শনীয়'))) matchCat = true;
-          else if (selectedCat.includes('পরিবহন') && (itemCat.includes('পরিবহন') || itemCat.includes('বাস'))) matchCat = true;
-          else if (selectedCat.includes('ট্রেন') && (itemCat.includes('ট্রেন') || itemCat.includes('রেল'))) matchCat = true;
-          else if (selectedCat.includes('লঞ্চ') && (itemCat.includes('লঞ্চ') || itemCat.includes('ঘাট'))) matchCat = true;
-          else if (selectedCat.includes('প্রশাসন') && (itemCat.includes('প্রশাসন') || itemCat.includes('অফিস'))) matchCat = true;
+          else if (selectedCat.includes('মিষ্টি') && (itemCat.includes('মিষ্টি') || itemCat.includes('খাবার') || itemCat.includes('রেস্তোরাঁ'))) matchCat = true;
           else matchCat = itemCat.includes(selectedCat);
         }
 
@@ -1284,7 +1250,7 @@
       }
 
       const chamberBox = document.getElementById('chamberDocsBtnBox');
-      const isMedical = (item.category || '').includes('চিকিৎসা') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল');
+      const isMedical = (item.category || '').includes('চিকিৎসা') || (item.category || '').includes('ডায়াগনস্টিক') || (item.category || '').includes('হাসপাতাল') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল');
       chamberBox.style.display = isMedical ? 'block' : 'none';
 
       const callBtn = document.getElementById('detailsCallBtn');
@@ -1415,7 +1381,6 @@
       }
     }
 
-    // ডাটা লোড ও স্বয়ংক্রিয় ক্যাটাগরি আপডেট
     async function loadData() {
       const cachedPlaces = localStorage.getItem('cached_places');
       const cachedDocs = localStorage.getItem('cached_docs');
@@ -1443,7 +1408,7 @@
 
         updateVisibleCategoryCards();
       } catch (err) {
-        console.warn("অফলাইন মোডে চলছে:", err);
+        console.warn("অফলাইন মোড / ক্যাশড ডাটা ব্যবহৃত হচ্ছে:", err);
       }
     }
 
