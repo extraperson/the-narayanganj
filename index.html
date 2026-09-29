@@ -295,7 +295,7 @@
     }
 
     .page-listings {
-      padding: 16px 20px 90px;
+      padding: 16px 20px 80px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -392,10 +392,10 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 9px 0;
+      padding: 10px 0;
       border-radius: 8px;
       text-decoration: none;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
     }
 
@@ -409,13 +409,12 @@
       background: #E2E8F0;
     }
 
-    /* ফিক্সড: বটমে পর্যাপ্ত প্যাডিং (১২০ পিক্সেল) */
+    /* কনটেন্ট ফ্লো: কোনো ফিক্সড পজিশন নেই, স্বাভাবিক ফ্লোতে সুন্দর নিচে নিচে বসবে */
     .details-content {
-      padding: 20px;
+      padding: 20px 20px 40px;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      padding-bottom: 120px;
     }
 
     .details-title { font-size: 21px; font-weight: 700; color: var(--text); }
@@ -476,21 +475,12 @@
       width: 18px;
     }
 
-    /* ফিক্সড বটম বার */
-    .details-fixed-bottom {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 440px;
-      background: #ffffff;
-      padding: 14px 20px;
-      box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.08);
+    /* স্বাভাবিক ব্লকে বাটন কনটেইনার (আর ওভারল্যাপ হবে না) */
+    .inline-action-buttons {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      z-index: 20;
+      margin-top: 2px;
     }
 
     .chamber-card-item {
@@ -685,7 +675,7 @@
     <div class="page-listings" id="doctorListings"></div>
   </div>
 
-  <!-- ৪. প্রতিষ্ঠান বিস্তারিত স্ক্রিন -->
+  <!-- ৪. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (ওভারল্যাপ ছাড়া স্বাভাবিক ফ্লো) -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -702,6 +692,7 @@
         <span class="details-tag" id="detailsCategory">ক্যাটাগরি</span>
       </div>
 
+      <!-- ডাক্তার তালিকা বোতাম -->
       <div id="chamberDocsBtnBox" style="display: none;">
         <div class="btn-show-chamber-docs" onclick="viewChamberDoctors()">
           <div>
@@ -712,6 +703,7 @@
         </div>
       </div>
 
+      <!-- তথ্য তালিকা -->
       <div class="info-list">
         <div class="info-item">
           <i class="fa-solid fa-location-dot"></i>
@@ -736,21 +728,23 @@
         </div>
       </div>
 
-      <div class="details-desc-box">
+      <!-- কল ও গুগল ম্যাপ বোতাম (স্বাভাবিক ব্লকে) -->
+      <div class="inline-action-buttons">
+        <a href="#" id="detailsCallBtn" class="btn-action btn-call">
+          <i class="fa-solid fa-phone"></i> কল করুন
+        </a>
+        <a href="#" id="detailsMapBtn" target="_blank" rel="noopener noreferrer" class="btn-action btn-map">
+          <i class="fa-solid fa-diamond-turn-right"></i> গুগল ম্যাপ
+        </a>
+      </div>
+
+      <!-- পরিচিতি ও সুবিধা বক্স -->
+      <div class="details-desc-box" style="border-top: 1px solid var(--border); padding-top: 14px;">
         <h4 style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">পরিচিতি ও সুবিধা</h4>
         <p id="detailsDesc" style="font-size: 14px; color: #4A5568; line-height: 1.6;">
           এখানে বিশেষজ্ঞ চিকিৎসকদের নিয়মিত কনসালটেশন, প্যাথলজিক্যাল টেস্ট, ডিজিটাল এক্স-রে ও সার্বক্ষণিক স্বাস্থ্যসেবা পাওয়া যায়।
         </p>
       </div>
-    </div>
-
-    <div class="details-fixed-bottom">
-      <a href="#" id="detailsCallBtn" class="btn-action btn-call">
-        <i class="fa-solid fa-phone"></i> কল করুন
-      </a>
-      <a href="#" id="detailsMapBtn" target="_blank" rel="noopener noreferrer" class="btn-action btn-map">
-        <i class="fa-solid fa-diamond-turn-right"></i> গুগল ম্যাপ
-      </a>
     </div>
   </div>
 
@@ -778,7 +772,7 @@
       <span>সিরিয়ালের জন্য নির্ধারিত চেম্বারের নম্বরে কল করুন</span>
     </div>
 
-    <div style="padding: 10px 20px 100px; display: flex; flex-direction: column; gap: 14px;">
+    <div style="padding: 10px 20px 60px; display: flex; flex-direction: column; gap: 14px;">
       <h4 style="font-size: 16px; font-weight: 700; color: var(--text);">চেম্বার ও সময়সূচি</h4>
       <div id="docProfileChambersList" style="display: flex; flex-direction: column; gap: 12px;"></div>
     </div>
