@@ -115,14 +115,16 @@
       color: var(--text);
     }
 
+    /* ওভারল্যাপ ফিক্স: এরিয়া ফিল্টার চিপস বার */
     .area-filter-scroll {
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      padding: 8px 20px 6px;
+      padding: 10px 20px 12px;
       white-space: nowrap;
       -ms-overflow-style: none;
       scrollbar-width: none;
+      flex-shrink: 0;
     }
     .area-filter-scroll::-webkit-scrollbar {
       display: none;
@@ -132,15 +134,16 @@
       background: #fff;
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 5px 13px;
+      padding: 6px 14px;
       font-size: 12px;
       font-weight: 600;
       color: var(--text-muted);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
       transition: all 0.2s;
+      flex-shrink: 0;
     }
 
     .area-chip.active {
@@ -331,8 +334,9 @@
 
     .btn-circle.active-heart { color: #E11D48; background: #FFE4E6; }
 
+    /* ওভারল্যাপ ফিক্স: লিস্ট প্যাডিং */
     .page-listings {
-      padding: 12px 20px 95px;
+      padding: 6px 20px 95px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -712,7 +716,7 @@
     </nav>
   </div>
 
-  <!-- ২. ক্যাটাগরি তালিকা স্ক্রিন -->
+  <!-- ২. ক্যাটাগরি তালিকা স্ক্রিন (প্যাডিং ও মার্জিন নিখুঁত করা) -->
   <div class="slide-page" id="categoryPage">
     <div class="top-sub-header">
       <button class="btn-circle" onclick="closeCategoryPage()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -722,7 +726,7 @@
       </div>
     </div>
 
-    <div style="padding: 14px 20px 4px;">
+    <div style="padding: 14px 20px 4px; flex-shrink: 0;">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
         <input type="text" id="catSearchInput" placeholder="এই বিভাগের মধ্যে নাম বা ঠিকানা খুঁজুন...">
@@ -743,7 +747,7 @@
     <div class="page-listings" id="categoryListings"></div>
   </div>
 
-  <!-- ৩. ডাক্তার তালিকা স্ক্রিন -->
+  <!-- ৩. ডাক্তার তালিকা স্ক্রিন (প্যাডিং ও মার্জিন নিখুঁত করা) -->
   <div class="slide-page" id="doctorPage">
     <div class="top-sub-header">
       <button class="btn-circle" onclick="closeDoctorPage()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -753,7 +757,7 @@
       </div>
     </div>
 
-    <div style="padding: 14px 20px 4px;">
+    <div style="padding: 14px 20px 4px; flex-shrink: 0;">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
         <input type="text" id="docSearchInput" placeholder="ডাক্তারের নাম, রোগ বা স্পেশালিটি...">
@@ -787,7 +791,7 @@
     <div class="page-listings" id="bookmarkListings"></div>
   </div>
 
-  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (সম্পূর্ণ ক্লিন) -->
+  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
