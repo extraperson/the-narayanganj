@@ -787,7 +787,7 @@
     <div class="page-listings" id="bookmarkListings"></div>
   </div>
 
-  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (অপ্রয়োজনীয় টেক্সট সম্পূর্ণ ডিলিট করা) -->
+  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (সম্পূর্ণ ক্লিন) -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -894,18 +894,6 @@
   </div>
 
   <script>
-// পুরোনো ক্যাশ এবং সার্ভিস ওয়ার্কার আন-রেজিস্টার করা (ফোর্স রিফ্রেশ)
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-    for(let registration of registrations) {
-      registration.unregister();
-    }
-  });
-}
-// পুরোনো ক্যাশ করা শিটের ডাটা এককালীন পরিষ্কার করা
-localStorage.removeItem('cached_places');
-localStorage.removeItem('cached_docs');
-    
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
     }
