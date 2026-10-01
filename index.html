@@ -115,7 +115,6 @@
       color: var(--text);
     }
 
-    /* ওভারল্যাপ ফিক্স: এরিয়া ফিল্টার চিপস বার */
     .area-filter-scroll {
       display: flex;
       gap: 8px;
@@ -334,7 +333,6 @@
 
     .btn-circle.active-heart { color: #E11D48; background: #FFE4E6; }
 
-    /* ওভারল্যাপ ফিক্স: লিস্ট প্যাডিং */
     .page-listings {
       padding: 6px 20px 95px;
       display: flex;
@@ -716,7 +714,7 @@
     </nav>
   </div>
 
-  <!-- ২. ক্যাটাগরি তালিকা স্ক্রিন (প্যাডিং ও মার্জিন নিখুঁত করা) -->
+  <!-- ২. ক্যাটাগরি তালিকা স্ক্রিন -->
   <div class="slide-page" id="categoryPage">
     <div class="top-sub-header">
       <button class="btn-circle" onclick="closeCategoryPage()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -747,7 +745,7 @@
     <div class="page-listings" id="categoryListings"></div>
   </div>
 
-  <!-- ৩. ডাক্তার তালিকা স্ক্রিন (প্যাডিং ও মার্জিন নিখুঁত করা) -->
+  <!-- ৩. ডাক্তার তালিকা স্ক্রিন -->
   <div class="slide-page" id="doctorPage">
     <div class="top-sub-header">
       <button class="btn-circle" onclick="closeDoctorPage()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -1254,7 +1252,7 @@
       const filtered = doctorsData.filter(doc => {
         let matchChamber = true;
         if (currentChamberFilter) {
-          const target = currentChamberFilter.toLowerCase().replace('ডায়াগনস্টিক', '').replace('সেন্টার', '').trim();
+          const target = currentChamberFilter.toLowerCase().replace(/ডায়াগনস্টিক|সেন্টার|হাসপাতাল|\(প্রাঃ\)|\(pvt\.\)|ltd\.|লিঃ/g, '').trim();
           matchChamber = (doc.chamber || '').toLowerCase().includes(target);
         }
 
@@ -1367,6 +1365,32 @@
       document.getElementById('detailsView').classList.remove('open');
     }
 
+    // চেম্বার থেকে সরাসরি প্রতিষ্ঠান প্রোফাইলে যাওয়ার লিংকড ফাংশন
+    function goToChamberDetails(chamberName, chamberArea) {
+      if (!chamberName) return;
+
+      const cleanTarget = chamberName.toLowerCase().replace(/ডায়াগনস্টিক|সেন্টার|হাসপাতাল|\(প্রাঃ\)|\(pvt\.\)|ltd\.|লিঃ/g, '').trim();
+      
+      let matchedPlace = placesData.find(p => {
+        const pName = (p.name || '').toLowerCase();
+        return pName.includes(cleanTarget) || cleanTarget.includes(pName);
+      });
+
+      if (!matchedPlace) {
+        matchedPlace = {
+          name: chamberName,
+          category: 'ডায়াগনস্টিক ও হাসপাতাল',
+          area: chamberArea || 'নারায়ণগঞ্জ',
+          address: `${chamberName}, ${chamberArea || 'নারায়ণগঞ্জ'}`,
+          timing: 'খোলা আছে',
+          phone: '',
+          map_url: `https://maps.google.com/?q=${encodeURIComponent(chamberName + ' ' + (chamberArea || 'নারায়ণগঞ্জ'))}`
+        };
+      }
+
+      openDetails(matchedPlace);
+    }
+
     function openDoctorProfile(doc) {
       activeDoctor = doc;
       document.getElementById('docProfileName').innerText = doc.name || 'ডাক্তারের নাম';
@@ -1395,8 +1419,13 @@
           const item = document.createElement('div');
           item.className = 'chamber-card-item';
           item.innerHTML = `
-            <div style="font-weight: 700; font-size: 15px; color: #0F5132;">
-              <i class="fa-solid fa-hospital" style="color: #0284C7;"></i> ${ch}
+            <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="goToChamberDetails('${ch.replace(/'/g, "\\'")}', '${area.replace(/'/g, "\\'")}')">
+              <div style="font-weight: 700; font-size: 15px; color: #0F5132;">
+                <i class="fa-solid fa-hospital" style="color: #0284C7;"></i> ${ch}
+              </div>
+              <span style="font-size: 11px; background: #E0F2FE; color: #0284C7; padding: 2px 8px; border-radius: 12px; font-weight: 600;">
+                প্রতিষ্ঠান দেখুন <i class="fa-solid fa-arrow-right" style="font-size: 9px;"></i>
+              </span>
             </div>
             <div style="font-size: 13px; color: #475569;">
               <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> ${area}
