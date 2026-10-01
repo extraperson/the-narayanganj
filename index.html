@@ -285,7 +285,6 @@
       max-width: 440px;
       height: 100vh;
       background: var(--bg);
-      z-index: 500;
       display: flex;
       flex-direction: column;
       overflow-y: auto;
@@ -296,10 +295,12 @@
       transform: translateX(-50%) translateX(0);
     }
 
-    .details-view { background: #FFFFFF; z-index: 1000; }
-    #doctorPage { z-index: 1100; }
+    /* Z-Index Hierarchy ফিক্স: যাতে প্রতিষ্ঠান পেজ সবার উপরে আসে */
+    #categoryPage { z-index: 500; }
+    #doctorPage { z-index: 600; }
+    #bookmarkPage { z-index: 700; }
     #doctorProfileView { z-index: 1200; background: #FFFFFF; }
-    #bookmarkPage { z-index: 1300; }
+    #detailsView { z-index: 1400; background: #FFFFFF; }
 
     .top-sub-header {
       position: sticky;
@@ -789,7 +790,38 @@
     <div class="page-listings" id="bookmarkListings"></div>
   </div>
 
-  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন -->
+  <!-- ৫. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন (z-index: 1200) -->
+  <div class="details-view" id="doctorProfileView">
+    <div class="top-sub-header" style="justify-content: space-between;">
+      <button class="btn-circle" onclick="closeDoctorProfile()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-circle" onclick="shareDoctor()"><i class="fa-solid fa-share-nodes"></i></button>
+        <button class="btn-circle" id="docHeartBtn" onclick="toggleBookmarkActiveDoctor()"><i class="fa-regular fa-heart"></i></button>
+      </div>
+    </div>
+
+    <div style="padding: 24px 20px 16px; background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%); text-align: center;">
+      <div style="width: 76px; height: 76px; border-radius: 50%; background: #0284C7; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 12px; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);">
+        <i class="fa-solid fa-user-doctor"></i>
+      </div>
+      <h2 id="docProfileName" style="font-size: 20px; font-weight: 700; color: #0C4A6E; line-height: 1.2;">ডাক্তারের নাম</h2>
+      <div id="docProfileSpecialty" style="font-size: 14px; font-weight: 600; color: #0284C7; margin-top: 4px;">স্পেশালিটি</div>
+      <div id="docProfileDegrees" style="font-size: 12px; color: #475569; margin-top: 2px;">ডিগ্রি সমূহ</div>
+      <div id="docProfileFee" style="font-size: 13px; font-weight: 600; color: #0F5132; margin-top: 6px; background: #DCFCE7; display: inline-block; padding: 2px 10px; border-radius: 20px;">ভিজিট ফি: -</div>
+    </div>
+
+    <div class="ad-slot-box" style="margin: 14px 20px 6px;">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>সিরিয়ালের জন্য নির্ধারিত চেম্বারের নম্বরে কল করুন</span>
+    </div>
+
+    <div style="padding: 10px 20px 95px; display: flex; flex-direction: column; gap: 14px;">
+      <h4 style="font-size: 16px; font-weight: 700; color: var(--text);">চেম্বার ও সময়সূচি</h4>
+      <div id="docProfileChambersList" style="display: flex; flex-direction: column; gap: 12px;"></div>
+    </div>
+  </div>
+
+  <!-- ৬. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (z-index: 1400 যাতে ডাক্তারের পেজের উপরে ওঠে) -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -861,37 +893,6 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- ৬. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন -->
-  <div class="details-view" id="doctorProfileView">
-    <div class="top-sub-header" style="justify-content: space-between;">
-      <button class="btn-circle" onclick="closeDoctorProfile()"><i class="fa-solid fa-arrow-left"></i></button>
-      <div style="display: flex; gap: 8px;">
-        <button class="btn-circle" onclick="shareDoctor()"><i class="fa-solid fa-share-nodes"></i></button>
-        <button class="btn-circle" id="docHeartBtn" onclick="toggleBookmarkActiveDoctor()"><i class="fa-regular fa-heart"></i></button>
-      </div>
-    </div>
-
-    <div style="padding: 24px 20px 16px; background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%); text-align: center;">
-      <div style="width: 76px; height: 76px; border-radius: 50%; background: #0284C7; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 12px; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);">
-        <i class="fa-solid fa-user-doctor"></i>
-      </div>
-      <h2 id="docProfileName" style="font-size: 20px; font-weight: 700; color: #0C4A6E; line-height: 1.2;">ডাক্তারের নাম</h2>
-      <div id="docProfileSpecialty" style="font-size: 14px; font-weight: 600; color: #0284C7; margin-top: 4px;">স্পেশালিটি</div>
-      <div id="docProfileDegrees" style="font-size: 12px; color: #475569; margin-top: 2px;">ডিগ্রি সমূহ</div>
-      <div id="docProfileFee" style="font-size: 13px; font-weight: 600; color: #0F5132; margin-top: 6px; background: #DCFCE7; display: inline-block; padding: 2px 10px; border-radius: 20px;">ভিজিট ফি: -</div>
-    </div>
-
-    <div class="ad-slot-box" style="margin: 14px 20px 6px;">
-      <i class="fa-solid fa-circle-info"></i>
-      <span>সিরিয়ালের জন্য নির্ধারিত চেম্বারের নম্বরে কল করুন</span>
-    </div>
-
-    <div style="padding: 10px 20px 95px; display: flex; flex-direction: column; gap: 14px;">
-      <h4 style="font-size: 16px; font-weight: 700; color: var(--text);">চেম্বার ও সময়সূচি</h4>
-      <div id="docProfileChambersList" style="display: flex; flex-direction: column; gap: 12px;"></div>
     </div>
   </div>
 
@@ -1043,7 +1044,6 @@
       window.open(formUrl, '_blank');
     }
 
-    // অটো-হাইড লজিক
     function updateVisibleCategoryCards() {
       const docCard = document.getElementById('catCard-doctor');
       if (docCard) {
@@ -1365,7 +1365,7 @@
       document.getElementById('detailsView').classList.remove('open');
     }
 
-    // চেম্বার থেকে সরাসরি প্রতিষ্ঠান প্রোফাইলে যাওয়ার লিংকড ফাংশন
+    // চেম্বার থেকে সরাসরি প্রতিষ্ঠান প্রোফাইলে নেওয়ার ফাংশন
     function goToChamberDetails(chamberName, chamberArea) {
       if (!chamberName) return;
 
@@ -1418,27 +1418,38 @@
 
           const item = document.createElement('div');
           item.className = 'chamber-card-item';
-          item.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="goToChamberDetails('${ch.replace(/'/g, "\\'")}', '${area.replace(/'/g, "\\'")}')">
-              <div style="font-weight: 700; font-size: 15px; color: #0F5132;">
-                <i class="fa-solid fa-hospital" style="color: #0284C7;"></i> ${ch}
-              </div>
-              <span style="font-size: 11px; background: #E0F2FE; color: #0284C7; padding: 2px 8px; border-radius: 12px; font-weight: 600;">
-                প্রতিষ্ঠান দেখুন <i class="fa-solid fa-arrow-right" style="font-size: 9px;"></i>
-              </span>
+
+          // নিরাপদ ক্লিক ইভেন্ট বাইন্ডিং
+          const headerRow = document.createElement('div');
+          headerRow.style.cssText = "display: flex; justify-content: space-between; align-items: center; cursor: pointer;";
+          headerRow.onclick = () => goToChamberDetails(ch, area);
+
+          headerRow.innerHTML = `
+            <div style="font-weight: 700; font-size: 15px; color: #0F5132;">
+              <i class="fa-solid fa-hospital" style="color: #0284C7;"></i> ${ch}
             </div>
-            <div style="font-size: 13px; color: #475569;">
+            <span style="font-size: 11px; background: #E0F2FE; color: #0284C7; padding: 2px 8px; border-radius: 12px; font-weight: 600;">
+              প্রতিষ্ঠান দেখুন <i class="fa-solid fa-arrow-right" style="font-size: 9px;"></i>
+            </span>
+          `;
+
+          const bodyContent = document.createElement('div');
+          bodyContent.innerHTML = `
+            <div style="font-size: 13px; color: #475569; margin-top: 4px;">
               <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> ${area}
             </div>
-            <div style="font-size: 13px; color: #475569;">
+            <div style="font-size: 13px; color: #475569; margin-top: 2px;">
               <i class="fa-solid fa-clock" style="color: var(--primary);"></i> ${time}
             </div>
-            <div style="margin-top: 4px;">
-              <a href="${ph ? 'tel:' + ph : '#'}" class="btn-action btn-call" style="width: 100%; border-radius: 8px;">
+            <div style="margin-top: 8px;">
+              <a href="${ph ? 'tel:' + ph : '#'}" class="btn-action btn-call" style="width: 100%; border-radius: 8px;" onclick="event.stopPropagation()">
                 <i class="fa-solid fa-phone"></i> সিরিয়াল কল (${ph || 'নম্বর নেই'})
               </a>
             </div>
           `;
+
+          item.appendChild(headerRow);
+          item.appendChild(bodyContent);
           listContainer.appendChild(item);
         });
       }
@@ -1452,22 +1463,22 @@
     }
 
     function goHome() {
+      closeDetails();
       closeDoctorProfile();
       closeDoctorPage();
       closeBookmarkPage();
-      closeDetails();
       closeCategoryPage();
     }
 
     window.onpopstate = function() {
-      if (document.getElementById('doctorProfileView').classList.contains('open')) {
+      if (document.getElementById('detailsView').classList.contains('open')) {
+        closeDetails();
+      } else if (document.getElementById('doctorProfileView').classList.contains('open')) {
         closeDoctorProfile();
       } else if (document.getElementById('bookmarkPage').classList.contains('open')) {
         closeBookmarkPage();
       } else if (document.getElementById('doctorPage').classList.contains('open')) {
         closeDoctorPage();
-      } else if (document.getElementById('detailsView').classList.contains('open')) {
-        closeDetails();
       } else if (document.getElementById('categoryPage').classList.contains('open')) {
         closeCategoryPage();
       }
