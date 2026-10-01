@@ -285,6 +285,7 @@
       max-width: 440px;
       height: 100vh;
       background: var(--bg);
+      z-index: 500;
       display: flex;
       flex-direction: column;
       overflow-y: auto;
@@ -295,11 +296,10 @@
       transform: translateX(-50%) translateX(0);
     }
 
-    #categoryPage { z-index: 500; }
-    #doctorPage { z-index: 600; }
-    #bookmarkPage { z-index: 700; }
+    .details-view { background: #FFFFFF; z-index: 1000; }
+    #doctorPage { z-index: 1100; }
     #doctorProfileView { z-index: 1200; background: #FFFFFF; }
-    #detailsView { z-index: 1400; background: #FFFFFF; }
+    #bookmarkPage { z-index: 1300; }
 
     .top-sub-header {
       position: sticky;
@@ -789,38 +789,7 @@
     <div class="page-listings" id="bookmarkListings"></div>
   </div>
 
-  <!-- ৫. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন -->
-  <div class="details-view" id="doctorProfileView">
-    <div class="top-sub-header" style="justify-content: space-between;">
-      <button class="btn-circle" onclick="closeDoctorProfile()"><i class="fa-solid fa-arrow-left"></i></button>
-      <div style="display: flex; gap: 8px;">
-        <button class="btn-circle" onclick="shareDoctor()"><i class="fa-solid fa-share-nodes"></i></button>
-        <button class="btn-circle" id="docHeartBtn" onclick="toggleBookmarkActiveDoctor()"><i class="fa-regular fa-heart"></i></button>
-      </div>
-    </div>
-
-    <div style="padding: 24px 20px 16px; background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%); text-align: center;">
-      <div style="width: 76px; height: 76px; border-radius: 50%; background: #0284C7; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 12px; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);">
-        <i class="fa-solid fa-user-doctor"></i>
-      </div>
-      <h2 id="docProfileName" style="font-size: 20px; font-weight: 700; color: #0C4A6E; line-height: 1.2;">ডাক্তারের নাম</h2>
-      <div id="docProfileSpecialty" style="font-size: 14px; font-weight: 600; color: #0284C7; margin-top: 4px;">স্পেশালিটি</div>
-      <div id="docProfileDegrees" style="font-size: 12px; color: #475569; margin-top: 2px;">ডিগ্রি সমূহ</div>
-      <div id="docProfileFee" style="font-size: 13px; font-weight: 600; color: #0F5132; margin-top: 6px; background: #DCFCE7; display: inline-block; padding: 2px 10px; border-radius: 20px;">ভিজিট ফি: -</div>
-    </div>
-
-    <div class="ad-slot-box" style="margin: 14px 20px 6px;">
-      <i class="fa-solid fa-circle-info"></i>
-      <span>সিরিয়ালের জন্য নির্ধারিত চেম্বারের নম্বরে কল করুন</span>
-    </div>
-
-    <div style="padding: 10px 20px 95px; display: flex; flex-direction: column; gap: 14px;">
-      <h4 style="font-size: 16px; font-weight: 700; color: var(--text);">চেম্বার ও সময়সূচি</h4>
-      <div id="docProfileChambersList" style="display: flex; flex-direction: column; gap: 12px;"></div>
-    </div>
-  </div>
-
-  <!-- ৬. প্রতিষ্ঠান বিস্তারিত স্ক্রিন -->
+  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -895,11 +864,38 @@
     </div>
   </div>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
+  <!-- ৬. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন (ডিফল্ট সহজ স্ট্যাটিক রূপ) -->
+  <div class="details-view" id="doctorProfileView">
+    <div class="top-sub-header" style="justify-content: space-between;">
+      <button class="btn-circle" onclick="closeDoctorProfile()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-circle" onclick="shareDoctor()"><i class="fa-solid fa-share-nodes"></i></button>
+        <button class="btn-circle" id="docHeartBtn" onclick="toggleBookmarkActiveDoctor()"><i class="fa-regular fa-heart"></i></button>
+      </div>
+    </div>
 
+    <div style="padding: 24px 20px 16px; background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%); text-align: center;">
+      <div style="width: 76px; height: 76px; border-radius: 50%; background: #0284C7; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 12px; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);">
+        <i class="fa-solid fa-user-doctor"></i>
+      </div>
+      <h2 id="docProfileName" style="font-size: 20px; font-weight: 700; color: #0C4A6E; line-height: 1.2;">ডাক্তারের নাম</h2>
+      <div id="docProfileSpecialty" style="font-size: 14px; font-weight: 600; color: #0284C7; margin-top: 4px;">স্পেশালিটি</div>
+      <div id="docProfileDegrees" style="font-size: 12px; color: #475569; margin-top: 2px;">ডিগ্রি সমূহ</div>
+      <div id="docProfileFee" style="font-size: 13px; font-weight: 600; color: #0F5132; margin-top: 6px; background: #DCFCE7; display: inline-block; padding: 2px 10px; border-radius: 20px;">ভিজিট ফি: -</div>
+    </div>
+
+    <div class="ad-slot-box" style="margin: 14px 20px 6px;">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>সিরিয়ালের জন্য নির্ধারিত চেম্বারের নম্বরে কল করুন</span>
+    </div>
+
+    <div style="padding: 10px 20px 95px; display: flex; flex-direction: column; gap: 14px;">
+      <h4 style="font-size: 16px; font-weight: 700; color: var(--text);">চেম্বার ও সময়সূচি</h4>
+      <div id="docProfileChambersList" style="display: flex; flex-direction: column; gap: 12px;"></div>
+    </div>
+  </div>
+
+  <script>
     const SHEET_ID = "1ctXswktft11lTCw_TiTbwoF2jgmLsHaf4Zno23QImjQ";
     const API_PLACES = `https://opensheet.elk.sh/${SHEET_ID}/Sheet1`;
     const API_DOCTORS = `https://opensheet.elk.sh/${SHEET_ID}/Doctors`;
@@ -1050,18 +1046,18 @@
       }
 
       const categoryChecks = [
-        { id: 'catCard-সরকারি হাসপাতাল', keywords: ['সরকারি', '৩০০ শয্যা', 'ভিক্টোরিয়া', 'মাতৃসদন'] },
-        { id: 'catCard-বেসরকারি হাসপাতাল', keywords: ['বেসরকারি', 'প্রাইভেট', 'ক্লিনিক', 'চিকিৎসা'] },
-        { id: 'catCard-ডায়াগনস্টিক', keywords: ['ডায়াগনস্টিক', 'কনসালটেশন', 'ল্যাব', 'প্যাথলজি', 'মেডিকেল', 'চিকিৎসা'] },
+        { id: 'catCard-সরকারি হাসপাতাল', keywords: ['সরকারি হাসপাতাল', 'সরকারি স্বাস্থ্য', '৩০০ শয্যা', 'ভিক্টোরিয়া', 'মাতৃসদন'] },
+        { id: 'catCard-বেসরকারি হাসপাতাল', keywords: ['বেসরকারি হাসপাতাল', 'প্রাইভেট হাসপাতাল', 'ক্লিনিক'] },
+        { id: 'catCard-ডায়াগনস্টিক', keywords: ['ডায়াগনস্টিক', 'কনসালটেশন', 'ল্যাব', 'প্যাথলজি', 'মেডিকেল'] },
         { id: 'catCard-ডেন্টাল', keywords: ['ডেন্টাল', 'দাঁত', 'dental'] },
-        { id: 'catCard-শিক্ষা প্রতিষ্ঠান', keywords: ['শিক্ষা', 'স্কুল', 'কলেজ', 'মাদরাসা', 'একাডেমি'] },
-        { id: 'catCard-সংবাদপত্র', keywords: ['সংবাদপত্র', 'পত্রিকা', 'নিউজ', 'অনলাইন'] },
-        { id: 'catCard-সিনেমা হল', keywords: ['সিনেমা', 'মুভি', 'হল', 'প্রেক্ষাগৃহ'] },
-        { id: 'catCard-দর্শনীয় স্থান', keywords: ['দর্শনীয়', 'পর্যটন', 'পার্ক', 'দুর্গ', 'পানাম'] },
-        { id: 'catCard-জরুরি সেবা', keywords: ['জরুরি', 'পুলিশ', 'থানা', 'ফায়ার', 'অ্যাম্বুলেন্স'] },
+        { id: 'catCard-শিক্ষা প্রতিষ্ঠান', keywords: ['শিক্ষা প্রতিষ্ঠান', 'শিক্ষা', 'স্কুল', 'কলেজ', 'মাদরাসা', 'একাডেমি'] },
+        { id: 'catCard-সংবাদপত্র', keywords: ['সংবাদপত্র', 'পত্রিকা', 'নিউজ', 'অনলাইন পোর্টাল'] },
+        { id: 'catCard-সিনেমা হল', keywords: ['সিনেমা হল', 'সিনেমা', 'প্রেক্ষাগৃহ', 'মুভি'] },
+        { id: 'catCard-দর্শনীয় স্থান', keywords: ['দর্শনীয় স্থান', 'দর্শনীয়', 'পর্যটন', 'বিনোদন', 'পার্ক', 'দুর্গ', 'পানাম'] },
+        { id: 'catCard-জরুরি সেবা', keywords: ['জরুরি', 'অ্যাম্বুলেন্স', 'পুলিশ', 'থানা', 'ফায়ার'] },
         { id: 'catCard-পরিবহন', keywords: ['পরিবহন', 'বাস', 'ট্রেন', 'লঞ্চ'] },
-        { id: 'catCard-শপিং ও ব্যবসা', keywords: ['শপিং', 'ব্যবসা', 'মার্কেট', 'মোকাম'] },
-        { id: 'catCard-মিষ্টি ও খাবার', keywords: ['মিষ্টি', 'খাবার', 'রেস্তোরাঁ', 'হোটেল'] }
+        { id: 'catCard-শপিং ও ব্যবসা', keywords: ['শপিং', 'ব্যবসা', 'মার্কেট', 'মোকাম', 'দোকান'] },
+        { id: 'catCard-মিষ্টি ও খাবার', keywords: ['মিষ্টি', 'খাবার', 'রেস্তোরাঁ', 'হোটেল', 'ক্যাফে'] }
       ];
 
       categoryChecks.forEach(item => {
@@ -1147,8 +1143,8 @@
         let matchCat = (currentCategory === 'সব');
         if (!matchCat) {
           if (selectedCat.includes('সরকারি হাসপাতাল') && (itemCat.includes('সরকারি') || itemCat.includes('৩০০ শয্যা') || itemCat.includes('ভিক্টোরিয়া'))) matchCat = true;
-          else if (selectedCat.includes('বেসরকারি হাসপাতাল') && (itemCat.includes('বেসরকারি') || itemCat.includes('প্রাইভেট হাসপাতাল') || itemCat.includes('ক্লিনিক') || itemCat.includes('চিকিৎসা'))) matchCat = true;
-          else if (selectedCat.includes('ডায়াগনস্টিক') && (itemCat.includes('ডায়াগনস্টিক') || itemCat.includes('কনসালটেশন') || itemCat.includes('ল্যাব') || itemCat.includes('চিকিৎসা'))) matchCat = true;
+          else if (selectedCat.includes('বেসরকারি হাসপাতাল') && (itemCat.includes('বেসরকারি') || itemCat.includes('প্রাইভেট হাসপাতাল') || itemCat.includes('ক্লিনিক'))) matchCat = true;
+          else if (selectedCat.includes('ডায়াগনস্টিক') && (itemCat.includes('ডায়াগনস্টিক') || itemCat.includes('কনসালটেশন') || itemCat.includes('ল্যাব'))) matchCat = true;
           else if (selectedCat.includes('ডেন্টাল') && (itemCat.includes('ডেন্টাল') || itemCat.includes('দাঁত') || itemCat.includes('dental'))) matchCat = true;
           else if (selectedCat.includes('শিক্ষা') && (itemCat.includes('শিক্ষা') || itemCat.includes('স্কুল') || itemCat.includes('কলেজ') || itemCat.includes('মাদরাসা'))) matchCat = true;
           else if (selectedCat.includes('সংবাদ') && (itemCat.includes('সংবাদপত্র') || itemCat.includes('পত্রিকা') || itemCat.includes('নিউজ'))) matchCat = true;
@@ -1364,31 +1360,6 @@
       document.getElementById('detailsView').classList.remove('open');
     }
 
-    function goToChamberDetails(chamberName, chamberArea) {
-      if (!chamberName) return;
-
-      const cleanTarget = chamberName.toLowerCase().replace(/ডায়াগনস্টিক|সেন্টার|হাসপাতাল|\(প্রাঃ\)|\(pvt\.\)|ltd\.|লিঃ/g, '').trim();
-      
-      let matchedPlace = placesData.find(p => {
-        const pName = (p.name || '').toLowerCase();
-        return pName.includes(cleanTarget) || cleanTarget.includes(pName);
-      });
-
-      if (!matchedPlace) {
-        matchedPlace = {
-          name: chamberName,
-          category: 'ডায়াগনস্টিক ও হাসপাতাল',
-          area: chamberArea || 'নারায়ণগঞ্জ',
-          address: `${chamberName}, ${chamberArea || 'নারায়ণগঞ্জ'}`,
-          timing: 'খোলা আছে',
-          phone: '',
-          map_url: `https://maps.google.com/?q=${encodeURIComponent(chamberName + ' ' + (chamberArea || 'নারায়ণগঞ্জ'))}`
-        };
-      }
-
-      openDetails(matchedPlace);
-    }
-
     function openDoctorProfile(doc) {
       activeDoctor = doc;
       document.getElementById('docProfileName').innerText = doc.name || 'ডাক্তারের নাম';
@@ -1416,39 +1387,22 @@
 
           const item = document.createElement('div');
           item.className = 'chamber-card-item';
-
-          const headerRow = document.createElement('div');
-          headerRow.style.cssText = "display: flex; justify-content: space-between; align-items: center; cursor: pointer;";
-          headerRow.onclick = function() {
-            goToChamberDetails(ch, area);
-          };
-
-          headerRow.innerHTML = `
+          item.innerHTML = `
             <div style="font-weight: 700; font-size: 15px; color: #0F5132;">
               <i class="fa-solid fa-hospital" style="color: #0284C7;"></i> ${ch}
             </div>
-            <span style="font-size: 11px; background: #E0F2FE; color: #0284C7; padding: 2px 8px; border-radius: 12px; font-weight: 600;">
-              প্রতিষ্ঠান দেখুন <i class="fa-solid fa-arrow-right" style="font-size: 9px;"></i>
-            </span>
-          `;
-
-          const bodyContent = document.createElement('div');
-          bodyContent.innerHTML = `
-            <div style="font-size: 13px; color: #475569; margin-top: 4px;">
+            <div style="font-size: 13px; color: #475569;">
               <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> ${area}
             </div>
-            <div style="font-size: 13px; color: #475569; margin-top: 2px;">
+            <div style="font-size: 13px; color: #475569;">
               <i class="fa-solid fa-clock" style="color: var(--primary);"></i> ${time}
             </div>
-            <div style="margin-top: 8px;">
-              <a href="${ph ? 'tel:' + ph : '#'}" class="btn-action btn-call" style="width: 100%; border-radius: 8px;" onclick="event.stopPropagation()">
+            <div style="margin-top: 4px;">
+              <a href="${ph ? 'tel:' + ph : '#'}" class="btn-action btn-call" style="width: 100%; border-radius: 8px;">
                 <i class="fa-solid fa-phone"></i> সিরিয়াল কল (${ph || 'নম্বর নেই'})
               </a>
             </div>
           `;
-
-          item.appendChild(headerRow);
-          item.appendChild(bodyContent);
           listContainer.appendChild(item);
         });
       }
@@ -1462,22 +1416,22 @@
     }
 
     function goHome() {
-      closeDetails();
       closeDoctorProfile();
       closeDoctorPage();
       closeBookmarkPage();
+      closeDetails();
       closeCategoryPage();
     }
 
     window.onpopstate = function() {
-      if (document.getElementById('detailsView').classList.contains('open')) {
-        closeDetails();
-      } else if (document.getElementById('doctorProfileView').classList.contains('open')) {
+      if (document.getElementById('doctorProfileView').classList.contains('open')) {
         closeDoctorProfile();
       } else if (document.getElementById('bookmarkPage').classList.contains('open')) {
         closeBookmarkPage();
       } else if (document.getElementById('doctorPage').classList.contains('open')) {
         closeDoctorPage();
+      } else if (document.getElementById('detailsView').classList.contains('open')) {
+        closeDetails();
       } else if (document.getElementById('categoryPage').classList.contains('open')) {
         closeCategoryPage();
       }
@@ -1507,49 +1461,18 @@
       }
     }
 
-    function cleanSheetRow(row) {
-      const clean = {};
-      Object.keys(row).forEach(k => {
-        clean[k.trim().toLowerCase()] = typeof row[k] === 'string' ? row[k].trim() : row[k];
-      });
-      return clean;
-    }
-
     async function loadData() {
       try {
-        const timestamp = new Date().getTime();
         const [resPlaces, resDocs] = await Promise.all([
-          fetch(`${API_PLACES}?t=${timestamp}`),
-          fetch(`${API_DOCTORS}?t=${timestamp}`)
+          fetch(API_PLACES),
+          fetch(API_DOCTORS)
         ]);
-
-        const rawPlaces = await resPlaces.json();
-        const rawDocs = await resDocs.json();
-
-        if (Array.isArray(rawPlaces) && rawPlaces.length > 0) {
-          placesData = rawPlaces.map(cleanSheetRow);
-          localStorage.setItem('cached_places', JSON.stringify(placesData));
-        }
-        if (Array.isArray(rawDocs) && rawDocs.length > 0) {
-          doctorsData = rawDocs.map(cleanSheetRow);
-          localStorage.setItem('cached_docs', JSON.stringify(doctorsData));
-        }
+        placesData = await resPlaces.json();
+        doctorsData = await resDocs.json();
 
         updateVisibleCategoryCards();
-
-        if (document.getElementById('categoryPage').classList.contains('open')) {
-          renderCategoryItems();
-        }
-        if (document.getElementById('doctorPage').classList.contains('open')) {
-          renderDoctorItems();
-        }
       } catch (err) {
-        console.warn("ক্যাশড ডাটা ব্যবহৃত হচ্ছে:", err);
-        const cp = localStorage.getItem('cached_places');
-        const cd = localStorage.getItem('cached_docs');
-        if (cp) placesData = JSON.parse(cp);
-        if (cd) doctorsData = JSON.parse(cd);
-        updateVisibleCategoryCards();
+        console.warn("ডাটা লোড হতে সমস্যা হয়েছে:", err);
       }
     }
 
