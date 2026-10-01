@@ -295,7 +295,6 @@
       transform: translateX(-50%) translateX(0);
     }
 
-    /* Z-Index Hierarchy ফিক্স: যাতে প্রতিষ্ঠান পেজ সবার উপরে আসে */
     #categoryPage { z-index: 500; }
     #doctorPage { z-index: 600; }
     #bookmarkPage { z-index: 700; }
@@ -790,7 +789,7 @@
     <div class="page-listings" id="bookmarkListings"></div>
   </div>
 
-  <!-- ৫. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন (z-index: 1200) -->
+  <!-- ৫. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন -->
   <div class="details-view" id="doctorProfileView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDoctorProfile()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -821,7 +820,7 @@
     </div>
   </div>
 
-  <!-- ৬. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (z-index: 1400 যাতে ডাক্তারের পেজের উপরে ওঠে) -->
+  <!-- ৬. প্রতিষ্ঠান বিস্তারিত স্ক্রিন -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -1051,18 +1050,18 @@
       }
 
       const categoryChecks = [
-        { id: 'catCard-সরকারি হাসপাতাল', keywords: ['সরকারি হাসপাতাল', 'সরকারি স্বাস্থ্য', '৩০০ শয্যা', 'ভিক্টোরিয়া', 'মাতৃসদন'] },
-        { id: 'catCard-বেসরকারি হাসপাতাল', keywords: ['বেসরকারি হাসপাতাল', 'প্রাইভেট হাসপাতাল', 'ক্লিনিক'] },
-        { id: 'catCard-ডায়াগনস্টিক', keywords: ['ডায়াগনস্টিক', 'কনসালটেশন', 'ল্যাব', 'প্যাথলজি'] },
+        { id: 'catCard-সরকারি হাসপাতাল', keywords: ['সরকারি', '৩০০ শয্যা', 'ভিক্টোরিয়া', 'মাতৃসদন'] },
+        { id: 'catCard-বেসরকারি হাসপাতাল', keywords: ['বেসরকারি', 'প্রাইভেট', 'ক্লিনিক', 'চিকিৎসা'] },
+        { id: 'catCard-ডায়াগনস্টিক', keywords: ['ডায়াগনস্টিক', 'কনসালটেশন', 'ল্যাব', 'প্যাথলজি', 'মেডিকেল', 'চিকিৎসা'] },
         { id: 'catCard-ডেন্টাল', keywords: ['ডেন্টাল', 'দাঁত', 'dental'] },
-        { id: 'catCard-শিক্ষা প্রতিষ্ঠান', keywords: ['শিক্ষা প্রতিষ্ঠান', 'শিক্ষা', 'স্কুল', 'কলেজ', 'মাদরাসা', 'একাডেমি'] },
-        { id: 'catCard-সংবাদপত্র', keywords: ['সংবাদপত্র', 'পত্রিকা', 'নিউজ', 'অনলাইন পোর্টাল'] },
-        { id: 'catCard-সিনেমা হল', keywords: ['সিনেমা হল', 'সিনেমা', 'প্রেক্ষাগৃহ', 'মুভি'] },
-        { id: 'catCard-দর্শনীয় স্থান', keywords: ['দর্শনীয় স্থান', 'দর্শনীয়', 'পর্যটন', 'বিনোদন', 'পার্ক', 'দুর্গ', 'পানাম'] },
-        { id: 'catCard-জরুরি সেবা', keywords: ['জরুরি', 'অ্যাম্বুলেন্স', 'পুলিশ', 'থানা', 'ফায়ার'] },
+        { id: 'catCard-শিক্ষা প্রতিষ্ঠান', keywords: ['শিক্ষা', 'স্কুল', 'কলেজ', 'মাদরাসা', 'একাডেমি'] },
+        { id: 'catCard-সংবাদপত্র', keywords: ['সংবাদপত্র', 'পত্রিকা', 'নিউজ', 'অনলাইন'] },
+        { id: 'catCard-সিনেমা হল', keywords: ['সিনেমা', 'মুভি', 'হল', 'প্রেক্ষাগৃহ'] },
+        { id: 'catCard-দর্শনীয় স্থান', keywords: ['দর্শনীয়', 'পর্যটন', 'পার্ক', 'দুর্গ', 'পানাম'] },
+        { id: 'catCard-জরুরি সেবা', keywords: ['জরুরি', 'পুলিশ', 'থানা', 'ফায়ার', 'অ্যাম্বুলেন্স'] },
         { id: 'catCard-পরিবহন', keywords: ['পরিবহন', 'বাস', 'ট্রেন', 'লঞ্চ'] },
-        { id: 'catCard-শপিং ও ব্যবসা', keywords: ['শপিং', 'ব্যবসা', 'মার্কেট', 'মোকাম', 'দোকান'] },
-        { id: 'catCard-মিষ্টি ও খাবার', keywords: ['মিষ্টি', 'খাবার', 'রেস্তোরাঁ', 'হোটেল', 'ক্যাফে'] }
+        { id: 'catCard-শপিং ও ব্যবসা', keywords: ['শপিং', 'ব্যবসা', 'মার্কেট', 'মোকাম'] },
+        { id: 'catCard-মিষ্টি ও খাবার', keywords: ['মিষ্টি', 'খাবার', 'রেস্তোরাঁ', 'হোটেল'] }
       ];
 
       categoryChecks.forEach(item => {
@@ -1148,8 +1147,8 @@
         let matchCat = (currentCategory === 'সব');
         if (!matchCat) {
           if (selectedCat.includes('সরকারি হাসপাতাল') && (itemCat.includes('সরকারি') || itemCat.includes('৩০০ শয্যা') || itemCat.includes('ভিক্টোরিয়া'))) matchCat = true;
-          else if (selectedCat.includes('বেসরকারি হাসপাতাল') && (itemCat.includes('বেসরকারি') || itemCat.includes('প্রাইভেট হাসপাতাল') || itemCat.includes('ক্লিনিক'))) matchCat = true;
-          else if (selectedCat.includes('ডায়াগনস্টিক') && (itemCat.includes('ডায়াগনস্টিক') || itemCat.includes('কনসালটেশন') || itemCat.includes('ল্যাব'))) matchCat = true;
+          else if (selectedCat.includes('বেসরকারি হাসপাতাল') && (itemCat.includes('বেসরকারি') || itemCat.includes('প্রাইভেট হাসপাতাল') || itemCat.includes('ক্লিনিক') || itemCat.includes('চিকিৎসা'))) matchCat = true;
+          else if (selectedCat.includes('ডায়াগনস্টিক') && (itemCat.includes('ডায়াগনস্টিক') || itemCat.includes('কনসালটেশন') || itemCat.includes('ল্যাব') || itemCat.includes('চিকিৎসা'))) matchCat = true;
           else if (selectedCat.includes('ডেন্টাল') && (itemCat.includes('ডেন্টাল') || itemCat.includes('দাঁত') || itemCat.includes('dental'))) matchCat = true;
           else if (selectedCat.includes('শিক্ষা') && (itemCat.includes('শিক্ষা') || itemCat.includes('স্কুল') || itemCat.includes('কলেজ') || itemCat.includes('মাদরাসা'))) matchCat = true;
           else if (selectedCat.includes('সংবাদ') && (itemCat.includes('সংবাদপত্র') || itemCat.includes('পত্রিকা') || itemCat.includes('নিউজ'))) matchCat = true;
@@ -1365,7 +1364,6 @@
       document.getElementById('detailsView').classList.remove('open');
     }
 
-    // চেম্বার থেকে সরাসরি প্রতিষ্ঠান প্রোফাইলে নেওয়ার ফাংশন
     function goToChamberDetails(chamberName, chamberArea) {
       if (!chamberName) return;
 
@@ -1419,10 +1417,11 @@
           const item = document.createElement('div');
           item.className = 'chamber-card-item';
 
-          // নিরাপদ ক্লিক ইভেন্ট বাইন্ডিং
           const headerRow = document.createElement('div');
           headerRow.style.cssText = "display: flex; justify-content: space-between; align-items: center; cursor: pointer;";
-          headerRow.onclick = () => goToChamberDetails(ch, area);
+          headerRow.onclick = function() {
+            goToChamberDetails(ch, area);
+          };
 
           headerRow.innerHTML = `
             <div style="font-weight: 700; font-size: 15px; color: #0F5132;">
@@ -1508,34 +1507,49 @@
       }
     }
 
+    function cleanSheetRow(row) {
+      const clean = {};
+      Object.keys(row).forEach(k => {
+        clean[k.trim().toLowerCase()] = typeof row[k] === 'string' ? row[k].trim() : row[k];
+      });
+      return clean;
+    }
+
     async function loadData() {
-      const cachedPlaces = localStorage.getItem('cached_places');
-      const cachedDocs = localStorage.getItem('cached_docs');
-      if (cachedPlaces) placesData = JSON.parse(cachedPlaces);
-      if (cachedDocs) doctorsData = JSON.parse(cachedDocs);
-
-      updateVisibleCategoryCards();
-
       try {
+        const timestamp = new Date().getTime();
         const [resPlaces, resDocs] = await Promise.all([
-          fetch(API_PLACES),
-          fetch(API_DOCTORS)
+          fetch(`${API_PLACES}?t=${timestamp}`),
+          fetch(`${API_DOCTORS}?t=${timestamp}`)
         ]);
-        const freshPlaces = await resPlaces.json();
-        const freshDocs = await resDocs.json();
 
-        if (Array.isArray(freshPlaces) && freshPlaces.length > 0) {
-          placesData = freshPlaces;
-          localStorage.setItem('cached_places', JSON.stringify(freshPlaces));
+        const rawPlaces = await resPlaces.json();
+        const rawDocs = await resDocs.json();
+
+        if (Array.isArray(rawPlaces) && rawPlaces.length > 0) {
+          placesData = rawPlaces.map(cleanSheetRow);
+          localStorage.setItem('cached_places', JSON.stringify(placesData));
         }
-        if (Array.isArray(freshDocs) && freshDocs.length > 0) {
-          doctorsData = freshDocs;
-          localStorage.setItem('cached_docs', JSON.stringify(freshDocs));
+        if (Array.isArray(rawDocs) && rawDocs.length > 0) {
+          doctorsData = rawDocs.map(cleanSheetRow);
+          localStorage.setItem('cached_docs', JSON.stringify(doctorsData));
         }
 
         updateVisibleCategoryCards();
+
+        if (document.getElementById('categoryPage').classList.contains('open')) {
+          renderCategoryItems();
+        }
+        if (document.getElementById('doctorPage').classList.contains('open')) {
+          renderDoctorItems();
+        }
       } catch (err) {
-        console.warn("অফলাইন মোড / ক্যাশড ডাটা ব্যবহৃত হচ্ছে:", err);
+        console.warn("ক্যাশড ডাটা ব্যবহৃত হচ্ছে:", err);
+        const cp = localStorage.getItem('cached_places');
+        const cd = localStorage.getItem('cached_docs');
+        if (cp) placesData = JSON.parse(cp);
+        if (cd) doctorsData = JSON.parse(cd);
+        updateVisibleCategoryCards();
       }
     }
 
