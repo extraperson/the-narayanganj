@@ -829,6 +829,52 @@
         </div>
       </div>
 
+		<!-- শিক্ষা প্রতিষ্ঠান প্রিমিয়াম কার্ড (অধ্যক্ষ ও রেজাল্ট) -->
+      <div id="eduDetailsBox" style="display: none; flex-direction: column; gap: 12px;">
+        
+        <!-- বর্তমান অধ্যক্ষ কার্ড -->
+        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
+          <div style="width: 44px; height: 44px; border-radius: 50%; background: #EDE9FE; color: #7C3AED; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+            <i class="fa-solid fa-user-tie"></i>
+          </div>
+          <div>
+            <span style="font-size: 11px; font-weight: 600; color: #7C3AED; text-transform: uppercase;">বর্তমান অধ্যক্ষ</span>
+            <div id="eduPrincipalName" style="font-size: 15px; font-weight: 700; color: var(--text);">-</div>
+            <div id="eduEiinBox" style="font-size: 11px; color: var(--text-muted); margin-top: 1px;">EIIN: -</div>
+          </div>
+        </div>
+
+        <!-- ফলাফল ড্যাশবোর্ড কার্ড -->
+        <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 12px; padding: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="font-weight: 700; font-size: 14px; color: #0F5132;">
+              <i class="fa-solid fa-graduation-cap"></i> পাবলিক পরীক্ষার ফলাফল
+            </div>
+            <span id="eduExamYear" style="font-size: 11px; background: #DCFCE7; color: #166534; padding: 2px 8px; border-radius: 10px; font-weight: 700;">HSC</span>
+          </div>
+
+          <div id="eduResultGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center;">
+            <div style="background: #F1F5F9; padding: 8px 4px; border-radius: 8px;">
+              <div style="font-size: 10px; color: var(--text-muted);">পরীক্ষার্থী</div>
+              <div id="resAppeared" style="font-weight: 700; font-size: 14px; color: var(--text);">-</div>
+            </div>
+            <div style="background: #ECFDF5; padding: 8px 4px; border-radius: 8px;">
+              <div style="font-size: 10px; color: #047857;">উত্তীর্ণ</div>
+              <div id="resPassed" style="font-weight: 700; font-size: 14px; color: #047857;">-</div>
+            </div>
+            <div style="background: #FFFBEB; padding: 8px 4px; border-radius: 8px;">
+              <div style="font-size: 10px; color: #B45309;">জিপিএ-৫</div>
+              <div id="resGpa5" style="font-weight: 700; font-size: 14px; color: #B45309;">-</div>
+            </div>
+            <div style="background: #EFF6FF; padding: 8px 4px; border-radius: 8px;">
+              <div style="font-size: 10px; color: #1D4ED8;">পাসের হার</div>
+              <div id="resRate" style="font-weight: 700; font-size: 13px; color: #1D4ED8;">-</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+	  
       <div class="info-list">
         <div class="info-item">
           <i class="fa-solid fa-location-dot"></i>
@@ -1332,6 +1378,30 @@
       const chamberBox = document.getElementById('chamberDocsBtnBox');
       const isMedical = (item.category || '').includes('চিকিৎসা') || (item.category || '').includes('ডায়াগনস্টিক') || (item.category || '').includes('হাসপাতাল') || (item.category || '').includes('ডেন্টাল') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল') || (item.name || '').includes('ডেন্টাল');
       chamberBox.style.display = isMedical ? 'block' : 'none';
+	  
+	  // শিক্ষা প্রতিষ্ঠান ডাটা চেক ও ডিসপ্লে
+      const eduBox = document.getElementById('eduDetailsBox');
+      const isEdu = (item.category || '').includes('শিক্ষা') || (item.name || '').includes('কলেজ') || (item.name || '').includes('স্কুল');
+
+      if (isEdu && (item.principal || item.result_summary)) {
+        eduBox.style.display = 'flex';
+        document.getElementById('eduPrincipalName').innerText = item.principal || 'তথ্য নেই';
+        document.getElementById('eduEiinBox').innerText = item.eiin ? `EIIN: ${item.eiin}` : '';
+        document.getElementById('eduExamYear').innerText = item.result_year || 'সর্বশেষ ফলাফল';
+
+        if (item.result_summary) {
+          const parts = item.result_summary.split('|').map(s => s.trim());
+          document.getElementById('resAppeared').innerText = parts[0] || '-';
+          document.getElementById('resPassed').innerText = parts[1] || '-';
+          document.getElementById('resGpa5').innerText = parts[2] || '-';
+          document.getElementById('resRate').innerText = parts[3] || '-';
+          document.getElementById('eduResultGrid').style.display = 'grid';
+        } else {
+          document.getElementById('eduResultGrid').style.display = 'none';
+        }
+      } else {
+        eduBox.style.display = 'none';
+      }
 
       const callBtn = document.getElementById('detailsCallBtn');
       if (item.phone) {
