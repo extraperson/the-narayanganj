@@ -451,6 +451,18 @@
       margin-left: 6px;
     }
 
+    .beds-badge {
+      display: inline-block;
+      background: #E0F2FE;
+      color: #0284C7;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 6px;
+      margin-left: 6px;
+    }
+
     .doc-nav-card {
       background: #F0F9FF;
       border: 1px solid #BAE6FD;
@@ -506,6 +518,26 @@
       flex-direction: column;
       gap: 8px;
     }
+
+    /* সোশ্যাল ও যোগাযোগ লিংক বাটন */
+    .social-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 18px;
+      text-decoration: none;
+      transition: transform 0.15s;
+    }
+    .social-btn:active { transform: scale(0.92); }
+    .btn-web { background: #0F5132; }
+    .btn-fb { background: #1877F2; }
+    .btn-yt { background: #FF0000; }
+    .btn-li { background: #0A66C2; }
+    .btn-ig { background: linear-gradient(45deg, #F58529, #DD2A7B, #8134AF); }
 
     .bottom-nav {
       position: fixed;
@@ -837,6 +869,7 @@
         <div style="display: flex; align-items: center; flex-wrap: wrap;">
           <span class="details-tag" id="detailsCategory">ক্যাটাগরি</span>
           <span class="eiin-badge" id="detailsEiin" style="display: none;">EIIN: -</span>
+          <span class="beds-badge" id="detailsBeds" style="display: none;"><i class="fa-solid fa-bed"></i> ২৫০ শয্যা</span>
         </div>
       </div>
 
@@ -847,6 +880,24 @@
         <a href="#" id="detailsMapBtn" target="_blank" rel="noopener noreferrer" class="btn-action btn-map">
           <i class="fa-solid fa-diamond-turn-right"></i> গুগল ম্যাপ
         </a>
+      </div>
+
+      <!-- জরুরি অ্যাম্বুলেন্স কার্ড (হাসপাতাল ভিত্তিক) -->
+      <div id="hospitalAmbulanceBox" style="display: none;">
+        <div style="background: #FEF2F2; border: 1px dashed #FCA5A5; border-radius: var(--radius); padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 38px; height: 38px; border-radius: 50%; background: #EF4444; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px;">
+              <i class="fa-solid fa-truck-medical"></i>
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 14px; color: #991B1B;">জরুরি অ্যাম্বুলেন্স সার্ভিস</div>
+              <div id="ambulanceNote" style="font-size: 11px; color: #B91C1C;">২৪ ঘণ্টা সেবা • মাত্র ৫০০ টাকা</div>
+            </div>
+          </div>
+          <a href="#" id="ambulanceCallBtn" class="btn-action" style="background: #DC2626; color: #fff; padding: 7px 14px; font-size: 13px; border-radius: 8px;">
+            <i class="fa-solid fa-phone"></i> কল
+          </a>
+        </div>
       </div>
 
       <!-- ডাক্তার তালিকা নেভিগেশন কার্ড -->
@@ -863,10 +914,58 @@
         </div>
       </div>
 
+      <!-- ক্রিটিক্যাল কেয়ার ও বিশেষ সুবিধা ব্লক (ICU, NICU, Dialysis ইত্যাদি) -->
+      <div id="hospitalCareBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
+        <div style="font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-heart-pulse"></i> ক্রিটিক্যাল কেয়ার ও বিশেষ শয্যা
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;">
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 4px; border-radius: 8px;">
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">ICU</div>
+            <div style="font-weight: 700; font-size: 14px; color: #0F5132; margin-top: 2px;">৯ বেড</div>
+          </div>
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 4px; border-radius: 8px;">
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">HDU</div>
+            <div style="font-weight: 700; font-size: 14px; color: #0F5132; margin-top: 2px;">৮ বেড</div>
+          </div>
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 4px; border-radius: 8px;">
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">NICU (নবজাতক)</div>
+            <div style="font-weight: 700; font-size: 14px; color: #0284C7; margin-top: 2px;">৬০ বেড</div>
+          </div>
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 4px; border-radius: 8px;">
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">PICU (শিশু)</div>
+            <div style="font-weight: 700; font-size: 14px; color: #0284C7; margin-top: 2px;">১৮ বেড</div>
+          </div>
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 4px; border-radius: 8px;">
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">CCU (হৃদরোগ)</div>
+            <div style="font-weight: 700; font-size: 14px; color: #B45309; margin-top: 2px;">৮ বেড</div>
+          </div>
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 4px; border-radius: 8px;">
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">ডায়ালাইসিস</div>
+            <div style="font-weight: 700; font-size: 14px; color: #7C3AED; margin-top: 2px;">১৫ বেড</div>
+          </div>
+        </div>
+        <div id="facilitiesListBox" style="margin-top: 10px; font-size: 12px; color: var(--text-muted); border-top: 1px solid #F1F5F9; padding-top: 8px;">
+          <strong style="color: var(--text);">অন্যান্য সুবিধা:</strong> <span id="facilitiesText">-</span>
+        </div>
+      </div>
+
+      <!-- সোশ্যাল মিডিয়া ও অনলাইন প্রোফাইল বার -->
+      <div id="socialLinksBox" style="display: none; background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px;">
+        <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">
+          অফিসিয়াল ওয়েবসাইট ও সামাজিক মাধ্যম
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <a href="#" id="linkWebsite" target="_blank" rel="noopener noreferrer" class="social-btn btn-web" style="display: none;" title="ওয়েবসাইট"><i class="fa-solid fa-globe"></i></a>
+          <a href="#" id="linkFacebook" target="_blank" rel="noopener noreferrer" class="social-btn btn-fb" style="display: none;" title="ফেসবুক"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" id="linkYoutube" target="_blank" rel="noopener noreferrer" class="social-btn btn-yt" style="display: none;" title="ইউটিউব"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" id="linkLinkedin" target="_blank" rel="noopener noreferrer" class="social-btn btn-li" style="display: none;" title="লিংকডইন"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a href="#" id="linkInstagram" target="_blank" rel="noopener noreferrer" class="social-btn btn-ig" style="display: none;" title="ইনস্টাগ্রাম"><i class="fa-brands fa-instagram"></i></a>
+        </div>
+      </div>
+
       <!-- শিক্ষা প্রতিষ্ঠান প্রিমিয়াম ব্লক -->
       <div id="eduSectionBox" style="display: none; flex-direction: column; gap: 12px;">
-        
-        <!-- বর্তমান অধ্যক্ষ কার্ড -->
         <div id="eduPrincipalCard" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
           <div style="width: 44px; height: 44px; border-radius: 50%; background: #EDE9FE; color: #7C3AED; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
             <i class="fa-solid fa-user-tie"></i>
@@ -877,7 +976,6 @@
           </div>
         </div>
 
-        <!-- ফলাফল পেজ নেভিগেশন কার্ড -->
         <div class="doc-nav-card" style="background: #F0FDF4; border-color: #BBF7D0;" onclick="viewInstitutionResults()">
           <div class="doc-nav-left">
             <div class="doc-nav-icon" style="background: #16A34A;"><i class="fa-solid fa-graduation-cap"></i></div>
@@ -888,9 +986,9 @@
           </div>
           <i class="fa-solid fa-chevron-right" style="color: #16A34A; font-size: 14px;"></i>
         </div>
-
       </div>
 
+      <!-- নিয়মিত তথ্য তালিকা -->
       <div class="info-list">
         <div class="info-item">
           <i class="fa-solid fa-location-dot"></i>
@@ -1239,8 +1337,8 @@
           else if (selectedCat.includes('সিনেমা') && (itemCat.includes('সিনেমা') || itemCat.includes('মুভি') || itemCat.includes('হল'))) matchCat = true;
           else if (selectedCat.includes('দর্শনীয়') && (itemCat.includes('দর্শনীয়') || itemCat.includes('পর্যটন') || itemCat.includes('দুর্গ') || itemCat.includes('পানাম'))) matchCat = true;
           else if (selectedCat.includes('জরুরি') && (itemCat.includes('জরুরি') || itemCat.includes('পুলিশ') || itemCat.includes('ফায়ার') || itemCat.includes('অ্যাম্বুলেন্স'))) matchCat = true;
-          else if (selectedCat.includes('পরিবহন') && (itemCat.includes('পরিবহন') || itemCat.includes('বাস') || itemKar.includes('ট্রেন') || itemCat.includes('লঞ্চ'))) matchCat = true;
-          else if (selectedCat.includes('শপিং') && (itemCat.includes('শপিং') || itemCat.includes('ব্যবসা') || itemCat.includes('মার্কেট'))) matchCat = true;
+          else if (selectedCat.includes('পরিবহন') && (itemCat.includes('পরিবহন') || itemCat.includes('বাস') || itemCat.includes('ট্রেন') || itemCat.includes('লঞ্চ'))) matchCat = true;
+          else if (selectedCat.includes('শপিং') && (itemCat.includes('শপিং') || itemCat.includes('ব্যবসা') || itemKar = (item.name || '').toLowerCase().includes(query))) matchCat = true;
           else if (selectedCat.includes('মিষ্টি') && (itemCat.includes('মিষ্টি') || itemCat.includes('খাবার') || itemCat.includes('রেস্তোরাঁ'))) matchCat = true;
           else matchCat = itemCat.includes(selectedCat);
         }
@@ -1445,6 +1543,15 @@
         eiinEl.style.display = 'none';
       }
 
+      // শয্যা ব্যাজ হ্যান্ডলিং (Beds Badge)
+      const bedsEl = document.getElementById('detailsBeds');
+      if (item.beds && item.beds.toString().trim() !== '') {
+        bedsEl.innerHTML = `<i class="fa-solid fa-bed"></i> ${item.beds}`;
+        bedsEl.style.display = 'inline-block';
+      } else {
+        bedsEl.style.display = 'none';
+      }
+
       updateHeartIcon(document.getElementById('detailsHeartBtn'), isItemBookmarked(item.name));
 
       const landmarkBox = document.getElementById('detailsLandmarkBox');
@@ -1461,7 +1568,69 @@
       const isMedical = (item.category || '').includes('চিকিৎসা') || (item.category || '').includes('ডায়াগনস্টিক') || (item.category || '').includes('হাসপাতাল') || (item.category || '').includes('ডেন্টাল') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল') || (item.name || '').includes('ডেন্টাল');
       chamberBox.style.display = isMedical ? 'block' : 'none';
 
-      // ২. শিক্ষা প্রতিষ্ঠান ব্লক
+      // ২. ক্রিটিক্যাল কেয়ার ও অ্যাম্বুলেন্স ব্লক
+      const ambBox = document.getElementById('hospitalAmbulanceBox');
+      const ambBtn = document.getElementById('ambulanceCallBtn');
+      if (item.ambulance && item.ambulance.trim() !== '') {
+        const ambNumber = item.ambulance.split(',')[0].trim();
+        ambBtn.href = `tel:${ambNumber}`;
+        ambBox.style.display = 'block';
+      } else {
+        ambBox.style.display = 'none';
+      }
+
+      const careBox = document.getElementById('hospitalCareBox');
+      const isHospital = (item.category || '').includes('হাসপাতাল') || (item.name || '').includes('মেডিকেল') || (item.name || '').includes('হাসপাতাল');
+      if (isHospital && (item.beds || item.facilities)) {
+        careBox.style.display = 'block';
+        document.getElementById('facilitiesText').innerText = item.facilities || '২৪ ঘণ্টা ফার্মেসী, ল্যাব ও জরুরি চিকিৎসা সেবা';
+      } else {
+        careBox.style.display = 'none';
+      }
+
+      // ৩. সোশ্যাল মিডিয়া ও ওয়েবসাইট বার
+      const socialBox = document.getElementById('socialLinksBox');
+      const webBtn = document.getElementById('linkWebsite');
+      const fbBtn = document.getElementById('linkFacebook');
+      const ytBtn = document.getElementById('linkYoutube');
+      const liBtn = document.getElementById('linkLinkedin');
+      const igBtn = document.getElementById('linkInstagram');
+
+      let hasSocial = false;
+
+      if (item.website && item.website.trim() !== '') {
+        webBtn.href = item.website.startsWith('http') ? item.website : `https://${item.website}`;
+        webBtn.style.display = 'flex';
+        hasSocial = true;
+      } else { webBtn.style.display = 'none'; }
+
+      if (item.facebook && item.facebook.trim() !== '') {
+        fbBtn.href = item.facebook;
+        fbBtn.style.display = 'flex';
+        hasSocial = true;
+      } else { fbBtn.style.display = 'none'; }
+
+      if (item.youtube && item.youtube.trim() !== '') {
+        ytBtn.href = item.youtube;
+        ytBtn.style.display = 'flex';
+        hasSocial = true;
+      } else { ytBtn.style.display = 'none'; }
+
+      if (item.linkedin && item.linkedin.trim() !== '') {
+        liBtn.href = item.linkedin;
+        liBtn.style.display = 'flex';
+        hasSocial = true;
+      } else { liBtn.style.display = 'none'; }
+
+      if (item.instagram && item.instagram.trim() !== '') {
+        igBtn.href = item.instagram;
+        igBtn.style.display = 'flex';
+        hasSocial = true;
+      } else { igBtn.style.display = 'none'; }
+
+      socialBox.style.display = hasSocial ? 'block' : 'none';
+
+      // ৪. শিক্ষা প্রতিষ্ঠান ব্লক
       const eduBox = document.getElementById('eduSectionBox');
       const isEdu = (item.category || '').includes('শিক্ষা') || (item.name || '').includes('কলেজ') || (item.name || '').includes('স্কুল') || (item.name || '').includes('মাদরাসা');
       
