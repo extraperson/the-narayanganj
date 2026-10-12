@@ -775,7 +775,24 @@
       </div>
     </div>
 
-    <div class="area-filter-scroll" id="docAreaFilterBar">
+    <!-- ডাক্তার ডিপার্টমেন্ট ফিল্টার চিপস -->
+    <div class="area-filter-scroll" id="docDeptFilterBar" style="padding-top: 6px; padding-bottom: 4px;">
+      <div class="area-chip active" onclick="setDoctorDeptFilter('সব বিভাগ', this)"><i class="fa-solid fa-stethoscope"></i> সব বিভাগ</div>
+      <div class="area-chip" onclick="setDoctorDeptFilter('মেডিসিন', this)">মেডিসিন</div>
+      <div class="area-chip" onclick="setDoctorDeptFilter('কার্ডিওলজি', this)">কার্ডিওলজি (হৃদরোগ)</div>
+      <div class="area-chip" onclick="setDoctorDeptFilter('গাইনী', this)">গাইনী ও প্রসূতি</div>
+      <div class="area-chip" onclick="setDoctorDeptFilter('শিশু', this)">নবজাতক ও শিশু</div>
+      <div class="area-chip" onclick="setDoctorDeptFilter('অর্থোপেডিক', this)">অর্থোপেডিক (হাড়-জোড়া)</div>
+      <div class="area-chip" onclick="setDoctorDeptFilter('সার্জারি', this)">জেনারেল সার্জারি</div>
+      <div class="area-chip" onclick="setDoctorDeptFilter('ইউরোলজি', this)">ইউরোলজি (কিডনি-মূত্র)</div>
+      <div class="area-chip" onclick="setDoctorDeptFilter('নিউরো', this)">নিউরো (মস্তিষ্ক ও স্নায়ু)</div>
+      <div class="area-chip" onclick="setDoctorDeptFilter('গ্যাস্ট্রো', this)">গ্যাস্ট্রো ও লিভার</div>
+      <div class="area-chip" onclick="setDoctorDeptFilter('চর্ম ও যৌন', this)">চর্ম ও যৌন</div>
+      <div class="area-chip" onclick="setDoctorDeptFilter('ইএনটি', this)">নাক, কান ও গলা</div>
+      <div class="area-chip" onclick="setDoctorDeptFilter('ডেন্টাল', this)">দাঁতের চিকিৎসা</div>
+    </div>
+
+    <div class="area-filter-scroll" id="docAreaFilterBar" style="padding-top: 4px;">
       <div class="area-chip active" onclick="setDoctorAreaFilter('সব এলাকা', this)"><i class="fa-solid fa-location-dot"></i> সব এলাকা</div>
       <div class="area-chip" onclick="setDoctorAreaFilter('চাষাড়া', this)">চাষাড়া / সদর</div>
       <div class="area-chip" onclick="setDoctorAreaFilter('বন্দর', this)">বন্দর</div>
@@ -966,6 +983,7 @@
     let currentChamberFilter = null;
     let selectedCatArea = 'সব এলাকা';
     let selectedDocArea = 'সব এলাকা';
+    let selectedDocDept = 'সব বিভাগ';
     let activeItem = null;
     let activeDoctor = null;
 
@@ -1166,6 +1184,16 @@
       renderDoctorItems();
     }
 
+    function setDoctorDeptFilter(deptName, chipElement) {
+      selectedDocDept = deptName;
+      const bar = document.getElementById('docDeptFilterBar');
+      if (bar) {
+        bar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+        chipElement.classList.add('active');
+      }
+      renderDoctorItems();
+    }
+
     function openCategoryPage(category, subtitle = '') {
       currentCategory = category;
       document.getElementById('catPageTitle').innerText = category === 'সব' ? 'সকল সেবা ও তথ্য' : category;
@@ -1211,7 +1239,7 @@
           else if (selectedCat.includes('সিনেমা') && (itemCat.includes('সিনেমা') || itemCat.includes('মুভি') || itemCat.includes('হল'))) matchCat = true;
           else if (selectedCat.includes('দর্শনীয়') && (itemCat.includes('দর্শনীয়') || itemCat.includes('পর্যটন') || itemCat.includes('দুর্গ') || itemCat.includes('পানাম'))) matchCat = true;
           else if (selectedCat.includes('জরুরি') && (itemCat.includes('জরুরি') || itemCat.includes('পুলিশ') || itemCat.includes('ফায়ার') || itemCat.includes('অ্যাম্বুলেন্স'))) matchCat = true;
-          else if (selectedCat.includes('পরিবহন') && (itemCat.includes('পরিবহন') || itemCat.includes('বাস') || itemCat.includes('ট্রেন') || itemCat.includes('লঞ্চ'))) matchCat = true;
+          else if (selectedCat.includes('পরিবহন') && (itemCat.includes('পরিবহন') || itemCat.includes('বাস') || itemKar.includes('ট্রেন') || itemCat.includes('লঞ্চ'))) matchCat = true;
           else if (selectedCat.includes('শপিং') && (itemCat.includes('শপিং') || itemCat.includes('ব্যবসা') || itemCat.includes('মার্কেট'))) matchCat = true;
           else if (selectedCat.includes('মিষ্টি') && (itemCat.includes('মিষ্টি') || itemCat.includes('খাবার') || itemCat.includes('রেস্তোরাঁ'))) matchCat = true;
           else matchCat = itemCat.includes(selectedCat);
@@ -1286,6 +1314,14 @@
         docBar.style.display = chamberName ? 'none' : 'flex';
       }
 
+      selectedDocDept = 'সব বিভাগ';
+      const deptBar = document.getElementById('docDeptFilterBar');
+      if (deptBar) {
+        deptBar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+        deptBar.querySelector('.area-chip').classList.add('active');
+        deptBar.style.display = chamberName ? 'none' : 'flex';
+      }
+
       renderDoctorItems();
       
       const docPage = document.getElementById('doctorPage');
@@ -1304,6 +1340,21 @@
 
       const query = document.getElementById('docSearchInput').value.toLowerCase().trim();
 
+      const deptKeywords = {
+        'মেডিসিন': ['মেডিসিন', 'ইন্টারনাল', 'medicine'],
+        'কার্ডিওলজি': ['কার্ডিওলজি', 'কার্ডিওলজিস্ট', 'কার্ডিয়াক', 'হৃদরোগ', 'কার্ডিও', 'হার্ট', 'cardio'],
+        'গাইনী': ['গাইনী', 'গাইনি', 'প্রসূতি', 'স্ত্রী রোগ', 'স্ত্রী-রোগ', 'obs', 'gynae', 'মহিলা রোগ'],
+        'শিশু': ['শিশু', 'নবজাতক', 'কিশোর রোগ', 'pediatric', 'paediatric', 'শিশু রোগ'],
+        'অর্থোপেডিক': ['অর্থোপেডিক', 'অর্থোপেডিক্স', 'হাড়ভাঙ্গা', 'হাড়', 'ট্রমা', 'স্পাইন', 'বাত-ব্যথা', 'জোড়াবাত', 'ortho'],
+        'সার্জারি': ['সার্জারি', 'সার্জন', 'অপারেশন', 'surgery', 'surgeon', 'ল্যাপারোস্কোপিক'],
+        'ইউরোলজি': ['ইউরোলজি', 'ইউরোলজিস্ট', 'কিডনি', 'মূত্রনালী', 'প্রোস্টেট', 'urology'],
+        'নিউরো': ['নিউরো', 'নিউরোসার্জারি', 'নিউরোমেডিসিন', 'মস্তিষ্ক', 'মেরুদণ্ড', 'স্নায়ু', 'neuro'],
+        'গ্যাস্ট্রো': ['গ্যাস্ট্রো', 'গ্যাস্ট্রোএন্টারোলজি', 'লিভার', 'পরিপাকতন্ত্র', 'হেপাটোলজি', 'gastro', 'liver'],
+        'চর্ম ও যৌন': ['চর্ম', 'যৌন', 'ডার্মাটোলজি', 'ত্বক', 'skin', 'derma'],
+        'ইএনটি': ['নাক', 'কান', 'গলা', 'ইএনটি', 'ent'],
+        'ডেন্টাল': ['ডেন্টাল', 'দাঁত', 'মুখের রোগ', 'dental', 'দাঁতের']
+      };
+
       const filtered = doctorsData.filter(doc => {
         let matchChamber = true;
         if (currentChamberFilter) {
@@ -1320,6 +1371,13 @@
           if (targetArea === 'চাষাড়া' && (docArea.includes('সদর') || docChamber.includes('সদর'))) matchArea = true;
         }
 
+        let matchDept = (selectedDocDept === 'সব বিভাগ');
+        if (!matchDept) {
+          const keys = deptKeywords[selectedDocDept] || [selectedDocDept.toLowerCase()];
+          const fullDocText = ((doc.specialty || '') + ' ' + (doc.degrees || '') + ' ' + (doc.name || '')).toLowerCase();
+          matchDept = keys.some(k => fullDocText.includes(k.toLowerCase()));
+        }
+
         const matchSearch = 
           (doc.name || '').toLowerCase().includes(query) ||
           (doc.specialty || '').toLowerCase().includes(query) ||
@@ -1327,7 +1385,7 @@
           (doc.area || '').toLowerCase().includes(query) ||
           (doc.degrees || '').toLowerCase().includes(query);
 
-        return matchChamber && matchArea && matchSearch;
+        return matchChamber && matchArea && matchDept && matchSearch;
       });
 
       if (filtered.length === 0) {
@@ -1447,7 +1505,6 @@
       document.getElementById('detailsView').classList.remove('open');
     }
 
-    // চেম্বার থেকে প্রতিষ্ঠানে যাওয়ার ফাংশন
     function goToChamberDetails(chamberName, chamberArea) {
       if (!chamberName) return;
 
@@ -1549,7 +1606,6 @@
       document.getElementById('doctorProfileView').classList.remove('open');
     }
 
-    // আলাদা রেজাল্ট পেজ খোলা
     function viewInstitutionResults() {
       if (!activeItem) return;
 
