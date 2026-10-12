@@ -306,15 +306,13 @@
       position: sticky;
       top: 0;
       background: #fff;
-      padding: 14px 20px;
+      padding: 12px 20px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       border-bottom: 1px solid var(--border);
       z-index: 10;
     }
-
-    .top-sub-header h3 { font-size: 18px; font-weight: 700; color: var(--text); }
 
     .btn-circle {
       width: 36px;
@@ -519,6 +517,24 @@
       gap: 8px;
     }
 
+    /* বিভাগ ও সেবা ট্যাগ গ্রিড */
+    .dept-badge-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .dept-badge-item {
+      background: #F1F5F9;
+      color: #334155;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid #E2E8F0;
+    }
+
     .social-btn {
       width: 40px;
       height: 40px;
@@ -615,7 +631,7 @@
       <div id="section-health">
         <div class="section-title"><i class="fa-solid fa-notes-medical"></i> স্বাস্থ্য সেবা</div>
         <div class="home-categories-grid">
-          <div class="home-cat-card" id="catCard-doctor" onclick="openDoctorList(null, 'সকল বিশেষজ্ঞ চিকিৎসক')">
+          <div class="home-cat-card" onclick="openDoctorList(null, 'সকল বিশেষজ্ঞ চিকিৎসক')">
             <div class="home-cat-icon theme-doctor"><i class="fa-solid fa-user-doctor"></i></div>
             <div class="home-cat-info">
               <h4>বিশেষজ্ঞ ডাক্তার</h4>
@@ -623,7 +639,7 @@
             </div>
           </div>
 
-          <div class="home-cat-card" id="catCard-সরকারি হাসপাতাল" onclick="openCategoryPage('সরকারি হাসপাতাল', 'সরকারি হাসপাতাল ও স্বাস্থ্য কেন্দ্র')">
+          <div class="home-cat-card" onclick="openCategoryPage('সরকারি হাসপাতাল', 'সরকারি হাসপাতাল ও স্বাস্থ্য কেন্দ্র')">
             <div class="home-cat-icon theme-gov-hospital"><i class="fa-solid fa-hospital-user"></i></div>
             <div class="home-cat-info">
               <h4>সরকারি হাসপাতাল</h4>
@@ -631,7 +647,7 @@
             </div>
           </div>
 
-          <div class="home-cat-card" id="catCard-বেসরকারি হাসপাতাল" onclick="openCategoryPage('বেসরকারি হাসপাতাল', 'প্রাইভেট হাসপাতাল ও ক্লিনিক')">
+          <div class="home-cat-card" onclick="openCategoryPage('বেসরকারি হাসপাতাল', 'প্রাইভেট হাসপাতাল ও ক্লিনিক')">
             <div class="home-cat-icon theme-pvt-hospital"><i class="fa-solid fa-square-h"></i></div>
             <div class="home-cat-info">
               <h4>বেসরকারি হাসপাতাল</h4>
@@ -639,7 +655,7 @@
             </div>
           </div>
 
-          <div class="home-cat-card" id="catCard-ডায়াগনস্টিক" onclick="openCategoryPage('ডায়াগনস্টিক', 'ল্যাব টেস্ট ও কনসালটেশন সেন্টার')">
+          <div class="home-cat-card" onclick="openCategoryPage('ডায়াগনস্টিক', 'ল্যাব টেস্ট ও কনসালটেশন সেন্টার')">
             <div class="home-cat-icon theme-diagnostic"><i class="fa-solid fa-hospital"></i></div>
             <div class="home-cat-info">
               <h4>ডায়াগনস্টিক সেন্টার</h4>
@@ -647,7 +663,7 @@
             </div>
           </div>
 
-          <div class="home-cat-card" id="catCard-ডেন্টাল" onclick="openCategoryPage('ডেন্টাল', 'ডেন্টাল ক্লিনিক ও দাঁতের বিশেষজ্ঞ')">
+          <div class="home-cat-card" onclick="openCategoryPage('ডেন্টাল', 'ডেন্টাল ক্লিনিক ও দাঁতের বিশেষজ্ঞ')">
             <div class="home-cat-icon theme-dental"><i class="fa-solid fa-tooth"></i></div>
             <div class="home-cat-info">
               <h4>ডেন্টাল ক্লিনিক</h4>
@@ -661,7 +677,7 @@
       <div id="section-edu-news">
         <div class="section-title"><i class="fa-solid fa-graduation-cap"></i> শিক্ষা ও সংবাদ</div>
         <div class="home-categories-grid">
-          <div class="home-cat-card" id="catCard-শিক্ষা প্রতিষ্ঠান" onclick="openCategoryPage('শিক্ষা প্রতিষ্ঠান', 'কলেজ, স্কুল ও মাদরাসা')">
+          <div class="home-cat-card" onclick="openCategoryPage('শিক্ষা প্রতিষ্ঠান', 'কলেজ, স্কুল ও মাদরাসা')">
             <div class="home-cat-icon theme-edu"><i class="fa-solid fa-school"></i></div>
             <div class="home-cat-info">
               <h4>শিক্ষা প্রতিষ্ঠান</h4>
@@ -669,7 +685,7 @@
             </div>
           </div>
 
-          <div class="home-cat-card" id="catCard-সংবাদপত্র" onclick="openCategoryPage('সংবাদপত্র', 'দৈনিক পত্রিকা ও অনলাইন পোর্টাল')">
+          <div class="home-cat-card" onclick="openCategoryPage('সংবাদপত্র', 'দৈনিক পত্রিকা ও অনলাইন পোর্টাল')">
             <div class="home-cat-icon theme-news"><i class="fa-solid fa-newspaper"></i></div>
             <div class="home-cat-info">
               <h4>সংবাদপত্র</h4>
@@ -683,7 +699,7 @@
       <div id="section-entertainment">
         <div class="section-title"><i class="fa-solid fa-film"></i> বিনোদন ও ভ্রমণ</div>
         <div class="home-categories-grid">
-          <div class="home-cat-card" id="catCard-সিনেমা হল" onclick="openCategoryPage('সিনেমা হল', 'মুভি থিয়েটার ও প্রেক্ষাগৃহ')">
+          <div class="home-cat-card" onclick="openCategoryPage('সিনেমা হল', 'মুভি থিয়েটার ও প্রেক্ষাগৃহ')">
             <div class="home-cat-icon theme-movie"><i class="fa-solid fa-film"></i></div>
             <div class="home-cat-info">
               <h4>সিনেমা হল</h4>
@@ -691,7 +707,7 @@
             </div>
           </div>
 
-          <div class="home-cat-card" id="catCard-দর্শনীয় স্থান" onclick="openCategoryPage('দর্শনীয় স্থান', 'পানাম নগর, জাদুঘর ও দুর্গ')">
+          <div class="home-cat-card" onclick="openCategoryPage('দর্শনীয় স্থান', 'পানাম নগর, জাদুঘর ও দুর্গ')">
             <div class="home-cat-icon theme-tour"><i class="fa-solid fa-landmark"></i></div>
             <div class="home-cat-info">
               <h4>দর্শনীয় স্থান</h4>
@@ -705,7 +721,7 @@
       <div id="section-citizen">
         <div class="section-title"><i class="fa-solid fa-city"></i> নাগরিক সেবা ও অন্যান্য</div>
         <div class="home-categories-grid">
-          <div class="home-cat-card" id="catCard-জরুরি সেবা" onclick="openCategoryPage('জরুরি সেবা', 'থানা, অ্যাম্বুলেন্স ও ফায়ার সার্ভিস')">
+          <div class="home-cat-card" onclick="openCategoryPage('জরুরি সেবা', 'থানা, অ্যাম্বুলেন্স ও ফায়ার সার্ভিস')">
             <div class="home-cat-icon theme-emergency"><i class="fa-solid fa-truck-medical"></i></div>
             <div class="home-cat-info">
               <h4>জরুরি সেবা</h4>
@@ -713,7 +729,7 @@
             </div>
           </div>
 
-          <div class="home-cat-card" id="catCard-পরিবহন" onclick="openCategoryPage('পরিবহন', 'বাস, ট্রেন, লঞ্চ ও রুট')">
+          <div class="home-cat-card" onclick="openCategoryPage('পরিবহন', 'বাস, ট্রেন, লঞ্চ ও রুট')">
             <div class="home-cat-icon theme-bus"><i class="fa-solid fa-bus"></i></div>
             <div class="home-cat-info">
               <h4>পরিবহন</h4>
@@ -721,7 +737,7 @@
             </div>
           </div>
 
-          <div class="home-cat-card" id="catCard-শপিং ও ব্যবসা" onclick="openCategoryPage('শপিং ও ব্যবসা', 'টানবাজার, মার্কেট ও মোকাম')">
+          <div class="home-cat-card" onclick="openCategoryPage('শপিং ও ব্যবসা', 'টানবাজার, মার্কেট ও মোকাম')">
             <div class="home-cat-icon theme-shop"><i class="fa-solid fa-bag-shopping"></i></div>
             <div class="home-cat-info">
               <h4>শপিং ও ব্যবসা</h4>
@@ -729,7 +745,7 @@
             </div>
           </div>
 
-          <div class="home-cat-card" id="catCard-মিষ্টি ও খাবার" onclick="openCategoryPage('মিষ্টি ও খাবার', 'বিখ্যাত মিষ্টি, রেস্তোরাঁ ও ক্যাফে')">
+          <div class="home-cat-card" onclick="openCategoryPage('মিষ্টি ও খাবার', 'বিখ্যাত মিষ্টি, রেস্তোরাঁ ও ক্যাফে')">
             <div class="home-cat-icon theme-food"><i class="fa-solid fa-utensils"></i></div>
             <div class="home-cat-info">
               <h4>মিষ্টি ও খাবার</h4>
@@ -853,8 +869,12 @@
   <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (z-index: 1400) -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
-      <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
-      <div style="display: flex; gap: 8px;">
+      <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+        <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
+        <!-- স্ক্রলে স্টিকি হেডারে প্রতিষ্ঠানের নাম -->
+        <h4 id="detailsStickyTitle" style="font-size: 15px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">...</h4>
+      </div>
+      <div style="display: flex; gap: 8px; flex-shrink: 0;">
         <button class="btn-circle" onclick="shareItem()"><i class="fa-solid fa-share-nodes"></i></button>
         <button class="btn-circle" id="detailsHeartBtn" onclick="toggleBookmarkActiveItem()"><i class="fa-regular fa-heart"></i></button>
       </div>
@@ -913,7 +933,7 @@
         </div>
       </div>
 
-      <!-- ক্রিটিক্যাল কেয়ার ও বিশেষ সুবিধা ব্লক (ICU, NICU, Dialysis ইত্যাদি) -->
+      <!-- ক্রিটিক্যাল কেয়ার ও বিশেষ সুবিধা ব্লক -->
       <div id="hospitalCareBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-heart-pulse"></i> ক্রিটিক্যাল কেয়ার ও বিশেষ শয্যা
@@ -949,6 +969,32 @@
         </div>
       </div>
 
+      <!-- হাসপাতালের প্রধান চিকিৎসা ও সেবা বিভাগ (Official Departments) -->
+      <div id="hospitalDeptsBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
+        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-hospital-user" style="color: var(--primary);"></i> চিকিৎসা ও সেবা বিভাগসমূহ
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted);">বিশেষায়িত ক্লিনিক্যাল ও ডায়াগনস্টিক বিভাগ</p>
+        
+        <div class="dept-badge-grid" id="hospitalDeptsList">
+          <span class="dept-badge-item">মেডিসিন</span>
+          <span class="dept-badge-item">জেনারেল ও ল্যাপারোস্কোপিক সার্জারি</span>
+          <span class="dept-badge-item">কার্ডিওলজি (হৃদরোগ)</span>
+          <span class="dept-badge-item">গাইনী ও প্রসূতি</span>
+          <span class="dept-badge-item">নবজাতক ও শিশু রোগ</span>
+          <span class="dept-badge-item">অর্থোপেডিক্স ও ট্রমা</span>
+          <span class="dept-badge-item">ইউরোলজি (কিডনি ও মূত্র)</span>
+          <span class="dept-badge-item">নিউরোসার্জারি ও স্পাইন</span>
+          <span class="dept-badge-item">গ্যাস্ট্রোএন্টারোলজি ও লিভার</span>
+          <span class="dept-badge-item">চর্ম ও যৌন রোগ</span>
+          <span class="dept-badge-item">নাক, কান ও গলা (ইএনটি)</span>
+          <span class="dept-badge-item">চক্ষু বিভাগ</span>
+          <span class="dept-badge-item">ডায়ালাইসিস ইউনিট</span>
+          <span class="dept-badge-item">রেডিও নিউক্লিয়ার থেরাপি (RNTZ)</span>
+          <span class="dept-badge-item">২৪ ঘণ্টা প্যাথলজি ও সিটি স্ক্যান</span>
+        </div>
+      </div>
+
       <!-- সোশ্যাল মিডিয়া ও অনলাইন প্রোফাইল বার -->
       <div id="socialLinksBox" style="display: none; background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px;">
         <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">
@@ -963,7 +1009,7 @@
         </div>
       </div>
 
-      <!-- শিক্ষা প্রতিষ্ঠান প্রিমিয়াম ব্লক -->
+      <!-- শুধু শিক্ষা প্রতিষ্ঠানের জন্য প্রিমিয়াম ব্লক (হাসপাতালে কখনোই আসবে না) -->
       <div id="eduSectionBox" style="display: none; flex-direction: column; gap: 12px;">
         <div id="eduPrincipalCard" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
           <div style="width: 44px; height: 44px; border-radius: 50%; background: #EDE9FE; color: #7C3AED; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
@@ -1262,6 +1308,7 @@
       document.getElementById('categoryPage').classList.remove('open');
     }
 
+    // নিখুঁত ও নির্ভুল ক্যাটাগরি ফিল্টারিং লজিক (যা সরাসরি শিটের category কলাম দেখে কাজ করে)
     function renderCategoryItems() {
       const container = document.getElementById('categoryListings');
       container.innerHTML = '';
@@ -1269,26 +1316,21 @@
       const query = document.getElementById('catSearchInput').value.toLowerCase().trim();
 
       const filtered = placesData.filter(item => {
-        const itemCat = ((item.category || '') + ' ' + (item.name || '')).toLowerCase();
+        const itemCat = (item.category || '').trim();
         const itemArea = (item.area || '').toLowerCase();
         const itemAddress = (item.address || '').toLowerCase();
-        const selectedCat = currentCategory.toLowerCase();
         
-        let matchCat = (currentCategory === 'সব');
-        if (!matchCat) {
-          if (selectedCat.includes('সরকারি হাসপাতাল') && (itemCat.includes('সরকারি') || itemCat.includes('৩০০ শয্যা') || itemCat.includes('ভিক্টোরিয়া'))) matchCat = true;
-          else if (selectedCat.includes('বেসরকারি হাসপাতাল') && (itemCat.includes('বেসরকারি') || itemCat.includes('প্রাইভেট হাসপাতাল') || itemCat.includes('ক্লিনিক'))) matchCat = true;
-          else if (selectedCat.includes('ডায়াগনস্টিক') && (itemCat.includes('ডায়াগনস্টিক') || itemCat.includes('কনসালটেশন') || itemCat.includes('ল্যাব'))) matchCat = true;
-          else if (selectedCat.includes('ডেন্টাল') && (itemCat.includes('ডেন্টাল') || itemCat.includes('দাঁত') || itemCat.includes('dental'))) matchCat = true;
-          else if (selectedCat.includes('শিক্ষা') && (itemCat.includes('শিক্ষা') || itemCat.includes('স্কুল') || itemCat.includes('কলেজ') || itemCat.includes('মাদরাসা'))) matchCat = true;
-          else if (selectedCat.includes('সংবাদ') && (itemCat.includes('সংবাদপত্র') || itemCat.includes('পত্রিকা') || itemCat.includes('নিউজ'))) matchCat = true;
-          else if (selectedCat.includes('সিনেমা') && (itemCat.includes('সিনেমা') || itemCat.includes('মুভি') || itemCat.includes('হল'))) matchCat = true;
-          else if (selectedCat.includes('দর্শনীয়') && (itemCat.includes('দর্শনীয়') || itemCat.includes('পর্যটন') || itemCat.includes('দুর্গ') || itemCat.includes('পানাম'))) matchCat = true;
-          else if (selectedCat.includes('জরুরি') && (itemCat.includes('জরুরি') || itemCat.includes('পুলিশ') || itemCat.includes('ফায়ার') || itemCat.includes('অ্যাম্বুলেন্স'))) matchCat = true;
-          else if (selectedCat.includes('পরিবহন') && (itemCat.includes('পরিবহন') || itemCat.includes('বাস') || itemCat.includes('ট্রেন') || itemCat.includes('লঞ্চ'))) matchCat = true;
-          else if (selectedCat.includes('শপিং') && (itemCat.includes('শপিং') || itemCat.includes('ব্যবসা') || itemCat.includes('মার্কেট'))) matchCat = true;
-          else if (selectedCat.includes('মিষ্টি') && (itemCat.includes('মিষ্টি') || itemCat.includes('খাবার') || itemCat.includes('রেস্তোরাঁ'))) matchCat = true;
-          else matchCat = itemCat.includes(selectedCat);
+        let matchCat = false;
+        if (currentCategory === 'সব') {
+          matchCat = true;
+        } else if (currentCategory === 'সরকারি হাসপাতাল') {
+          matchCat = (itemCat === 'সরকারি হাসপাতাল');
+        } else if (currentCategory === 'বেসরকারি হাসপাতাল') {
+          matchCat = (itemCat === 'বেসরকারি হাসপাতাল' || itemCat === 'হাসপাতাল');
+        } else if (currentCategory === 'শিক্ষা প্রতিষ্ঠান') {
+          matchCat = (itemCat === 'শিক্ষা প্রতিষ্ঠান' || itemCat === 'স্কুল' || itemCat === 'কলেজ' || itemCat === 'মাদরাসা');
+        } else {
+          matchCat = itemCat.toLowerCase().includes(currentCategory.toLowerCase());
         }
 
         let matchArea = (selectedCatArea === 'সব এলাকা');
@@ -1476,24 +1518,27 @@
 
     function openDetails(item) {
       activeItem = item;
+      const cat = (item.category || '').trim();
+
+      document.getElementById('detailsStickyTitle').innerText = item.name || 'বিস্তারিত';
       document.getElementById('detailsName').innerText = item.name || 'তথ্য নেই';
-      document.getElementById('detailsCategory').innerText = item.category || 'সেবা';
+      document.getElementById('detailsCategory').innerText = cat || 'সেবা';
       document.getElementById('detailsAddress').innerText = item.address || item.area || 'নারায়ণগঞ্জ';
       document.getElementById('detailsTiming').innerText = item.timing || 'খোলা আছে';
       document.getElementById('detailsPhone').innerText = item.phone || 'নম্বর নেই';
 
-      // EIIN ব্যাজ হ্যান্ডলিং
+      // EIIN ব্যাজ (শুধুমাত্র শিক্ষা প্রতিষ্ঠানের জন্য)
       const eiinEl = document.getElementById('detailsEiin');
-      if (item.eiin && item.eiin.toString().trim() !== '') {
+      if (cat === 'শিক্ষা প্রতিষ্ঠান' && item.eiin && item.eiin.toString().trim() !== '') {
         eiinEl.innerText = `EIIN: ${item.eiin}`;
         eiinEl.style.display = 'inline-block';
       } else {
         eiinEl.style.display = 'none';
       }
 
-      // শয্যা ব্যাজ হ্যান্ডলিং (Beds Badge)
+      // শয্যা ব্যাজ (শুধুমাত্র হাসপাতালের জন্য)
       const bedsEl = document.getElementById('detailsBeds');
-      if (item.beds && item.beds.toString().trim() !== '') {
+      if ((cat.includes('হাসপাতাল') || cat.includes('ক্লিনিক')) && item.beds && item.beds.toString().trim() !== '') {
         bedsEl.innerHTML = `<i class="fa-solid fa-bed"></i> ${item.beds}`;
         bedsEl.style.display = 'inline-block';
       } else {
@@ -1511,12 +1556,12 @@
         landmarkBox.style.display = 'none';
       }
 
-      // ১. চেম্বার ডাক্তার বাটন
+      // ১. চেম্বার ডাক্তার বাটন (শুধুমাত্র মেডিকেল/হাসপাতাল/ডায়াগনস্টিক)
       const chamberBox = document.getElementById('chamberDocsBtnBox');
-      const isMedical = (item.category || '').includes('চিকিৎসা') || (item.category || '').includes('ডায়াগনস্টিক') || (item.category || '').includes('হাসপাতাল') || (item.category || '').includes('ডেন্টাল') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল') || (item.name || '').includes('ডেন্টাল');
+      const isMedical = cat.includes('হাসপাতাল') || cat.includes('ডায়াগনস্টিক') || cat.includes('ডেন্টাল');
       chamberBox.style.display = isMedical ? 'block' : 'none';
 
-      // ২. ক্রিটিক্যাল কেয়ার ও অ্যাম্বুলেন্স ব্লক
+      // ২. ক্রিটিক্যাল কেয়ার ও অ্যাম্বুলেন্স ব্লক (শুধুমাত্র হাসপাতাল)
       const ambBox = document.getElementById('hospitalAmbulanceBox');
       const ambBtn = document.getElementById('ambulanceCallBtn');
       if (item.ambulance && item.ambulance.trim() !== '') {
@@ -1528,13 +1573,18 @@
       }
 
       const careBox = document.getElementById('hospitalCareBox');
-      const isHospital = (item.category || '').includes('হাসপাতাল') || (item.name || '').includes('মেডিকেল') || (item.name || '').includes('হাসপাতাল');
+      const deptsBox = document.getElementById('hospitalDeptsBox');
+      const isHospital = cat === 'সরকারি হাসপাতাল' || cat === 'বেসরকারি হাসপাতাল' || cat === 'হাসপাতাল';
+      
       if (isHospital && (item.beds || item.facilities)) {
         careBox.style.display = 'block';
         document.getElementById('facilitiesText').innerText = item.facilities || '২৪ ঘণ্টা ফার্মেসী, ল্যাব ও জরুরি চিকিৎসা সেবা';
       } else {
         careBox.style.display = 'none';
       }
+
+      // হাসপাতালের প্রধান চিকিৎসা বিভাগসমূহ
+      deptsBox.style.display = isHospital ? 'block' : 'none';
 
       // ৩. সোশ্যাল মিডিয়া ও ওয়েবসাইট বার
       const socialBox = document.getElementById('socialLinksBox');
@@ -1578,11 +1628,11 @@
 
       socialBox.style.display = hasSocial ? 'block' : 'none';
 
-      // ৪. শিক্ষা প্রতিষ্ঠান ব্লক
+      // ৪. শুধু আসল শিক্ষা প্রতিষ্ঠানের জন্য রেজাল্ট ব্লক
       const eduBox = document.getElementById('eduSectionBox');
-      const isEdu = (item.category || '').includes('শিক্ষা') || (item.name || '').includes('কলেজ') || (item.name || '').includes('স্কুল') || (item.name || '').includes('মাদরাসা');
+      const isActualEdu = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা');
       
-      if (isEdu) {
+      if (isActualEdu) {
         eduBox.style.display = 'flex';
         const principalCard = document.getElementById('eduPrincipalCard');
         if (item.principal && item.principal.trim() !== '') {
@@ -1639,7 +1689,7 @@
       if (!matchedPlace) {
         matchedPlace = {
           name: chamberName,
-          category: 'ডায়াগনস্টিক ও হাসপাতাল',
+          category: 'বেসরকারি হাসপাতাল',
           area: chamberArea || 'নারায়ণগঞ্জ',
           address: `${chamberName}, ${chamberArea || 'নারায়ণগঞ্জ'}`,
           timing: 'খোলা আছে',
