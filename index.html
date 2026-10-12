@@ -285,7 +285,6 @@
       max-width: 440px;
       height: 100vh;
       background: var(--bg);
-      z-index: 500;
       display: flex;
       flex-direction: column;
       overflow-y: auto;
@@ -296,10 +295,12 @@
       transform: translateX(-50%) translateX(0);
     }
 
-    .details-view { background: #FFFFFF; z-index: 1000; }
-    #doctorPage { z-index: 1100; }
+    #categoryPage { z-index: 500; }
+    #doctorPage { z-index: 600; }
+    #bookmarkPage { z-index: 700; }
     #doctorProfileView { z-index: 1200; background: #FFFFFF; }
-    #bookmarkPage { z-index: 1300; }
+    #detailsView { z-index: 1400; background: #FFFFFF; }
+    #eduResultsPage { z-index: 1600; background: #F8F9FA; }
 
     .top-sub-header {
       position: sticky;
@@ -436,6 +437,18 @@
       font-size: 12px;
       font-weight: 600;
       margin-top: 6px;
+    }
+
+    .eiin-badge {
+      display: inline-block;
+      background: #EDE9FE;
+      color: #7C3AED;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 6px;
+      margin-left: 6px;
     }
 
     .doc-nav-card {
@@ -789,7 +802,7 @@
     <div class="page-listings" id="bookmarkListings"></div>
   </div>
 
-  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন -->
+  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (z-index: 1400) -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDetails()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -804,7 +817,10 @@
     <div class="details-content">
       <div>
         <h2 class="details-title" id="detailsName">...</h2>
-        <span class="details-tag" id="detailsCategory">ক্যাটাগরি</span>
+        <div style="display: flex; align-items: center; flex-wrap: wrap;">
+          <span class="details-tag" id="detailsCategory">ক্যাটাগরি</span>
+          <span class="eiin-badge" id="detailsEiin" style="display: none;">EIIN: -</span>
+        </div>
       </div>
 
       <div class="action-buttons" style="margin-top: -2px;">
@@ -816,6 +832,7 @@
         </a>
       </div>
 
+      <!-- ডাক্তার তালিকা নেভিগেশন কার্ড -->
       <div id="chamberDocsBtnBox" style="display: none;">
         <div class="doc-nav-card" onclick="viewChamberDoctors()">
           <div class="doc-nav-left">
@@ -829,52 +846,34 @@
         </div>
       </div>
 
-		<!-- শিক্ষা প্রতিষ্ঠান প্রিমিয়াম কার্ড (অধ্যক্ষ ও রেজাল্ট) -->
-      <div id="eduDetailsBox" style="display: none; flex-direction: column; gap: 12px;">
+      <!-- শিক্ষা প্রতিষ্ঠান প্রিমিয়াম ব্লক -->
+      <div id="eduSectionBox" style="display: none; flex-direction: column; gap: 12px;">
         
         <!-- বর্তমান অধ্যক্ষ কার্ড -->
-        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
+        <div id="eduPrincipalCard" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
           <div style="width: 44px; height: 44px; border-radius: 50%; background: #EDE9FE; color: #7C3AED; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
             <i class="fa-solid fa-user-tie"></i>
           </div>
           <div>
-            <span style="font-size: 11px; font-weight: 600; color: #7C3AED; text-transform: uppercase;">বর্তমান অধ্যক্ষ</span>
+            <span style="font-size: 11px; font-weight: 600; color: #7C3AED; text-transform: uppercase;">বর্তমান অধ্যক্ষ / প্রধান শিক্ষক</span>
             <div id="eduPrincipalName" style="font-size: 15px; font-weight: 700; color: var(--text);">-</div>
-            <div id="eduEiinBox" style="font-size: 11px; color: var(--text-muted); margin-top: 1px;">EIIN: -</div>
           </div>
         </div>
 
-        <!-- ফলাফল ড্যাশবোর্ড কার্ড -->
-        <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 12px; padding: 14px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <div style="font-weight: 700; font-size: 14px; color: #0F5132;">
-              <i class="fa-solid fa-graduation-cap"></i> পাবলিক পরীক্ষার ফলাফল
-            </div>
-            <span id="eduExamYear" style="font-size: 11px; background: #DCFCE7; color: #166534; padding: 2px 8px; border-radius: 10px; font-weight: 700;">HSC</span>
-          </div>
-
-          <div id="eduResultGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center;">
-            <div style="background: #F1F5F9; padding: 8px 4px; border-radius: 8px;">
-              <div style="font-size: 10px; color: var(--text-muted);">পরীক্ষার্থী</div>
-              <div id="resAppeared" style="font-weight: 700; font-size: 14px; color: var(--text);">-</div>
-            </div>
-            <div style="background: #ECFDF5; padding: 8px 4px; border-radius: 8px;">
-              <div style="font-size: 10px; color: #047857;">উত্তীর্ণ</div>
-              <div id="resPassed" style="font-weight: 700; font-size: 14px; color: #047857;">-</div>
-            </div>
-            <div style="background: #FFFBEB; padding: 8px 4px; border-radius: 8px;">
-              <div style="font-size: 10px; color: #B45309;">জিপিএ-৫</div>
-              <div id="resGpa5" style="font-weight: 700; font-size: 14px; color: #B45309;">-</div>
-            </div>
-            <div style="background: #EFF6FF; padding: 8px 4px; border-radius: 8px;">
-              <div style="font-size: 10px; color: #1D4ED8;">পাসের হার</div>
-              <div id="resRate" style="font-weight: 700; font-size: 13px; color: #1D4ED8;">-</div>
+        <!-- ফলাফল পেজ নেভিগেশন কার্ড -->
+        <div class="doc-nav-card" style="background: #F0FDF4; border-color: #BBF7D0;" onclick="viewInstitutionResults()">
+          <div class="doc-nav-left">
+            <div class="doc-nav-icon" style="background: #16A34A;"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: #166534;">পাবলিক পরীক্ষার ফলাফল ও ইতিহাস</div>
+              <div style="font-size: 12px; color: #15803D;">বছরভিত্তিক ফলাফল ও পাসের হার দেখুন</div>
             </div>
           </div>
+          <i class="fa-solid fa-chevron-right" style="color: #16A34A; font-size: 14px;"></i>
         </div>
 
       </div>
-	  
+
       <div class="info-list">
         <div class="info-item">
           <i class="fa-solid fa-location-dot"></i>
@@ -910,7 +909,7 @@
     </div>
   </div>
 
-  <!-- ৬. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন (ডিফল্ট সহজ স্ট্যাটিক রূপ) -->
+  <!-- ৬. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন (z-index: 1200) -->
   <div class="details-view" id="doctorProfileView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDoctorProfile()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -941,13 +940,28 @@
     </div>
   </div>
 
+  <!-- ৭. পরীক্ষার ফলাফল ডেডিকেটেড পেজ (z-index: 1600) -->
+  <div class="slide-page" id="eduResultsPage">
+    <div class="top-sub-header">
+      <button class="btn-circle" onclick="closeInstitutionResults()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div>
+        <h3 id="eduResultsTitle">পরীক্ষার ফলাফল</h3>
+        <p id="eduResultsSub" style="font-size: 12px; color: var(--text-muted);">বছরভিত্তিক সাফল্যের ইতিহাস</p>
+      </div>
+    </div>
+
+    <div class="page-listings" id="eduResultsListings"></div>
+  </div>
+
   <script>
     const SHEET_ID = "1ctXswktft11lTCw_TiTbwoF2jgmLsHaf4Zno23QImjQ";
     const API_PLACES = `https://opensheet.elk.sh/${SHEET_ID}/Sheet1`;
     const API_DOCTORS = `https://opensheet.elk.sh/${SHEET_ID}/Doctors`;
+    const API_RESULTS = `https://opensheet.elk.sh/${SHEET_ID}/Results`;
 
     let placesData = [];
     let doctorsData = [];
+    let resultsData = [];
     let currentCategory = 'সব';
     let currentChamberFilter = null;
     let selectedCatArea = 'সব এলাকা';
@@ -1364,6 +1378,15 @@
       document.getElementById('detailsTiming').innerText = item.timing || 'খোলা আছে';
       document.getElementById('detailsPhone').innerText = item.phone || 'নম্বর নেই';
 
+      // EIIN ব্যাজ হ্যান্ডলিং
+      const eiinEl = document.getElementById('detailsEiin');
+      if (item.eiin && item.eiin.toString().trim() !== '') {
+        eiinEl.innerText = `EIIN: ${item.eiin}`;
+        eiinEl.style.display = 'inline-block';
+      } else {
+        eiinEl.style.display = 'none';
+      }
+
       updateHeartIcon(document.getElementById('detailsHeartBtn'), isItemBookmarked(item.name));
 
       const landmarkBox = document.getElementById('detailsLandmarkBox');
@@ -1375,29 +1398,23 @@
         landmarkBox.style.display = 'none';
       }
 
+      // ১. চেম্বার ডাক্তার বাটন
       const chamberBox = document.getElementById('chamberDocsBtnBox');
       const isMedical = (item.category || '').includes('চিকিৎসা') || (item.category || '').includes('ডায়াগনস্টিক') || (item.category || '').includes('হাসপাতাল') || (item.category || '').includes('ডেন্টাল') || (item.name || '').includes('ডায়াগনস্টিক') || (item.name || '').includes('হাসপাতাল') || (item.name || '').includes('ডেন্টাল');
       chamberBox.style.display = isMedical ? 'block' : 'none';
-	  
-	  // শিক্ষা প্রতিষ্ঠান ডাটা চেক ও ডিসপ্লে
-      const eduBox = document.getElementById('eduDetailsBox');
-      const isEdu = (item.category || '').includes('শিক্ষা') || (item.name || '').includes('কলেজ') || (item.name || '').includes('স্কুল');
 
-      if (isEdu && (item.principal || item.result_summary)) {
+      // ২. শিক্ষা প্রতিষ্ঠান ব্লক
+      const eduBox = document.getElementById('eduSectionBox');
+      const isEdu = (item.category || '').includes('শিক্ষা') || (item.name || '').includes('কলেজ') || (item.name || '').includes('স্কুল') || (item.name || '').includes('মাদরাসা');
+      
+      if (isEdu) {
         eduBox.style.display = 'flex';
-        document.getElementById('eduPrincipalName').innerText = item.principal || 'তথ্য নেই';
-        document.getElementById('eduEiinBox').innerText = item.eiin ? `EIIN: ${item.eiin}` : '';
-        document.getElementById('eduExamYear').innerText = item.result_year || 'সর্বশেষ ফলাফল';
-
-        if (item.result_summary) {
-          const parts = item.result_summary.split('|').map(s => s.trim());
-          document.getElementById('resAppeared').innerText = parts[0] || '-';
-          document.getElementById('resPassed').innerText = parts[1] || '-';
-          document.getElementById('resGpa5').innerText = parts[2] || '-';
-          document.getElementById('resRate').innerText = parts[3] || '-';
-          document.getElementById('eduResultGrid').style.display = 'grid';
+        const principalCard = document.getElementById('eduPrincipalCard');
+        if (item.principal && item.principal.trim() !== '') {
+          document.getElementById('eduPrincipalName').innerText = item.principal;
+          principalCard.style.display = 'flex';
         } else {
-          document.getElementById('eduResultGrid').style.display = 'none';
+          principalCard.style.display = 'none';
         }
       } else {
         eduBox.style.display = 'none';
@@ -1430,6 +1447,36 @@
       document.getElementById('detailsView').classList.remove('open');
     }
 
+    // চেম্বার থেকে প্রতিষ্ঠানে যাওয়ার ফাংশন
+    function goToChamberDetails(chamberName, chamberArea) {
+      if (!chamberName) return;
+
+      const cleanTarget = chamberName.toLowerCase()
+        .replace(/ডায়াগনস্টিক|সেন্টার|হাসপাতাল|\(প্রাঃ\)|\(pvt\.\)|ltd\.|লিঃ|-/g, '')
+        .trim();
+
+      let matchedPlace = placesData.find(p => {
+        const pName = (p.name || '').toLowerCase()
+          .replace(/ডায়াগনস্টিক|সেন্টার|হাসপাতাল|\(প্রাঃ\)|\(pvt\.\)|ltd\.|লিঃ|-/g, '')
+          .trim();
+        return pName.includes(cleanTarget) || cleanTarget.includes(pName);
+      });
+
+      if (!matchedPlace) {
+        matchedPlace = {
+          name: chamberName,
+          category: 'ডায়াগনস্টিক ও হাসপাতাল',
+          area: chamberArea || 'নারায়ণগঞ্জ',
+          address: `${chamberName}, ${chamberArea || 'নারায়ণগঞ্জ'}`,
+          timing: 'খোলা আছে',
+          phone: '',
+          map_url: `https://maps.google.com/?q=${encodeURIComponent(chamberName + ' ' + (chamberArea || 'নারায়ণগঞ্জ'))}`
+        };
+      }
+
+      openDetails(matchedPlace);
+    }
+
     function openDoctorProfile(doc) {
       activeDoctor = doc;
       document.getElementById('docProfileName').innerText = doc.name || 'ডাক্তারের নাম';
@@ -1457,22 +1504,39 @@
 
           const item = document.createElement('div');
           item.className = 'chamber-card-item';
-          item.innerHTML = `
+
+          const headerRow = document.createElement('div');
+          headerRow.style.cssText = "display: flex; justify-content: space-between; align-items: center; cursor: pointer;";
+          headerRow.onclick = function() {
+            goToChamberDetails(ch, area);
+          };
+
+          headerRow.innerHTML = `
             <div style="font-weight: 700; font-size: 15px; color: #0F5132;">
               <i class="fa-solid fa-hospital" style="color: #0284C7;"></i> ${ch}
             </div>
-            <div style="font-size: 13px; color: #475569;">
+            <span style="font-size: 11px; background: #E0F2FE; color: #0284C7; padding: 2px 8px; border-radius: 12px; font-weight: 600;">
+              প্রতিষ্ঠান দেখুন <i class="fa-solid fa-arrow-right" style="font-size: 9px;"></i>
+            </span>
+          `;
+
+          const bodyContent = document.createElement('div');
+          bodyContent.innerHTML = `
+            <div style="font-size: 13px; color: #475569; margin-top: 4px;">
               <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> ${area}
             </div>
-            <div style="font-size: 13px; color: #475569;">
+            <div style="font-size: 13px; color: #475569; margin-top: 2px;">
               <i class="fa-solid fa-clock" style="color: var(--primary);"></i> ${time}
             </div>
-            <div style="margin-top: 4px;">
-              <a href="${ph ? 'tel:' + ph : '#'}" class="btn-action btn-call" style="width: 100%; border-radius: 8px;">
+            <div style="margin-top: 8px;">
+              <a href="${ph ? 'tel:' + ph : '#'}" class="btn-action btn-call" style="width: 100%; border-radius: 8px;" onclick="event.stopPropagation()">
                 <i class="fa-solid fa-phone"></i> সিরিয়াল কল (${ph || 'নম্বর নেই'})
               </a>
             </div>
           `;
+
+          item.appendChild(headerRow);
+          item.appendChild(bodyContent);
           listContainer.appendChild(item);
         });
       }
@@ -1485,23 +1549,93 @@
       document.getElementById('doctorProfileView').classList.remove('open');
     }
 
+    // আলাদা রেজাল্ট পেজ খোলা
+    function viewInstitutionResults() {
+      if (!activeItem) return;
+
+      document.getElementById('eduResultsTitle').innerText = activeItem.name;
+      document.getElementById('eduResultsSub').innerText = 'পাবলিক পরীক্ষার বিগত ফলাফল ও সাফল্যের ইতিহাস';
+
+      const container = document.getElementById('eduResultsListings');
+      container.innerHTML = '';
+
+      const cleanInst = (activeItem.name || '').toLowerCase().replace(/সরকারি|কলেজ|স্কুল|মাদরাসা/g, '').trim();
+
+      const matchedResults = resultsData.filter(r => {
+        const rInst = (r.institution || '').toLowerCase().replace(/সরকারি|কলেজ|স্কুল|মাদরাসা/g, '').trim();
+        return rInst.includes(cleanInst) || cleanInst.includes(rInst);
+      });
+
+      if (matchedResults.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--text-muted); padding: 50px 20px;">
+            <i class="fa-solid fa-folder-open" style="font-size: 38px; color: #CBD5E1; margin-bottom: 12px;"></i>
+            <p>এই প্রতিষ্ঠানের কোনো ফলাফল এখনো যুক্ত করা হয়নি।</p>
+          </div>
+        `;
+      } else {
+        matchedResults.forEach(r => {
+          const card = document.createElement('div');
+          card.style.cssText = "background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);";
+
+          card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+              <div style="font-weight: 700; font-size: 16px; color: #0F5132;">
+                <i class="fa-solid fa-calendar-check" style="color: #16A34A;"></i> ${r.exam || 'HSC'} ${r.year || ''}
+              </div>
+              <span style="font-size: 12px; font-weight: 700; color: #16A34A; background: #DCFCE7; padding: 2px 10px; border-radius: 20px;">
+                পাস: ${r.pass_rate || '-'}
+              </span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; margin-top: 4px;">
+              <div style="background: #F8FAFC; padding: 10px 4px; border-radius: 8px; border: 1px solid #E2E8F0;">
+                <div style="font-size: 11px; color: var(--text-muted);">মোট পরীক্ষার্থী</div>
+                <div style="font-weight: 700; font-size: 15px; color: var(--text); margin-top: 2px;">${r.appeared || '-'}</div>
+              </div>
+              <div style="background: #F0FDF4; padding: 10px 4px; border-radius: 8px; border: 1px solid #BBF7D0;">
+                <div style="font-size: 11px; color: #166534;">উত্তীর্ণ শিক্ষার্থী</div>
+                <div style="font-weight: 700; font-size: 15px; color: #166534; margin-top: 2px;">${r.passed || '-'}</div>
+              </div>
+              <div style="background: #FFFBEB; padding: 10px 4px; border-radius: 8px; border: 1px solid #FDE68A;">
+                <div style="font-size: 11px; color: #B45309;">জিপিএ-৫ (A+)</div>
+                <div style="font-weight: 700; font-size: 15px; color: #B45309; margin-top: 2px;">${r.gpa5 || '-'}</div>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      }
+
+      document.getElementById('eduResultsPage').classList.add('open');
+      document.getElementById('eduResultsPage').scrollTop = 0;
+      window.history.pushState({ page: 'eduResults' }, '');
+    }
+
+    function closeInstitutionResults() {
+      document.getElementById('eduResultsPage').classList.remove('open');
+    }
+
     function goHome() {
+      closeInstitutionResults();
+      closeDetails();
       closeDoctorProfile();
       closeDoctorPage();
       closeBookmarkPage();
-      closeDetails();
       closeCategoryPage();
     }
 
     window.onpopstate = function() {
-      if (document.getElementById('doctorProfileView').classList.contains('open')) {
+      if (document.getElementById('eduResultsPage').classList.contains('open')) {
+        closeInstitutionResults();
+      } else if (document.getElementById('detailsView').classList.contains('open')) {
+        closeDetails();
+      } else if (document.getElementById('doctorProfileView').classList.contains('open')) {
         closeDoctorProfile();
       } else if (document.getElementById('bookmarkPage').classList.contains('open')) {
         closeBookmarkPage();
       } else if (document.getElementById('doctorPage').classList.contains('open')) {
         closeDoctorPage();
-      } else if (document.getElementById('detailsView').classList.contains('open')) {
-        closeDetails();
       } else if (document.getElementById('categoryPage').classList.contains('open')) {
         closeCategoryPage();
       }
@@ -1533,12 +1667,14 @@
 
     async function loadData() {
       try {
-        const [resPlaces, resDocs] = await Promise.all([
+        const [resPlaces, resDocs, resResults] = await Promise.all([
           fetch(API_PLACES),
-          fetch(API_DOCTORS)
+          fetch(API_DOCTORS),
+          fetch(API_RESULTS)
         ]);
         placesData = await resPlaces.json();
         doctorsData = await resDocs.json();
+        resultsData = await resResults.json();
 
         updateVisibleCategoryCards();
       } catch (err) {
