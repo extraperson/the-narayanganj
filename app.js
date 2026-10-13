@@ -527,7 +527,7 @@ function openDetails(item) {
     }
   }
 
-  // ৩. বিভাগসমূহ (গুগল শিটের departments কলাম থেকে ডাইনামিক রেন্ডার)
+  // ৩. বিভাগসমূহ (departments)
   const deptsBox = document.getElementById('hospitalDeptsBox');
   const deptsList = document.getElementById('hospitalDeptsList');
   if (deptsBox && deptsList) {
@@ -549,7 +549,7 @@ function openDetails(item) {
     }
   }
 
-  // ৪. সেবাসমূহ ও সুযোগ-সুবিধা (গুগল শিটের services কলাম থেকে ডাইনামিক রেন্ডার)
+  // ৪. সেবাসমূহ (services)
   const servicesBox = document.getElementById('hospitalServicesBox');
   const servicesList = document.getElementById('hospitalServicesList');
   if (servicesBox && servicesList) {
@@ -574,7 +574,32 @@ function openDetails(item) {
     }
   }
 
-  // ৫. সোশ্যাল মিডিয়া ও ওয়েবসাইট বার
+  // ৫. ডায়াগনস্টিক সার্ভিস (diagnostics)
+  const diagBox = document.getElementById('hospitalDiagBox');
+  const diagList = document.getElementById('hospitalDiagList');
+  if (diagBox && diagList) {
+    diagList.innerHTML = '';
+    const rawDiag = (item.diagnostics || '').trim();
+    if (rawDiag) {
+      rawDiag.split(',').forEach(dg => {
+        const dName = dg.trim();
+        if (dName) {
+          const badge = document.createElement('span');
+          badge.className = 'dept-badge-item';
+          badge.style.borderColor = '#FDE68A';
+          badge.style.color = '#B45309';
+          badge.style.background = '#FFFBEB';
+          badge.innerText = dName;
+          diagList.appendChild(badge);
+        }
+      });
+      diagBox.style.display = 'block';
+    } else {
+      diagBox.style.display = 'none';
+    }
+  }
+
+  // ৬. সোশ্যাল মিডিয়া ও ওয়েবসাইট বার
   const socialBox = document.getElementById('socialLinksBox');
   const webBtn = document.getElementById('linkWebsite');
   const fbBtn = document.getElementById('linkFacebook');
@@ -625,7 +650,7 @@ function openDetails(item) {
 
   if (socialBox) socialBox.style.display = hasSocial ? 'block' : 'none';
 
-  // ৬. শুধু শিক্ষা প্রতিষ্ঠানের জন্য রেজাল্ট ব্লক
+  // ৭. শুধু শিক্ষা প্রতিষ্ঠানের জন্য রেজাল্ট ব্লক
   const eduBox = document.getElementById('eduSectionBox');
   if (eduBox) {
     const isActualEdu = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা');
