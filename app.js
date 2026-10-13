@@ -259,6 +259,8 @@ function renderCategoryItems() {
       matchCat = (itemCat === 'বেসরকারি হাসপাতাল' || itemCat === 'হাসপাতাল');
     } else if (currentCategory === 'শিক্ষা প্রতিষ্ঠান') {
       matchCat = (itemCat === 'শিক্ষা প্রতিষ্ঠান' || itemCat === 'স্কুল' || itemCat === 'কলেজ' || itemCat === 'মাদরাসা');
+	} else if (currentCategory === 'জেনারেল স্টোর') {
+      matchCat = (itemCat === 'জেনারেল স্টোর' || itemCat.includes('স্টোর') || itemCat.includes('মুদি'));
     } else {
       matchCat = itemCat.toLowerCase().includes(currentCategory.toLowerCase());
     }
