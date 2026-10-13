@@ -486,39 +486,73 @@ function renderDoctorItems() {
   });
 }
 
-// পত্রিকার আরএসএস ফিড থেকে লাইভ হেডলাইন নিয়ে আসার ফাংশন
+// পত্রিকার আরএসএস ফিড থেকে লাইভ হেডলাইন নিয়ে আসার শক্তিশালী ফাংশন
 async function fetchLiveNews(feedUrl) {
   const container = document.getElementById('newspaperFeedList');
   if (!container) return;
-  container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px;">সর্বশেষ সংবাদ লোড হচ্ছে...</div>';
+  container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px;"><i class="fa-solid fa-spinner fa-spin"></i> সর্বশেষ সংবাদ লোড হচ্ছে...</div>';
 
+  const cleanUrl = feedUrl.trim();
+
+  // পদ্ধতি ১: rss2json সার্ভিস
   try {
-    const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+    const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(cleanUrl)}`;
     const res = await fetch(proxyUrl);
     const data = await res.json();
 
     if (data.status === 'ok' && data.items && data.items.length > 0) {
-      container.innerHTML = '';
-      // প্রথম ৫টি সংবাদ নেওয়া হচ্ছে
-      const topNews = data.items.slice(0, 5);
-      topNews.forEach(news => {
-        const item = document.createElement('a');
-        item.className = 'news-feed-item';
-        item.href = news.link;
-        item.target = '_blank';
-        item.rel = 'noopener noreferrer';
-        item.innerHTML = `
-          <i class="fa-solid fa-circle-dot"></i>
-          <div class="news-feed-title">${news.title}</div>
-        `;
-        container.appendChild(item);
-      });
-    } else {
-      container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center;">সংবাদ পাওয়া যায়নি।</div>';
+      renderNewsItems(container, data.items.slice(0, 5).map(item => ({ title: item.title, link: item.link })));
+      return;
+    }
+  } catch (e) {
+    console.warn("rss2json ব্যর্থ হয়েছে, ব্যাকআপ পদ্ধতিতে চেষ্টা করা হচ্ছে...", e);
+  }
+
+  // পদ্ধতি ২: ব্যাকআপ প্রক্সি + নেটিভ XML পার্সার (যদি পদ্ধতি ১ আটকে যায়)
+  try {
+    const backupUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(cleanUrl)}`;
+    const res = await fetch(backupUrl);
+    const text = await res.text();
+    
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(text, "text/xml");
+    const items = xmlDoc.querySelectorAll("item");
+
+    if (items && items.length > 0) {
+      const newsList = [];
+      for (let i = 0; i < Math.min(items.length, 5); i++) {
+        const title = items[i].querySelector("title")?.textContent || '';
+        const link = items[i].querySelector("link")?.textContent || '#';
+        if (title) newsList.push({ title, link });
+      }
+
+      if (newsList.length > 0) {
+        renderNewsItems(container, newsList);
+        return;
+      }
     }
   } catch (err) {
-    container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center;">সংবাদ লোড করতে সমস্যা হয়েছে।</div>';
+    console.error("উভয় পদ্ধতিতেই সংবাদ লোড ব্যর্থ:", err);
   }
+
+  container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px;">সংবাদ লোড করা সম্ভব হয়নি।</div>';
+}
+
+// হেডলাইন রেন্ডার হেল্পার
+function renderNewsItems(container, items) {
+  container.innerHTML = '';
+  items.forEach(news => {
+    const item = document.createElement('a');
+    item.className = 'news-feed-item';
+    item.href = news.link;
+    item.target = '_blank';
+    item.rel = 'noopener noreferrer';
+    item.innerHTML = `
+      <i class="fa-solid fa-circle-dot"></i>
+      <div class="news-feed-title">${news.title}</div>
+    `;
+    container.appendChild(item);
+  });
 }
 
 function openDetails(item) {
