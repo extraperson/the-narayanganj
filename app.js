@@ -493,52 +493,75 @@ async function fetchLiveNews(feedUrl) {
   container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px;"><i class="fa-solid fa-spinner fa-spin"></i> সর্বশেষ সংবাদ লোড হচ্ছে...</div>';
 
   const cleanUrl = feedUrl.trim();
+  let newsList = [];
 
-  // পদ্ধতি ১: rss2json সার্ভিস
+  // ১. মেথড: CorsProxy (ক্লাউডফ্লেয়ার বাইপাস করতে অত্যন্ত কার্যকর)
   try {
-    const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(cleanUrl)}`;
-    const res = await fetch(proxyUrl);
-    const data = await res.json();
-
-    if (data.status === 'ok' && data.items && data.items.length > 0) {
-      renderNewsItems(container, data.items.slice(0, 5).map(item => ({ title: item.title, link: item.link })));
-      return;
-    }
-  } catch (e) {
-    console.warn("rss2json ব্যর্থ হয়েছে, ব্যাকআপ পদ্ধতিতে চেষ্টা করা হচ্ছে...", e);
-  }
-
-  // পদ্ধতি ২: ব্যাকআপ প্রক্সি + নেটিভ XML পার্সার (যদি পদ্ধতি ১ আটকে যায়)
-  try {
-    const backupUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(cleanUrl)}`;
-    const res = await fetch(backupUrl);
-    const text = await res.text();
-    
+    const res = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(cleanUrl)}`);
+    const xmlText = await res.text();
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(text, "text/xml");
+    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
     const items = xmlDoc.querySelectorAll("item");
-
     if (items && items.length > 0) {
-      const newsList = [];
-      for (let i = 0; i < Math.min(items.length, 5); i++) {
-        const title = items[i].querySelector("title")?.textContent || '';
-        const link = items[i].querySelector("link")?.textContent || '#';
-        if (title) newsList.push({ title, link });
-      }
-
-      if (newsList.length > 0) {
-        renderNewsItems(container, newsList);
-        return;
-      }
+      items.forEach((it, idx) => {
+        if (idx < 5) {
+          const title = it.querySelector("title")?.textContent?.trim() || '';
+          const link = it.querySelector("link")?.textContent?.trim() || cleanUrl;
+          if (title) newsList.push({ title, link });
+        }
+      });
     }
-  } catch (err) {
-    console.error("উভয় পদ্ধতিতেই সংবাদ লোড ব্যর্থ:", err);
+  } catch (e) {}
+
+  // ২. মেথড: CodeTabs প্রক্সি (যদি মেথড ১ কোনো কারণে আটকে যায়)
+  if (newsList.length === 0) {
+    try {
+      const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(cleanUrl)}`);
+      const xmlText = await res.text();
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+      const items = xmlDoc.querySelectorAll("item");
+      if (items && items.length > 0) {
+        items.forEach((it, idx) => {
+          if (idx < 5) {
+            const title = it.querySelector("title")?.textContent?.trim() || '';
+            const link = it.querySelector("link")?.textContent?.trim() || cleanUrl;
+            if (title) newsList.push({ title, link });
+          }
+        });
+      }
+    } catch (e) {}
   }
 
-  container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px;">সংবাদ লোড করা সম্ভব হয়নি।</div>';
+  // ৩. মেথড: rss2json ব্যাকআপ
+  if (newsList.length === 0) {
+    try {
+      const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(cleanUrl)}`);
+      const data = await res.json();
+      if (data.status === 'ok' && data.items && data.items.length > 0) {
+        newsList = data.items.slice(0, 5).map(it => ({ title: it.title, link: it.link }));
+      }
+    } catch (e) {}
+  }
+
+  // স্ক্রিনে রেন্ডার করার অংশ
+  if (newsList.length > 0) {
+    renderNewsItems(container, newsList);
+  } else {
+    // যদি পত্রিকার সার্ভার কোনো প্রক্সিকেই ঢুকতে না দেয়
+    const mainSiteUrl = cleanUrl.replace(/\/feed\/?$/i, '');
+    container.innerHTML = `
+      <div style="background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 14px; text-align: center;">
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">পত্রিকার সার্ভার সুরক্ষার কারণে লাইভ হেডলাইন পেতে সমস্যা হচ্ছে।</div>
+        <a href="${mainSiteUrl}" target="_blank" rel="noopener noreferrer" class="btn-action btn-call" style="font-size: 12px; padding: 7px 14px; width: fit-content; margin: 0 auto; border-radius: 6px;">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> সরাসরি ওয়েবসাইটে খবর পড়ুন
+        </a>
+      </div>
+    `;
+  }
 }
 
-// হেডলাইন রেন্ডার হেল্পার
+// হেডলাইন রেন্ডার হেল্পার (যদি আগে না থাকে)
 function renderNewsItems(container, items) {
   container.innerHTML = '';
   items.forEach(news => {
