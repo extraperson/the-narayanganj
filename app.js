@@ -366,10 +366,21 @@ function renderDoctorItems() {
 
   const filtered = (doctorsData || []).filter(doc => {
     if (!doc) return false;
+    
+    // স্মার্ট চেম্বার ফিল্টারিং (দুই দিক থেকেই কি-ওয়ার্ড ম্যাচিং)
     let matchChamber = true;
     if (currentChamberFilter) {
-      const target = currentChamberFilter.toLowerCase().replace(/ডায়াগনস্টিক|সেন্টার|হাসপাতাল|\(প্রাঃ\)|\(pvt\.\)|ltd\.|লিঃ/g, '').trim();
-      matchChamber = (doc.chamber || '').toLowerCase().includes(target);
+      const cleanTarget = currentChamberFilter.toLowerCase()
+        .replace(/ডায়াগনস্টিক|সেন্টার|হাসপাতাল|মেডিকেল|সার্ভিসেস|কলেজ|এন্ড|লিঃ|\(প্রাঃ\)|\(pvt\.\)|ltd\.|লিমিটেড|-/g, ' ')
+        .trim();
+      const keywords = cleanTarget.split(/\s+/).filter(w => w.length >= 3);
+      const chamberText = (doc.chamber || '').toLowerCase();
+      
+      if (keywords.length > 0) {
+        matchChamber = keywords.some(kw => chamberText.includes(kw));
+      } else {
+        matchChamber = chamberText.includes(currentChamberFilter.toLowerCase());
+      }
     }
 
     let matchArea = (selectedDocArea === 'সব এলাকা');
@@ -459,7 +470,7 @@ function openDetails(item) {
   const phoneEl = document.getElementById('detailsPhone');
   if (phoneEl) phoneEl.innerText = item.phone || 'নম্বর নেই';
 
-  // EIIN ব্যাজ (শুধুমাত্র শিক্ষা প্রতিষ্ঠান)
+  // EIIN ব্যাজ
   const eiinEl = document.getElementById('detailsEiin');
   if (eiinEl) {
     if (cat === 'শিক্ষা প্রতিষ্ঠান' && item.eiin && item.eiin.toString().trim() !== '') {
@@ -470,7 +481,7 @@ function openDetails(item) {
     }
   }
 
-  // শয্যা ব্যাজ (শুধুমাত্র হাসপাতাল)
+  // শয্যা ব্যাজ
   const bedsEl = document.getElementById('detailsBeds');
   if (bedsEl) {
     if ((cat.includes('হাসপাতাল') || cat.includes('ক্লিনিক')) && item.beds && item.beds.toString().trim() !== '') {
@@ -527,7 +538,7 @@ function openDetails(item) {
     }
   }
 
-  // ৩. বিভাগসমূহ (departments)
+  // ৩. বিভাগসমূহ
   const deptsBox = document.getElementById('hospitalDeptsBox');
   const deptsList = document.getElementById('hospitalDeptsList');
   if (deptsBox && deptsList) {
@@ -549,7 +560,7 @@ function openDetails(item) {
     }
   }
 
-  // ৪. সেবাসমূহ (services)
+  // ৪. সেবাসমূহ
   const servicesBox = document.getElementById('hospitalServicesBox');
   const servicesList = document.getElementById('hospitalServicesList');
   if (servicesBox && servicesList) {
@@ -574,7 +585,7 @@ function openDetails(item) {
     }
   }
 
-  // ৫. ডায়াগনস্টিক সার্ভিস (diagnostics)
+  // ৫. ডায়াগনস্টিক সার্ভিস
   const diagBox = document.getElementById('hospitalDiagBox');
   const diagList = document.getElementById('hospitalDiagList');
   if (diagBox && diagList) {
@@ -650,7 +661,7 @@ function openDetails(item) {
 
   if (socialBox) socialBox.style.display = hasSocial ? 'block' : 'none';
 
-  // ৭. শুধু শিক্ষা প্রতিষ্ঠানের জন্য রেজাল্ট ব্লক
+  // ৭. শিক্ষা প্রতিষ্ঠানের ফলাফল ব্লক
   const eduBox = document.getElementById('eduSectionBox');
   if (eduBox) {
     const isActualEdu = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা');
@@ -708,6 +719,9 @@ function closeDetails() {
 
 function goToChamberDetails(chamberName, chamberArea) {
   if (!chamberName) return;
+
+  closeDoctorProfile();
+  closeDoctorPage();
 
   const cleanTarget = chamberName.toLowerCase()
     .replace(/ডায়াগনস্টিক|সেন্টার|হাসপাতাল|\(প্রাঃ\)|\(pvt\.\)|ltd\.|লিঃ|-/g, '')
@@ -909,14 +923,14 @@ function goHome() {
 window.onpopstate = function() {
   if (document.getElementById('eduResultsPage')?.classList.contains('open')) {
     closeInstitutionResults();
-  } else if (document.getElementById('detailsView')?.classList.contains('open')) {
-    closeDetails();
   } else if (document.getElementById('doctorProfileView')?.classList.contains('open')) {
     closeDoctorProfile();
-  } else if (document.getElementById('bookmarkPage')?.classList.contains('open')) {
-    closeBookmarkPage();
   } else if (document.getElementById('doctorPage')?.classList.contains('open')) {
     closeDoctorPage();
+  } else if (document.getElementById('detailsView')?.classList.contains('open')) {
+    closeDetails();
+  } else if (document.getElementById('bookmarkPage')?.classList.contains('open')) {
+    closeBookmarkPage();
   } else if (document.getElementById('categoryPage')?.classList.contains('open')) {
     closeCategoryPage();
   }
