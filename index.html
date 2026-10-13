@@ -399,30 +399,22 @@
         </div>
       </div>
 
-      <!-- হাসপাতালের প্রধান চিকিৎসা ও সেবা বিভাগ -->
+      <!-- ১. বিভাগসমূহ (গুগল শিট থেকে ডাইনামিক রেন্ডার হবে) -->
       <div id="hospitalDeptsBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
-          <i class="fa-solid fa-hospital-user" style="color: var(--primary);"></i> চিকিৎসা ও সেবা বিভাগসমূহ
+          <i class="fa-solid fa-hospital-user" style="color: var(--primary);"></i> বিভাগসমূহ
         </div>
-        <p style="font-size: 11px; color: var(--text-muted);">বিশেষায়িত ক্লিনিক্যাল ও ডায়াগনস্টিক বিভাগ</p>
-        
-        <div class="dept-badge-grid" id="hospitalDeptsList">
-          <span class="dept-badge-item">মেডিসিন</span>
-          <span class="dept-badge-item">জেনারেল ও ল্যাপারোস্কোপিক সার্জারি</span>
-          <span class="dept-badge-item">কার্ডিওলজি (হৃদরোগ)</span>
-          <span class="dept-badge-item">গাইনী ও প্রসূতি</span>
-          <span class="dept-badge-item">নবজাতক ও শিশু রোগ</span>
-          <span class="dept-badge-item">অর্থোপেডিক্স ও ট্রমা</span>
-          <span class="dept-badge-item">ইউরোলজি (কিডনি ও মূত্র)</span>
-          <span class="dept-badge-item">নিউরোসার্জারি ও স্পাইন</span>
-          <span class="dept-badge-item">গ্যাস্ট্রোএন্টারোলজি ও লিভার</span>
-          <span class="dept-badge-item">চর্ম ও যৌন রোগ</span>
-          <span class="dept-badge-item">নাক, কান ও গলা (ইএনটি)</span>
-          <span class="dept-badge-item">চক্ষু বিভাগ</span>
-          <span class="dept-badge-item">ডায়ালাইসিস ইউনিট</span>
-          <span class="dept-badge-item">রেডিও নিউক্লিয়ার থেরাপি (RNTZ)</span>
-          <span class="dept-badge-item">২৪ ঘণ্টা প্যাথলজি ও সিটি স্ক্যান</span>
+        <p style="font-size: 11px; color: var(--text-muted);">বিশেষায়িত ক্লিনিক্যাল ও চিকিৎসাসেবা বিভাগ</p>
+        <div class="dept-badge-grid" id="hospitalDeptsList"></div>
+      </div>
+
+      <!-- ২. সেবাসমূহ ও সুযোগ-সুবিধা (গুগল শিট থেকে ডাইনামিক রেন্ডার হবে) -->
+      <div id="hospitalServicesBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
+        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-bell-concierge" style="color: #0284C7;"></i> সেবাসমূহ ও অন্যান্য সুবিধা
         </div>
+        <p style="font-size: 11px; color: var(--text-muted);">জরুরি ও প্রাতিষ্ঠানিক সুবিধাসমূহ</p>
+        <div class="dept-badge-grid" id="hospitalServicesList"></div>
       </div>
 
       <!-- সোশ্যাল মিডিয়া ও অনলাইন প্রোফাইল বার -->

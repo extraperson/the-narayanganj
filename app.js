@@ -459,6 +459,7 @@ function openDetails(item) {
   const phoneEl = document.getElementById('detailsPhone');
   if (phoneEl) phoneEl.innerText = item.phone || 'নম্বর নেই';
 
+  // EIIN ব্যাজ (শুধুমাত্র শিক্ষা প্রতিষ্ঠান)
   const eiinEl = document.getElementById('detailsEiin');
   if (eiinEl) {
     if (cat === 'শিক্ষা প্রতিষ্ঠান' && item.eiin && item.eiin.toString().trim() !== '') {
@@ -469,6 +470,7 @@ function openDetails(item) {
     }
   }
 
+  // শয্যা ব্যাজ (শুধুমাত্র হাসপাতাল)
   const bedsEl = document.getElementById('detailsBeds');
   if (bedsEl) {
     if ((cat.includes('হাসপাতাল') || cat.includes('ক্লিনিক')) && item.beds && item.beds.toString().trim() !== '') {
@@ -492,12 +494,14 @@ function openDetails(item) {
     }
   }
 
+  // ১. চেম্বার ডাক্তার বাটন
   const chamberBox = document.getElementById('chamberDocsBtnBox');
   if (chamberBox) {
     const isMedical = cat.includes('হাসপাতাল') || cat.includes('ডায়াগনস্টিক') || cat.includes('ডেন্টাল');
     chamberBox.style.display = isMedical ? 'block' : 'none';
   }
 
+  // ২. ক্রিটিক্যাল কেয়ার ও অ্যাম্বুলেন্স ব্লক
   const ambBox = document.getElementById('hospitalAmbulanceBox');
   const ambBtn = document.getElementById('ambulanceCallBtn');
   if (ambBox && ambBtn) {
@@ -511,7 +515,6 @@ function openDetails(item) {
   }
 
   const careBox = document.getElementById('hospitalCareBox');
-  const deptsBox = document.getElementById('hospitalDeptsBox');
   const isHospital = cat === 'সরকারি হাসপাতাল' || cat === 'বেসরকারি হাসপাতাল' || cat === 'হাসপাতাল';
   
   if (careBox) {
@@ -524,10 +527,54 @@ function openDetails(item) {
     }
   }
 
-  if (deptsBox) {
-    deptsBox.style.display = isHospital ? 'block' : 'none';
+  // ৩. বিভাগসমূহ (গুগল শিটের departments কলাম থেকে ডাইনামিক রেন্ডার)
+  const deptsBox = document.getElementById('hospitalDeptsBox');
+  const deptsList = document.getElementById('hospitalDeptsList');
+  if (deptsBox && deptsList) {
+    deptsList.innerHTML = '';
+    const rawDepts = (item.departments || '').trim();
+    if (rawDepts) {
+      rawDepts.split(',').forEach(dept => {
+        const dName = dept.trim();
+        if (dName) {
+          const badge = document.createElement('span');
+          badge.className = 'dept-badge-item';
+          badge.innerText = dName;
+          deptsList.appendChild(badge);
+        }
+      });
+      deptsBox.style.display = 'block';
+    } else {
+      deptsBox.style.display = 'none';
+    }
   }
 
+  // ৪. সেবাসমূহ ও সুযোগ-সুবিধা (গুগল শিটের services কলাম থেকে ডাইনামিক রেন্ডার)
+  const servicesBox = document.getElementById('hospitalServicesBox');
+  const servicesList = document.getElementById('hospitalServicesList');
+  if (servicesBox && servicesList) {
+    servicesList.innerHTML = '';
+    const rawServices = (item.services || '').trim();
+    if (rawServices) {
+      rawServices.split(',').forEach(srv => {
+        const sName = srv.trim();
+        if (sName) {
+          const badge = document.createElement('span');
+          badge.className = 'dept-badge-item';
+          badge.style.borderColor = '#BAE6FD';
+          badge.style.color = '#0369A1';
+          badge.style.background = '#F0F9FF';
+          badge.innerText = sName;
+          servicesList.appendChild(badge);
+        }
+      });
+      servicesBox.style.display = 'block';
+    } else {
+      servicesBox.style.display = 'none';
+    }
+  }
+
+  // ৫. সোশ্যাল মিডিয়া ও ওয়েবসাইট বার
   const socialBox = document.getElementById('socialLinksBox');
   const webBtn = document.getElementById('linkWebsite');
   const fbBtn = document.getElementById('linkFacebook');
@@ -578,6 +625,7 @@ function openDetails(item) {
 
   if (socialBox) socialBox.style.display = hasSocial ? 'block' : 'none';
 
+  // ৬. শুধু শিক্ষা প্রতিষ্ঠানের জন্য রেজাল্ট ব্লক
   const eduBox = document.getElementById('eduSectionBox');
   if (eduBox) {
     const isActualEdu = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা');
