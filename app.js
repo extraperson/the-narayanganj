@@ -587,11 +587,20 @@ function openDetails(item) {
     }
   }
 
-  // ৩. বিভাগসমূহ
+  // ৩. বিভাগসমূহ (শিক্ষা প্রতিষ্ঠান ও হাসপাতালের জন্য স্মার্ট ট্যাগলাইন)
   const deptsBox = document.getElementById('hospitalDeptsBox');
   const deptsList = document.getElementById('hospitalDeptsList');
+  const deptsSub = document.getElementById('hospitalDeptsSub');
   if (deptsBox && deptsList) {
     deptsList.innerHTML = '';
+    
+    // ক্যাটাগরি অনুযায়ী ট্যাগলাইন অটো পরিবর্তন
+    if (deptsSub) {
+      deptsSub.innerText = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা') 
+        ? 'অনুমোদিত অনুষদ, বিভাগ ও বিষয়সমূহ' 
+        : 'চিকিৎসা ও ক্লিনিক্যাল শাখাসমূহ';
+    }
+
     const rawDepts = (item.departments || '').trim();
     if (rawDepts) {
       rawDepts.split(',').forEach(dept => {
