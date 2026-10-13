@@ -22,6 +22,23 @@ try {
   bookmarks = { places: [], doctors: [] };
 }
 
+// র‍্যান্ডমাইজেশন হেল্পার (Fisher-Yates Shuffle Algorithm)
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// স্পন্সরড প্রতিষ্ঠানকে উপরে রাখা এবং বাকিদের র‍্যান্ডম করার সাজানো ফাংশন
+function organizeListings(dataList) {
+  const featured = dataList.filter(item => (item.featured || '').toString().toLowerCase().trim() === 'yes');
+  const normal = dataList.filter(item => (item.featured || '').toString().toLowerCase().trim() !== 'yes');
+  return [...featured, ...shuffleArray(normal)];
+}
+
 function saveBookmarks() {
   try {
     localStorage.setItem('narayanganj_bookmarks', JSON.stringify(bookmarks));
@@ -272,16 +289,26 @@ function renderCategoryItems() {
     const area = item.area || 'নারায়ণগঞ্জ';
     const rating = item.rating || '৪.০';
     const phone = item.phone || '';
+    const isFeatured = (item.featured || '').toString().toLowerCase().trim() === 'yes';
     const mapUrl = item.map_url || `https://maps.google.com/?q=${encodeURIComponent(name + ' ' + area)}`;
 
     const card = document.createElement('div');
     card.className = 'place-card';
     card.onclick = () => openDetails(item);
 
+    // স্পন্সরড হলে হালকা স্পেশাল বর্ডার
+    if (isFeatured) {
+      card.style.borderColor = '#F59E0B';
+      card.style.background = '#FFFDF5';
+    }
+
     card.innerHTML = `
       <div class="place-header">
         <div>
-          <div class="place-title">${name}</div>
+          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+            <div class="place-title">${name}</div>
+            ${isFeatured ? '<span style="background: #FEF3C7; color: #B45309; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; border: 1px solid #FDE68A;"><i class="fa-solid fa-bolt"></i> স্পন্সরড</span>' : ''}
+          </div>
           <div class="place-area"><i class="fa-solid fa-location-dot"></i> ${area}</div>
         </div>
         <div class="rating-badge"><i class="fa-solid fa-star"></i> ${rating}</div>
@@ -367,7 +394,6 @@ function renderDoctorItems() {
   const filtered = (doctorsData || []).filter(doc => {
     if (!doc) return false;
     
-    // স্মার্ট চেম্বার ফিল্টারিং (দুই দিক থেকেই কি-ওয়ার্ড ম্যাচিং)
     let matchChamber = true;
     if (currentChamberFilter) {
       const cleanTarget = currentChamberFilter.toLowerCase()
@@ -423,14 +449,25 @@ function renderDoctorItems() {
     const firstChamber = (doc.chamber || '').split(',')[0].trim();
     const firstArea = (doc.area || 'চাষাড়া').split(',')[0].trim();
     const firstTiming = (doc.timing || 'নিয়মিত').split(',')[0].trim();
+    const isFeatured = (doc.featured || '').toString().toLowerCase().trim() === 'yes';
+
+    if (isFeatured) {
+      card.style.borderColor = '#F59E0B';
+      card.style.background = '#FFFDF5';
+    }
 
     card.innerHTML = `
       <div>
         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-          <div class="place-title" style="color: #0F5132;">${doc.name || ''}</div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <div class="place-title" style="color: #0F5132;">${doc.name || ''}</div>
+              ${isFeatured ? '<span style="background: #FEF3C7; color: #B45309; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; border: 1px solid #FDE68A;"><i class="fa-solid fa-bolt"></i> স্পন্সরড</span>' : ''}
+            </div>
+            <div class="doc-specialty">${doc.specialty || 'বিশেষজ্ঞ চিকিৎসক'}</div>
+          </div>
           <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 13px; margin-top: 4px;"></i>
         </div>
-        <div class="doc-specialty">${doc.specialty || 'বিশেষজ্ঞ চিকিৎসক'}</div>
         <div class="doc-degrees">${doc.degrees || ''}</div>
         <div class="doc-chamber-tag"><i class="fa-solid fa-hospital"></i> ${firstChamber} (${firstArea})</div>
         <div style="font-size: 12px; color: #475569; margin-top: 6px;">
@@ -967,8 +1004,10 @@ async function loadData() {
     const fetchResults = fetch(API_RESULTS).then(r => r.json()).catch(() => []);
 
     const [pData, dData, rData] = await Promise.all([fetchPlaces, fetchDocs, fetchResults]);
-    placesData = Array.isArray(pData) ? pData : [];
-    doctorsData = Array.isArray(dData) ? dData : [];
+    
+    // ডাটা লোড হওয়ার সাথে সাথে স্পন্সরড পিন ও সাধারণগুলো র‍্যান্ডমাইজেশন
+    placesData = Array.isArray(pData) ? organizeListings(pData) : [];
+    doctorsData = Array.isArray(dData) ? organizeListings(dData) : [];
     resultsData = Array.isArray(rData) ? rData : [];
   } catch (err) {
     console.warn("ডাটা লোড হতে সমস্যা হয়েছে:", err);
