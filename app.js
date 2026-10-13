@@ -490,6 +490,16 @@ function openDetails(item) {
   if (!item) return;
   activeItem = item;
   const cat = (item.category || '').trim();
+  
+  // ব্যানার ইমেজ হ্যান্ডলিং
+  const imgEl = document.getElementById('detailsImg');
+  if (imgEl) {
+    if (item.image_url && item.image_url.trim() !== '') {
+      imgEl.src = item.image_url.trim();
+    } else {
+      imgEl.src = 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80';
+    }
+  }
 
   const sticky = document.getElementById('detailsStickyTitle');
   if (sticky) sticky.innerText = item.name || 'বিস্তারিত';
