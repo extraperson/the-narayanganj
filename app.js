@@ -486,6 +486,41 @@ function renderDoctorItems() {
   });
 }
 
+// পত্রিকার আরএসএস ফিড থেকে লাইভ হেডলাইন নিয়ে আসার ফাংশন
+async function fetchLiveNews(feedUrl) {
+  const container = document.getElementById('newspaperFeedList');
+  if (!container) return;
+  container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px;">সর্বশেষ সংবাদ লোড হচ্ছে...</div>';
+
+  try {
+    const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+    const res = await fetch(proxyUrl);
+    const data = await res.json();
+
+    if (data.status === 'ok' && data.items && data.items.length > 0) {
+      container.innerHTML = '';
+      // প্রথম ৫টি সংবাদ নেওয়া হচ্ছে
+      const topNews = data.items.slice(0, 5);
+      topNews.forEach(news => {
+        const item = document.createElement('a');
+        item.className = 'news-feed-item';
+        item.href = news.link;
+        item.target = '_blank';
+        item.rel = 'noopener noreferrer';
+        item.innerHTML = `
+          <i class="fa-solid fa-circle-dot"></i>
+          <div class="news-feed-title">${news.title}</div>
+        `;
+        container.appendChild(item);
+      });
+    } else {
+      container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center;">সংবাদ পাওয়া যায়নি।</div>';
+    }
+  } catch (err) {
+    container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center;">সংবাদ লোড করতে সমস্যা হয়েছে।</div>';
+  }
+}
+
 function openDetails(item) {
   if (!item) return;
   activeItem = item;
@@ -719,6 +754,17 @@ function openDetails(item) {
 
   if (socialBox) socialBox.style.display = hasSocial ? 'block' : 'none';
 
+// পত্রিকার লাইভ ফিড হ্যান্ডলিং
+  const feedBox = document.getElementById('newspaperFeedBox');
+  if (feedBox) {
+    if (item.feed_url && item.feed_url.trim() !== '') {
+      feedBox.style.display = 'block';
+      fetchLiveNews(item.feed_url.trim());
+    } else {
+      feedBox.style.display = 'none';
+    }
+  }
+  
   // ৭. শিক্ষা প্রতিষ্ঠানের ফলাফল ব্লক
   const eduBox = document.getElementById('eduSectionBox');
   if (eduBox) {

@@ -449,6 +449,21 @@
           <a href="#" id="linkInstagram" target="_blank" rel="noopener noreferrer" class="social-btn btn-ig" style="display: none;" title="ইনস্টাগ্রাম"><i class="fa-brands fa-instagram"></i></a>
         </div>
       </div>
+	  
+	  <!-- ৪. লাইভ সংবাদ ও হেডলাইন ব্লক (শুধুমাত্র সংবাদপত্রের জন্য) -->
+      <div id="newspaperFeedBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
+        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-bolt" style="color: #DC2626;"></i> সর্বশেষ সংবাদ
+          </div>
+          <span style="font-size: 10px; background: #FEE2E2; color: #DC2626; padding: 2px 6px; border-radius: 4px; font-weight: 600;">লাইভ আপডেট</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">সংবাদ পড়তে শিরোনামে ক্লিক করুন</p>
+        
+        <div id="newspaperFeedList" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- এখানে লাইভ সংবাদ লোড হবে -->
+        </div>
+      </div>
 
       <!-- শুধু শিক্ষা প্রতিষ্ঠানের জন্য প্রিমিয়াম ব্লক -->
       <div id="eduSectionBox" style="display: none; flex-direction: column; gap: 12px;">
