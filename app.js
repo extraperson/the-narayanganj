@@ -964,6 +964,17 @@ function openDoctorProfile(doc) {
   if (feeEl) feeEl.innerText = doc.fee ? `ভিজিট ফি: ${doc.fee}` : 'ভিজিট ফি: চেম্বারে যোগাযোগ করুন';
 
   updateHeartIcon(document.getElementById('docHeartBtn'), isDocBookmarked(doc.name));
+  
+  const desigBox = document.getElementById('docProfileDesignation');
+  const desigText = document.getElementById('docProfileDesignationText');
+  if (desigBox && desigText) {
+    if (doc.designation && doc.designation.trim() !== '') {
+      desigText.innerText = doc.designation.trim();
+      desigBox.style.display = 'inline-block';
+    } else {
+      desigBox.style.display = 'none';
+    }
+  }
 
   // একাধিক চেম্বার ভাগ করার জন্য সেমিকোলন (;) ব্যবহার
   const chambers = (doc.chamber || '').split(';').map(s => s.trim()).filter(Boolean);
