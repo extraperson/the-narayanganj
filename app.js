@@ -1213,5 +1213,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const docInput = document.getElementById('docSearchInput');
   if (docInput) docInput.addEventListener('input', renderDoctorItems);
 
+  // হোম পেজের সার্চ সক্রিয় করা
+  const homeInput = document.getElementById('homeSearchInput');
+  if (homeInput) {
+    homeInput.addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      if (val !== '') {
+        openCategoryPage('সব', `"${val}" এর অনুসন্ধানের ফলাফল`);
+        const catSearch = document.getElementById('catSearchInput');
+        if (catSearch) {
+          catSearch.value = val;
+          renderCategoryItems();
+        }
+      }
+    });
+  }
+
   loadData();
 });
