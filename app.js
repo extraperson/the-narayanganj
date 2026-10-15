@@ -963,16 +963,36 @@ function openDoctorProfile(doc) {
   const feeEl = document.getElementById('docProfileFee');
   if (feeEl) feeEl.innerText = doc.fee ? `ভিজিট ফি: ${doc.fee}` : 'ভিজিট ফি: চেম্বারে যোগাযোগ করুন';
 
-  updateHeartIcon(document.getElementById('docHeartBtn'), isDocBookmarked(doc.name));
-  
+  // ডাক্তারের পদবি ও প্রতিষ্ঠান দুই লাইনে স্মার্ট ডিসপ্লে
   const desigBox = document.getElementById('docProfileDesignation');
-  const desigText = document.getElementById('docProfileDesignationText');
-  if (desigBox && desigText) {
-    if (doc.designation && doc.designation.trim() !== '') {
-      desigText.innerText = doc.designation.trim();
+  if (desigBox) {
+    const rawDesig = (doc.designation || '').trim();
+    if (rawDesig) {
+      if (rawDesig.includes(',')) {
+        // প্রথম কমার আগের অংশ পদবি এবং পরের অংশ প্রতিষ্ঠান
+        const splitIdx = rawDesig.indexOf(',');
+        const title = rawDesig.substring(0, splitIdx).trim();
+        const inst = rawDesig.substring(splitIdx + 1).trim();
+
+        desigBox.innerHTML = `
+          <div style="font-weight: 700; color: #0C4A6E; font-size: 12px; line-height: 1.35;">${title}</div>
+          <div style="font-size: 11px; color: #475569; margin-top: 3px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+            <i class="fa-solid fa-building-user" style="color: #0284C7; font-size: 11px;"></i>
+            <span>${inst}</span>
+          </div>
+        `;
+      } else {
+        desigBox.innerHTML = `
+          <div style="font-weight: 600; color: #0C4A6E; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px;">
+            <i class="fa-solid fa-building-user" style="color: #0284C7; font-size: 11px;"></i>
+            <span>${rawDesig}</span>
+          </div>
+        `;
+      }
       desigBox.style.display = 'inline-block';
     } else {
       desigBox.style.display = 'none';
+      desigBox.innerHTML = '';
     }
   }
 
