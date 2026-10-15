@@ -117,7 +117,7 @@ function openBookmarkPage() {
         const card = document.createElement('div');
         card.className = 'doctor-card';
         card.onclick = () => openDoctorProfile(doc);
-        const firstPhone = (doc.serial_phone || '').split(',')[0].trim();
+        const firstPhone = (doc.serial_phone || '').split(';')[0].split(',')[0].trim();
         card.innerHTML = `
           <div style="display: flex; justify-content: space-between; align-items: flex-start;">
             <div>
@@ -447,10 +447,10 @@ function renderDoctorItems() {
     card.className = 'doctor-card';
     card.onclick = () => openDoctorProfile(doc);
 
-    const firstPhone = (doc.serial_phone || '').split(',')[0].trim();
-    const firstChamber = (doc.chamber || '').split(',')[0].trim();
-    const firstArea = (doc.area || 'চাষাড়া').split(',')[0].trim();
-    const firstTiming = (doc.timing || 'নিয়মিত').split(',')[0].trim();
+    const firstPhone = (doc.serial_phone || '').split(';')[0].split(',')[0].trim();
+    const firstChamber = (doc.chamber || '').split(';')[0].trim();
+    const firstArea = (doc.area || 'চাষাড়া').split(';')[0].trim();
+    const firstTiming = (doc.timing || 'নিয়মিত').split(';')[0].trim();
     const isFeatured = (doc.featured || '').toString().toLowerCase().trim() === 'yes';
 
     if (isFeatured) {
@@ -822,22 +822,58 @@ function openDetails(item) {
     }
   }
   
-  // ৭. শিক্ষা প্রতিষ্ঠানের ফলাফল ব্লক
+// ৭. শিক্ষা প্রতিষ্ঠান (অধ্যক্ষ/ফলাফল) ও সংবাদপত্র (সম্পাদক) ব্লক
   const eduBox = document.getElementById('eduSectionBox');
   if (eduBox) {
-    const isActualEdu = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা');
-    if (isActualEdu) {
+    const isEdu = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা');
+    const isNews = (cat === 'সংবাদপত্র');
+
+    if (isEdu || isNews) {
       eduBox.style.display = 'flex';
+
       const principalCard = document.getElementById('eduPrincipalCard');
       const principalName = document.getElementById('eduPrincipalName');
+      const principalLabel = document.getElementById('eduPrincipalLabel');
+      const principalIcon = document.getElementById('eduPrincipalIcon');
+      const resultsNavCard = eduBox.querySelector('.doc-nav-card'); // পরীক্ষার ফলাফল বাটন
+
+      // ১. প্রধান ব্যক্তি (অধ্যক্ষ / সম্পাদক) হ্যান্ডলিং
       if (principalCard && principalName) {
         if (item.principal && item.principal.trim() !== '') {
-          principalName.innerText = item.principal;
+          principalName.innerText = item.principal.trim();
           principalCard.style.display = 'flex';
+
+          if (isNews) {
+            if (principalLabel) {
+              principalLabel.innerText = 'সম্পাদক ও প্রকাশক';
+              principalLabel.style.color = '#0284C7';
+            }
+            if (principalIcon) {
+              principalIcon.innerHTML = '<i class="fa-solid fa-pen-nib"></i>';
+              principalIcon.style.background = '#E0F2FE';
+              principalIcon.style.color = '#0284C7';
+            }
+          } else {
+            if (principalLabel) {
+              principalLabel.innerText = 'বর্তমান অধ্যক্ষ / প্রধান শিক্ষক';
+              principalLabel.style.color = '#7C3AED';
+            }
+            if (principalIcon) {
+              principalIcon.innerHTML = '<i class="fa-solid fa-user-tie"></i>';
+              principalIcon.style.background = '#EDE9FE';
+              principalIcon.style.color = '#7C3AED';
+            }
+          }
         } else {
           principalCard.style.display = 'none';
         }
       }
+
+      // ২. পরীক্ষার ফলাফল বাটন শুধুমাত্র শিক্ষা প্রতিষ্ঠানের জন্যই থাকবে, সংবাদপত্রে লুকিয়ে থাকবে
+      if (resultsNavCard) {
+        resultsNavCard.style.display = isEdu ? 'flex' : 'none';
+      }
+
     } else {
       eduBox.style.display = 'none';
     }
@@ -929,10 +965,11 @@ function openDoctorProfile(doc) {
 
   updateHeartIcon(document.getElementById('docHeartBtn'), isDocBookmarked(doc.name));
 
-  const chambers = (doc.chamber || '').split(',').map(s => s.trim()).filter(Boolean);
-  const areas = (doc.area || '').split(',').map(s => s.trim());
-  const timings = (doc.timing || '').split(',').map(s => s.trim());
-  const phones = (doc.serial_phone || '').split(',').map(s => s.trim());
+  // একাধিক চেম্বার ভাগ করার জন্য সেমিকোলন (;) ব্যবহার
+  const chambers = (doc.chamber || '').split(';').map(s => s.trim()).filter(Boolean);
+  const areas = (doc.area || '').split(';').map(s => s.trim());
+  const timings = (doc.timing || '').split(';').map(s => s.trim());
+  const phones = (doc.serial_phone || '').split(';').map(s => s.trim());
 
   const listContainer = document.getElementById('docProfileChambersList');
   if (listContainer) {
