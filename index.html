@@ -102,8 +102,6 @@
               <p>দাঁতের ডাক্তার ও চিকিৎসা</p>
             </div>
           </div>
-		  
-
         </div>
       </div>
 
@@ -163,7 +161,7 @@
             </div>
           </div>
 
-		  <div class="home-cat-card" onclick="openCategoryPage('জেনারেল স্টোর', 'মুদি দোকান, ডিপার্টমেন্টাল ও জেনারেল স্টোর')">
+          <div class="home-cat-card" onclick="openCategoryPage('জেনারেল স্টোর', 'মুদি দোকান, ডিপার্টমেন্টাল ও জেনারেল স্টোর')">
             <div class="home-cat-icon theme-shop"><i class="fa-solid fa-store"></i></div>
             <div class="home-cat-info">
               <h4>জেনারেল স্টোর</h4>
@@ -427,7 +425,7 @@
         <div class="dept-badge-grid" id="hospitalServicesList"></div>
       </div>
 	  
-	  <!-- ৩. ডায়াগনস্টিক সার্ভিস ও টেস্ট (গুগল শিট থেকে ডাইনামিক রেন্ডার হবে) -->
+      <!-- ৩. ডায়াগনস্টিক সার্ভিস ও টেস্ট (গুগল শিট থেকে ডাইনামিক রেন্ডার হবে) -->
       <div id="hospitalDiagBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-microscope" style="color: #D97706;"></i> ডায়াগনস্টিক সার্ভিস ও টেস্ট
@@ -450,7 +448,7 @@
         </div>
       </div>
 	  
-	  <!-- ৪. লাইভ সংবাদ ও হেডলাইন ব্লক (শুধুমাত্র সংবাদপত্রের জন্য) -->
+      <!-- ৪. লাইভ সংবাদ ও হেডলাইন ব্লক (শুধুমাত্র সংবাদপত্রের জন্য) -->
       <div id="newspaperFeedBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -468,7 +466,7 @@
       <!-- শুধু শিক্ষা প্রতিষ্ঠানের জন্য প্রিমিয়াম ব্লক -->
       <div id="eduSectionBox" style="display: none; flex-direction: column; gap: 12px;">
 	  
-		<div id="eduPrincipalCard" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
+        <div id="eduPrincipalCard" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
           <div id="eduPrincipalIcon" style="width: 44px; height: 44px; border-radius: 50%; background: #EDE9FE; color: #7C3AED; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
             <i class="fa-solid fa-user-tie"></i>
           </div>
@@ -488,6 +486,38 @@
           </div>
           <i class="fa-solid fa-chevron-right" style="color: #16A34A; font-size: 14px;"></i>
         </div>
+
+        <!-- প্রাতিষ্ঠানিক তথ্যাবলী গ্রিড -->
+        <div id="eduInfoGridBox" style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-circle-info"></i> প্রাতিষ্ঠানিক তথ্যাবলী
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 12px;">
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 10px; border-radius: 8px;">
+              <span style="font-size: 10px; color: var(--text-muted); display: block;">ব্যবস্থাপনা</span>
+              <strong id="eduManagement" style="color: var(--text); font-size: 12px;">-</strong>
+            </div>
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 10px; border-radius: 8px;">
+              <span style="font-size: 10px; color: var(--text-muted); display: block;">শিক্ষার্থী ধরন</span>
+              <strong id="eduForWhom" style="color: var(--text); font-size: 12px;">-</strong>
+            </div>
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 10px; border-radius: 8px;">
+              <span style="font-size: 10px; color: var(--text-muted); display: block;">প্রতিষ্ঠার তারিখ</span>
+              <strong id="eduEstDate" style="color: var(--text); font-size: 12px;">-</strong>
+            </div>
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 10px; border-radius: 8px;">
+              <span style="font-size: 10px; color: var(--text-muted); display: block;">সংসদীয় আসন</span>
+              <strong id="eduConstituency" style="color: var(--text); font-size: 12px;">-</strong>
+            </div>
+          </div>
+
+          <div id="eduEmailRow" style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #F1F5F9; font-size: 12px; display: none;">
+            <span style="color: var(--text-muted);"><i class="fa-solid fa-envelope" style="color: #EF4444; margin-right: 4px;"></i>ইমেইল:</span>
+            <a href="#" id="eduEmailLink" style="color: #0284C7; font-weight: 600; margin-left: 4px; word-break: break-all;">-</a>
+          </div>
+        </div>
+
       </div>
 
       <!-- নিয়মিত তথ্য তালিকা -->
@@ -545,7 +575,7 @@
       <div id="docProfileDegrees" style="font-size: 12px; color: #475569; margin-top: 2px;">ডিগ্রি সমূহ</div>
 	  <div id="docProfileDesignation" style="display: none; font-size: 12px; color: #0C4A6E; background: rgba(255,255,255,0.7); border: 1px solid #BAE6FD; border-radius: 6px; padding: 4px 10px; margin: 6px auto 0; max-width: 90%; font-weight: 500;">
 		<i class="fa-solid fa-building-user" style="color: #0284C7;"></i> <span id="docProfileDesignationText"></span>
-</div>
+      </div>
       <div id="docProfileFee" style="font-size: 13px; font-weight: 600; color: #0F5132; margin-top: 6px; background: #DCFCE7; display: inline-block; padding: 2px 10px; border-radius: 20px;">ভিজিট ফি: -</div>
     </div>
 

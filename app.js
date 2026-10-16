@@ -868,6 +868,7 @@ function openDetails(item) {
       const principalIcon = document.getElementById('eduPrincipalIcon');
       const resultsNavCard = eduBox.querySelector('.doc-nav-card');
 
+      // ১. প্রধান ব্যক্তি (অধ্যক্ষ / সম্পাদক) হ্যান্ডলিং
       if (principalCard && principalName) {
         if (item.principal && item.principal.trim() !== '') {
           principalName.innerText = item.principal.trim();
@@ -899,8 +900,41 @@ function openDetails(item) {
         }
       }
 
+      // ২. পরীক্ষার ফলাফল বাটন
       if (resultsNavCard) {
         resultsNavCard.style.display = isEdu ? 'flex' : 'none';
+      }
+
+      // ৩. নতুন ফিল্ডসমূহ: প্রাতিষ্ঠানিক তথ্য ও ইমেইল
+      const infoGridBox = document.getElementById('eduInfoGridBox');
+      const mgtEl = document.getElementById('eduManagement');
+      const whomEl = document.getElementById('eduForWhom');
+      const dateEl = document.getElementById('eduEstDate');
+      const constEl = document.getElementById('eduConstituency');
+      const emailRow = document.getElementById('eduEmailRow');
+      const emailLink = document.getElementById('eduEmailLink');
+
+      if (infoGridBox) {
+        // শুধুমাত্র শিক্ষা প্রতিষ্ঠান হলেই এই ইনফো গ্রিডটি দেখাবে
+        if (isEdu) {
+          infoGridBox.style.display = 'block';
+          if (mgtEl) mgtEl.innerText = item.management || 'সাধারণ';
+          if (whomEl) whomEl.innerText = item.for_whom || 'সহশিক্ষা';
+          if (dateEl) dateEl.innerText = item.establishment_date || item.established_date || 'তথ্য নেই';
+          if (constEl) constEl.innerText = item.constituency || 'নারায়ণগঞ্জ';
+
+          if (emailRow && emailLink) {
+            if (item.email && item.email.trim() !== '') {
+              emailLink.href = `mailto:${item.email.trim()}`;
+              emailLink.innerText = item.email.trim();
+              emailRow.style.display = 'block';
+            } else {
+              emailRow.style.display = 'none';
+            }
+          }
+        } else {
+          infoGridBox.style.display = 'none';
+        }
       }
 
     } else {
