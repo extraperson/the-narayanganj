@@ -314,9 +314,11 @@ function renderCategoryItems() {
       matchCat = (itemCat === 'শিক্ষা প্রতিষ্ঠান' || itemCat === 'স্কুল' || itemCat === 'কলেজ' || itemCat === 'মাদরাসা');
     } else if (currentCategory === 'জেনারেল স্টোর') {
       matchCat = (itemCat === 'জেনারেল স্টোর' || itemCat.includes('স্টোর') || itemCat.includes('মুদি'));
+	} else if (currentCategory === 'দর্শনীয় স্থান' || currentCategory === 'পর্যটন ও বিনোদন' || currentCategory === 'বিনোদন') {
+      matchCat = (itemCat.includes('দর্শনীয়') || itemCat.includes('পর্যটন') || itemCat.includes('বিনোদন') || itemCat.includes('পার্ক') || itemCat.includes('ঐতিহাসিক'));
     } else {
       matchCat = itemCat.toLowerCase().includes(currentCategory.toLowerCase());
-    }
+    } 
 
     let matchArea = (selectedCatArea === 'সব এলাকা');
     if (!matchArea) {
