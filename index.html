@@ -434,20 +434,20 @@
         <div class="dept-badge-grid" id="hospitalDiagList"></div>
       </div>
 
-      <!-- সোশ্যাল মিডিয়া ও অনলাইন প্রোফাইল বার -->
-      <div id="socialLinksBox" style="display: none; background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px;">
-        <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">
-          অফিসিয়াল ওয়েবসাইট ও সামাজিক মাধ্যম
+		<!-- সিনেমা হলের লাইভ মুভি ও শো-টাইম কার্ড ব্লক -->
+      <div id="cinemaShowtimeBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
+        <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-film" style="color: #E11D48;"></i> চলমান সিনেমা ও প্রদর্শনীর সময়সূচি
+          </div>
+          <span style="font-size: 10px; background: #FFE4E6; color: #E11D48; padding: 2px 6px; border-radius: 4px; font-weight: 600;">নাও শোয়িং</span>
         </div>
-        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-          <a href="#" id="linkWebsite" target="_blank" rel="noopener noreferrer" class="social-btn btn-web" style="display: none;" title="ওয়েবসাইট"><i class="fa-solid fa-globe"></i></a>
-          <a href="#" id="linkFacebook" target="_blank" rel="noopener noreferrer" class="social-btn btn-fb" style="display: none;" title="ফেসবুক"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#" id="linkYoutube" target="_blank" rel="noopener noreferrer" class="social-btn btn-yt" style="display: none;" title="ইউটিউব"><i class="fa-brands fa-youtube"></i></a>
-          <a href="#" id="linkLinkedin" target="_blank" rel="noopener noreferrer" class="social-btn btn-li" style="display: none;" title="লিংকডইন"><i class="fa-brands fa-linkedin-in"></i></a>
-          <a href="#" id="linkInstagram" target="_blank" rel="noopener noreferrer" class="social-btn btn-ig" style="display: none;" title="ইনস্টাগ্রাম"><i class="fa-brands fa-instagram"></i></a>
-        </div>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">আজকের নির্ধারিত শো-টাইম তালিকা</p>
+        
+        <!-- আপনার স্কেচ অনুযায়ী এখানে মুভির কার্ডগুলো বসবে -->
+        <div id="cinemaMovieList" style="display: flex; flex-direction: column; gap: 10px;"></div>
       </div>
-	  
+
       <!-- ৪. লাইভ সংবাদ ও হেডলাইন ব্লক (শুধুমাত্র সংবাদপত্রের জন্য) -->
       <div id="newspaperFeedBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
@@ -602,6 +602,21 @@
 
     <div class="page-listings" id="eduResultsListings"></div>
   </div>
+  
+        <!-- সোশ্যাল মিডিয়া ও অনলাইন প্রোফাইল বার -->
+      <div id="socialLinksBox" style="display: none; background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px;">
+        <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">
+          অফিসিয়াল ওয়েবসাইট ও সামাজিক মাধ্যম
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <a href="#" id="linkWebsite" target="_blank" rel="noopener noreferrer" class="social-btn btn-web" style="display: none;" title="ওয়েবসাইট"><i class="fa-solid fa-globe"></i></a>
+          <a href="#" id="linkFacebook" target="_blank" rel="noopener noreferrer" class="social-btn btn-fb" style="display: none;" title="ফেসবুক"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" id="linkYoutube" target="_blank" rel="noopener noreferrer" class="social-btn btn-yt" style="display: none;" title="ইউটিউব"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" id="linkLinkedin" target="_blank" rel="noopener noreferrer" class="social-btn btn-li" style="display: none;" title="লিংকডইন"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a href="#" id="linkInstagram" target="_blank" rel="noopener noreferrer" class="social-btn btn-ig" style="display: none;" title="ইনস্টাগ্রাম"><i class="fa-brands fa-instagram"></i></a>
+        </div>
+      </div>
+	  
 
   <script src="app.js"></script>
 </body>

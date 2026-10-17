@@ -717,18 +717,38 @@ function openDetails(item) {
     }
   }
 
+  // বিভাগসমূহ এবং সিনেমা হলের "বর্তমানে রানিং" হ্যান্ডলিং (ম্যানুয়াল)
   const deptsBox = document.getElementById('hospitalDeptsBox');
   const deptsList = document.getElementById('hospitalDeptsList');
   const deptsSub = document.getElementById('hospitalDeptsSub');
+  const isEdu = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা');
+  const isCinema = (cat === 'সিনেমা হল' || cat.includes('সিনেমা') || cat.includes('সিনেপ্লেক্স'));
+
   if (deptsBox && deptsList) {
     deptsList.innerHTML = '';
-    
-    if (deptsSub) {
-      deptsSub.innerText = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা') 
-        ? 'অনুমোদিত অনুষদ, স্তর ও বিভাগ' 
-        : 'চিকিৎসা ও ক্লিনিক্যাল শাখাসমূহ';
+
+    // ১. ক্যাটাগরি অনুযায়ী শিরোনাম পরিবর্তন
+    const deptsTitleDiv = deptsBox.querySelector('div');
+    if (deptsTitleDiv) {
+      if (isCinema) {
+        deptsTitleDiv.innerHTML = '<i class="fa-solid fa-film" style="color: #E11D48;"></i> বর্তমানে রানিং';
+      } else {
+        deptsTitleDiv.innerHTML = '<i class="fa-solid fa-layer-group" style="color: var(--primary);"></i> বিভাগসমূহ';
+      }
     }
 
+    // ২. সাব-টাইটেল পরিবর্তন
+    if (deptsSub) {
+      if (isEdu) {
+        deptsSub.innerText = 'অনুমোদিত অনুষদ, স্তর ও বিভাগ';
+      } else if (isCinema) {
+        deptsSub.innerText = 'চলমান সিনেমা ও প্রদর্শনী';
+      } else {
+        deptsSub.innerText = 'চিকিৎসা ও ক্লিনিক্যাল শাখাসমূহ';
+      }
+    }
+
+    // ৩. গুগল শিটের departments কলাম থেকে সাধারণ ব্যাজ তৈরি
     const rawDepts = (item.departments || '').trim();
     if (rawDepts) {
       rawDepts.split(',').forEach(dept => {
@@ -736,6 +756,11 @@ function openDetails(item) {
         if (dName) {
           const badge = document.createElement('span');
           badge.className = 'dept-badge-item';
+          if (isCinema) {
+            badge.style.borderColor = '#FECDD3';
+            badge.style.color = '#BE123C';
+            badge.style.background = '#FFF1F2';
+          }
           badge.innerText = dName;
           deptsList.appendChild(badge);
         }
@@ -744,6 +769,49 @@ function openDetails(item) {
     } else {
       deptsBox.style.display = 'none';
     }
+  }
+
+  // সিনেমা হলের শো-টাইম কার্ড ব্লক (স্বাধীন ও অপশনাল)
+  const cinemaBox = document.getElementById('cinemaShowtimeBox');
+  const cinemaList = document.getElementById('cinemaMovieList');
+
+  if (isCinema && item.showtimes && item.showtimes.trim() !== '') {
+    if (cinemaBox && cinemaList) {
+      cinemaList.innerHTML = '';
+      const movieEntries = item.showtimes.trim().split(/[|\n]/).map(m => m.trim()).filter(Boolean);
+
+      movieEntries.forEach(entry => {
+        const parts = entry.split(':');
+        const title = parts[0]?.trim() || 'চলচ্চিত্র';
+        const timesStr = parts.slice(1).join(':').trim();
+        const times = timesStr ? timesStr.split(',').map(t => t.trim()).filter(Boolean) : [];
+
+        // আপনার স্কেচ অনুযায়ী কার্ড
+        const card = document.createElement('div');
+        card.style.cssText = "background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px;";
+
+        card.innerHTML = `
+          <div style="font-weight: 700; font-size: 14px; color: #0F172A; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-clapperboard" style="color: #E11D48; font-size: 13px;"></i>
+            <span>${title}</span>
+          </div>
+          <div style="height: 1px; background: #E2E8F0; margin: 9px 0;"></div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+            ${times.length > 0 ? times.map(t => `
+              <span style="background: #FFFFFF; border: 1px solid #CBD5E1; color: #1E293B; font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                <i class="fa-regular fa-clock" style="color: #64748B; font-size: 10px; margin-right: 4px;"></i>${t}
+              </span>
+            `).join('') : '<span style="font-size: 11px; color: #94A3B8;">সময়সূচি দেওয়া হয়নি</span>'}
+          </div>
+        `;
+        cinemaList.appendChild(card);
+      });
+
+      cinemaBox.style.display = 'block';
+    }
+  } else {
+    // showtimes খালি থাকলে বা সিনেমা হল না হলে সম্পূর্ণ বন্ধ থাকবে
+    if (cinemaBox) cinemaBox.style.display = 'none';
   }
 
   const servicesBox = document.getElementById('hospitalServicesBox');
