@@ -109,7 +109,7 @@
       <div id="section-edu-news">
         <div class="section-title"><i class="fa-solid fa-graduation-cap"></i> শিক্ষা ও সংবাদ</div>
         <div class="home-categories-grid">
-          <div class="home-cat-card" onclick="openCategoryPage('শিক্ষা প্রতিষ্ঠান', 'কলেজ, স্কুল ও মাদরাসা')">
+          <div class="home-cat-card" onclick="openCategoryPage('শিক্ষা প্রতিষ্ঠান', 'বিশ্ববিদ্যালয়', 'কলেজ, স্কুল ও মাদরাসা')">
             <div class="home-cat-icon theme-edu"><i class="fa-solid fa-school"></i></div>
             <div class="home-cat-info">
               <h4>শিক্ষা প্রতিষ্ঠান</h4>
@@ -139,7 +139,7 @@
             </div>
           </div>
 
-          <div class="home-cat-card" onclick="openCategoryPage('দর্শনীয় স্থান', 'পানাম নগর, জাদুঘর ও দুর্গ')">
+          <div class="home-cat-card" onclick="openCategoryPage('দর্শনীয় স্থান', 'পর্যটন ও বিনোদন', 'পানাম নগর, জাদুঘর ও দুর্গ')">
             <div class="home-cat-icon theme-tour"><i class="fa-solid fa-landmark"></i></div>
             <div class="home-cat-info">
               <h4>দর্শনীয় স্থান</h4>
@@ -537,14 +537,15 @@
             <div id="detailsLandmark" style="color: #D97706; font-weight: 500; margin-top: 2px;">-</div>
           </div>
         </div>
-
-        <div class="info-item">
-          <i class="fa-solid fa-clock"></i>
-          <div>
-            <strong style="color: var(--text);">সময়সূচি:</strong>
-            <div id="detailsTiming" style="color: var(--text-muted); margin-top: 2px;">খোলা আছে</div>
-          </div>
-        </div>
+		
+		<div class="info-item" id="detailsTimingBox">
+		  <i class="fa-solid fa-clock"></i>
+			<div>
+			<strong style="color: var(--text);">সময়সূচি:</strong>
+			<div id="detailsTiming" style="color: var(--text-muted); margin-top: 2px;">-</div>
+			</div>
+		</div>
+		
         <div class="info-item">
           <i class="fa-solid fa-phone"></i>
           <div>

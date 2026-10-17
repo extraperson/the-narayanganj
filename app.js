@@ -62,7 +62,7 @@ function normalizeEducationItem(item) {
       item.english_version === 'হ্যাঁ' ? 'ইংরেজি ভার্সন' : ''
     ].filter(Boolean).join(', '),
     website: item.website || item.source_url || '',
-    timing: item.timing || 'খোলা আছে',
+    timing: item.timing || '',
     featured: item.featured || ''
   };
 }
@@ -646,7 +646,15 @@ function openDetails(item) {
   if (addrEl) addrEl.innerText = item.address || item.area || 'নারায়ণগঞ্জ';
 
   const timeEl = document.getElementById('detailsTiming');
-  if (timeEl) timeEl.innerText = item.timing || 'খোলা আছে';
+  const timingBox = document.getElementById('detailsTimingBox') || timeEl?.closest('.info-item');
+  if (timingBox && timeEl) {
+    if (item.timing && item.timing.trim() !== '') {
+      timeEl.innerText = item.timing.trim();
+      timingBox.style.display = 'flex';
+    } else {
+      timingBox.style.display = 'none';
+    }
+  }
 
   const phoneEl = document.getElementById('detailsPhone');
   if (phoneEl) phoneEl.innerText = item.phone || 'নম্বর নেই';
