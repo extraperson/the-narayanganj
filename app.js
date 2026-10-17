@@ -55,7 +55,7 @@ function normalizeEducationItem(item) {
     eiin: item.eiin || '',
     principal: item.principal || '',
     rating: item.rating || '৪.৫',
-    departments: item.education_level || item.type_file || '',
+    departments: item.departments || '',
     facilities: [
       item.for_whom,
       item.management ? `${item.management} ব্যবস্থাপনা` : '',
