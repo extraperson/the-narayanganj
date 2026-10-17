@@ -1334,7 +1334,7 @@ async function loadData() {
     placesData = Array.isArray(pData) ? organizeListings(pData) : [];
     doctorsData = Array.isArray(dData) ? organizeListings(dData) : [];
     resultsData = Array.isArray(rData) ? rData : [];
-    educationData = Array.isArray(eData) ? eData.map(normalizeEducationItem) : [];
+    educationData = Array.isArray(eData) ? organizeListings(eData.map(normalizeEducationItem)) : [];
   } catch (err) {
     console.warn("ডাটা লোড হতে সমস্যা হয়েছে:", err);
   }
