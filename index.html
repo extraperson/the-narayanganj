@@ -468,19 +468,33 @@
         </div>
       </div>
 	  
-	  <!-- আকর্ষণীয় ট্রিভিয়া হরাইজন্টাল স্লাইড কার্ড ব্লক -->
-<div id="eduTriviaBox" style="display: none; background: #FFFDF7; border: 1px solid #FDE68A; border-radius: var(--radius); padding: 14px 12px;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 4px;">
+	  <!-- খাঁটি প্রিমিয়াম ট্রিভিয়া ক্যারোজেল স্লাইডার -->
+<div id="eduTriviaBox" style="display: none; background: #FFFDF7; border: 1px solid #FDE68A; border-radius: 14px; padding: 14px; position: relative; overflow: hidden; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.05);">
+  
+  <!-- হেডার -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
     <div style="font-size: 14px; font-weight: 700; color: #92400E; display: flex; align-items: center; gap: 6px;">
-      <i class="fa-solid fa-lightbulb" style="color: #F59E0B;"></i> জানা-অজানা ও ট্রিভিয়া
+      <i class="fa-solid fa-lightbulb" style="color: #F59E0B;"></i> জানা-অজানা তথ্য ও ট্রিভিয়া
     </div>
-    <span style="font-size: 10px; color: #B45309; background: #FEF3C7; border: 1px solid #FDE68A; padding: 2px 7px; border-radius: 10px; font-weight: 600;">
-      স্লাইড করুন <i class="fa-solid fa-arrow-right" style="font-size: 9px;"></i>
-    </span>
+    
+    <!-- স্লাইড কন্ট্রোল বোতাম -->
+    <div style="display: flex; gap: 6px;">
+      <button type="button" onclick="slideTrivia(-1)" style="width: 26px; height: 26px; border-radius: 50%; border: 1px solid #FDE68A; background: #FFFFFF; color: #B45309; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 11px;">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <button type="button" onclick="slideTrivia(1)" style="width: 26px; height: 26px; border-radius: 50%; border: 1px solid #FDE68A; background: #FFFFFF; color: #B45309; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 11px;">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
   </div>
 
-  <!-- ডান-বাম স্ক্রোলেবল কন্টেইনার -->
-  <div id="eduTriviaList" style="display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 4px;"></div>
+  <!-- স্লাইডার ট্র্যাক (এখানে স্ক্রোল নয়, ট্রানজিশন দিয়ে কার্ড সরবে) -->
+  <div style="overflow: hidden; width: 100%;">
+    <div id="triviaTrack" style="display: flex; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); width: 100%;"></div>
+  </div>
+
+  <!-- পেজিং ডটস -->
+  <div id="triviaDots" style="display: flex; justify-content: center; gap: 5px; margin-top: 10px;"></div>
 </div>
 
       <!-- শুধু শিক্ষা প্রতিষ্ঠানের জন্য প্রিমিয়াম ব্লক -->

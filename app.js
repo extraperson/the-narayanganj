@@ -16,6 +16,10 @@ let selectedDocDept = 'সব বিভাগ';
 let activeItem = null;
 let activeDoctor = null;
 
+// ক্যারোজেল স্লাইডার স্টেট
+let currentTriviaIndex = 0;
+let totalTriviaSlides = 0;
+
 let bookmarks = { places: [], doctors: [] };
 try {
   const saved = localStorage.getItem('narayanganj_bookmarks');
@@ -619,10 +623,118 @@ function renderNewsItems(container, items) {
   });
 }
 
+// ==========================================
+// গ্লোবাল ট্রিভিয়া ক্যারোজেল স্লাইডার ফাংশনসমূহ
+// ==========================================
+function slideTrivia(direction) {
+  const track = document.getElementById('triviaTrack');
+  const dotsContainer = document.getElementById('triviaDots');
+  if (!track || totalTriviaSlides <= 1) return;
+
+  currentTriviaIndex += direction;
+  if (currentTriviaIndex < 0) currentTriviaIndex = totalTriviaSlides - 1;
+  if (currentTriviaIndex >= totalTriviaSlides) currentTriviaIndex = 0;
+
+  track.style.transform = `translateX(-${currentTriviaIndex * 100}%)`;
+
+  if (dotsContainer) {
+    const dots = dotsContainer.querySelectorAll('.t-dot');
+    dots.forEach((dot, idx) => {
+      if (idx === currentTriviaIndex) {
+        dot.style.background = '#F59E0B';
+        dot.style.width = '14px';
+      } else {
+        dot.style.background = '#FDE68A';
+        dot.style.width = '6px';
+      }
+    });
+  }
+}
+
+function renderTriviaSlider(rawTrivia) {
+  const triviaBox = document.getElementById('eduTriviaBox');
+  const track = document.getElementById('triviaTrack');
+  const dotsContainer = document.getElementById('triviaDots');
+
+  if (!triviaBox || !track || !dotsContainer) return;
+
+  if (!rawTrivia || rawTrivia.trim() === '') {
+    triviaBox.style.display = 'none';
+    return;
+  }
+
+  const facts = rawTrivia.split('|').map(f => f.trim()).filter(Boolean);
+  totalTriviaSlides = facts.length;
+  currentTriviaIndex = 0;
+  track.style.transform = 'translateX(0%)';
+  track.innerHTML = '';
+  dotsContainer.innerHTML = '';
+
+  if (totalTriviaSlides === 0) {
+    triviaBox.style.display = 'none';
+    return;
+  }
+
+  facts.forEach((fact, idx) => {
+    let title = `তথ্য #${toBanglaNumber(idx + 1)}`;
+    let desc = fact;
+
+    if (fact.includes(':')) {
+      const parts = fact.split(':');
+      title = parts[0].replace(/^[•\-\*]\s*/, '').trim();
+      desc = parts.slice(1).join(':').trim();
+    } else {
+      desc = fact.replace(/^[•\-\*]\s*/, '').trim();
+    }
+
+    const slide = document.createElement('div');
+    slide.style.cssText = "min-width: 100%; box-sizing: border-box; padding: 2px;";
+    slide.innerHTML = `
+      <div style="background: #FFFFFF; border: 1px solid #FDE68A; border-radius: 10px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+        <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 8px;">
+          <div style="width: 22px; height: 22px; border-radius: 50%; background: #FEF3C7; color: #D97706; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0;">
+            <i class="fa-solid fa-bookmark"></i>
+          </div>
+          <span style="font-weight: 700; font-size: 13px; color: #92400E;">${title}</span>
+        </div>
+        <div style="font-size: 12px; color: #451A03; line-height: 1.5;">
+          ${desc}
+        </div>
+      </div>
+    `;
+    track.appendChild(slide);
+
+    const dot = document.createElement('div');
+    dot.className = 't-dot';
+    dot.style.cssText = `
+      height: 6px;
+      width: ${idx === 0 ? '14px' : '6px'};
+      border-radius: 10px;
+      background: ${idx === 0 ? '#F59E0B' : '#FDE68A'};
+      transition: all 0.25s ease;
+    `;
+    dotsContainer.appendChild(dot);
+  });
+
+  let touchStartX = 0;
+  track.ontouchstart = (e) => { touchStartX = e.touches[0].clientX; };
+  track.ontouchend = (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      slideTrivia(diff > 0 ? 1 : -1);
+    }
+  };
+
+  triviaBox.style.display = 'block';
+}
+
 function openDetails(item) {
   if (!item) return;
   activeItem = item;
   const cat = (item.category || '').trim();
+  const isEdu = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা');
+  const isNews = (cat === 'সংবাদপত্র');
+  const isCinema = (cat === 'সিনেমা হল' || cat.includes('সিনেমা') || cat.includes('সিনেপ্লেক্স'));
   
   const imgEl = document.getElementById('detailsImg');
   if (imgEl) {
@@ -659,7 +771,6 @@ function openDetails(item) {
   const phoneEl = document.getElementById('detailsPhone');
   if (phoneEl) phoneEl.innerText = item.phone || 'নম্বর নেই';
 
-  // EIIN ব্যাজ
   const eiinEl = document.getElementById('detailsEiin');
   if (eiinEl) {
     if (item.eiin && item.eiin.toString().trim() !== '') {
@@ -670,7 +781,6 @@ function openDetails(item) {
     }
   }
 
-  // শয্যা ব্যাজ
   const bedsEl = document.getElementById('detailsBeds');
   if (bedsEl) {
     if ((cat.includes('হাসপাতাল') || cat.includes('ক্লিনিক')) && item.beds && item.beds.toString().trim() !== '') {
@@ -725,12 +835,9 @@ function openDetails(item) {
     }
   }
 
-  // বিভাগসমূহ এবং সিনেমা হলের "বর্তমানে রানিং" হ্যান্ডলিং (ম্যানুয়াল)
   const deptsBox = document.getElementById('hospitalDeptsBox');
   const deptsList = document.getElementById('hospitalDeptsList');
   const deptsSub = document.getElementById('hospitalDeptsSub');
-  const isEdu = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা');
-  const isCinema = (cat === 'সিনেমা হল' || cat.includes('সিনেমা') || cat.includes('সিনেপ্লেক্স'));
 
   if (deptsBox && deptsList) {
     deptsList.innerHTML = '';
@@ -776,7 +883,6 @@ function openDetails(item) {
     }
   }
 
-  // সিনেমা হলের শো-টাইম কার্ড ব্লক (স্বাধীন ও অপশনাল)
   const cinemaBox = document.getElementById('cinemaShowtimeBox');
   const cinemaList = document.getElementById('cinemaMovieList');
 
@@ -924,12 +1030,13 @@ function openDetails(item) {
       feedBox.style.display = 'none';
     }
   }
+
+  // ট্রিভিয়া স্লাইডার রেন্ডার কল
+  renderTriviaSlider(item.trivia);
   
   // শিক্ষা প্রতিষ্ঠান ও সংবাদপত্র সেকশন
   const eduBox = document.getElementById('eduSectionBox');
   if (eduBox) {
-    const isNews = (cat === 'সংবাদপত্র');
-
     if (isEdu || isNews) {
       eduBox.style.display = 'flex';
 
@@ -1006,66 +1113,6 @@ function openDetails(item) {
 
     } else {
       eduBox.style.display = 'none';
-    }
-  }
-
-  // ট্রিভিয়া হরাইজন্টাল স্লাইড কার্ড রেন্ডারিং
-  const triviaBox = document.getElementById('eduTriviaBox');
-  const triviaList = document.getElementById('eduTriviaList');
-
-  if (triviaBox && triviaList) {
-    const rawTrivia = (item.trivia || '').trim();
-    if (rawTrivia) {
-      triviaList.innerHTML = '';
-      const facts = rawTrivia.split('|').map(f => f.trim()).filter(Boolean);
-
-      facts.forEach((fact, idx) => {
-        // কোলন (:) থাকলে শিরোনাম ও বিস্তারিত আলাদা করা
-        let title = `তথ্য #${toBanglaNumber(idx + 1)}`;
-        let desc = fact;
-
-        if (fact.includes(':')) {
-          const parts = fact.split(':');
-          title = parts[0].replace(/^[•\-\*]\s*/, '').trim();
-          desc = parts.slice(1).join(':').trim();
-        } else {
-          desc = fact.replace(/^[•\-\*]\s*/, '').trim();
-        }
-
-        const card = document.createElement('div');
-        card.style.cssText = `
-          min-width: 220px;
-          max-width: 250px;
-          flex-shrink: 0;
-          background: #FFFFFF;
-          border: 1px solid #FDE68A;
-          border-radius: 10px;
-          padding: 10px 12px;
-          box-shadow: 0 1px 3px rgba(180, 83, 9, 0.05);
-          scroll-snap-align: start;
-          display: flex;
-          flex-direction: column;
-        `;
-
-        card.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-            <div style="width: 22px; height: 22px; border-radius: 50%; background: #FEF3C7; color: #D97706; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0;">
-              <i class="fa-solid fa-bookmark"></i>
-            </div>
-            <span style="font-weight: 700; font-size: 12px; color: #92400E;">${title}</span>
-          </div>
-          <div style="height: 1px; background: #FEF3C7; margin-bottom: 6px;"></div>
-          <div style="font-size: 12px; color: #451A03; line-height: 1.45;">
-            ${desc}
-          </div>
-        `;
-
-        triviaList.appendChild(card);
-      });
-
-      triviaBox.style.display = 'block';
-    } else {
-      triviaBox.style.display = 'none';
     }
   }
 
