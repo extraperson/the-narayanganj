@@ -1331,6 +1331,53 @@ function shareItem() {
   }
 }
 
+// ইংরেজি সংখ্যাকে বাংলায় রূপান্তর করার হেল্পার
+function toBanglaNumber(num) {
+  const bn = {'0':'০','1':'১','2':'২','3':'৩','4':'৪','5':'৫','6':'৬','7':'৭','8':'৮','9':'৯'};
+  return num.toString().replace(/\d/g, d => bn[d]);
+}
+
+// হোমপেজের কার্ডে স্বয়ংক্রিয়ভাবে সংখ্যা আপডেট করার ফাংশন
+function updateCategoryCounts() {
+  // ১. শিক্ষা প্রতিষ্ঠান গণনা
+  const eduCount = educationData.length;
+  const eduSub = document.getElementById('countSubEdu');
+  if (eduSub && eduCount > 0) {
+    eduSub.innerText = `${toBanglaNumber(eduCount)}+ স্কুল ও কলেজ`;
+  }
+
+  // ২. বিশেষজ্ঞ ডাক্তার গণনা
+  const docCount = doctorsData.length;
+  const docSub = document.getElementById('countSubDoctors');
+  if (docSub && docCount > 0) {
+    docSub.innerText = `${toBanglaNumber(docCount)}+ বিশেষজ্ঞ চিকিৎসক`;
+  }
+
+  // ৩. বেসরকারি হাসপাতাল গণনা
+  const pvtHospCount = placesData.filter(p => {
+    const c = (p.category || '').trim();
+    return c === 'বেসরকারি হাসপাতাল' || c === 'হাসপাতাল';
+  }).length;
+  const pvtSub = document.getElementById('countSubPvtHosp');
+  if (pvtSub && pvtHospCount > 0) {
+    pvtSub.innerText = `${toBanglaNumber(pvtHospCount)}+ ক্লিনিক ও সেবা`;
+  }
+
+  // ৪. ডায়াগনস্টিক সেন্টার গণনা
+  const diagCount = placesData.filter(p => (p.category || '').includes('ডায়াগনস্টিক')).length;
+  const diagSub = document.getElementById('countSubDiag');
+  if (diagSub && diagCount > 0) {
+    diagSub.innerText = `${toBanglaNumber(diagCount)}+ টেস্ট ল্যাব`;
+  }
+
+  // ৫. ডেন্টাল ক্লিনিক গণনা
+  const dentalCount = placesData.filter(p => (p.category || '').includes('ডেন্টাল')).length;
+  const dentalSub = document.getElementById('countSubDental');
+  if (dentalSub && dentalCount > 0) {
+    dentalSub.innerText = `${toBanglaNumber(dentalCount)}+ ডেন্টাল কেয়ার`;
+  }
+}
+
 async function loadData() {
   try {
     const fetchPlaces = fetch(API_PLACES).then(r => r.json()).catch(() => []);
@@ -1345,6 +1392,7 @@ async function loadData() {
     doctorsData = Array.isArray(dData) ? organizeListings(dData) : [];
     resultsData = Array.isArray(rData) ? rData : [];
     educationData = Array.isArray(eData) ? organizeListings(eData.map(normalizeEducationItem)) : [];
+	updateCategoryCounts();
   } catch (err) {
     console.warn("ডাটা লোড হতে সমস্যা হয়েছে:", err);
   }
