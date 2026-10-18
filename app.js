@@ -56,6 +56,7 @@ function normalizeEducationItem(item) {
     principal: item.principal || '',
     rating: item.rating || '৪.৫',
     departments: item.departments || '',
+    trivia: item.trivia || '',
     facilities: [
       item.for_whom,
       item.management ? `${item.management} ব্যবস্থাপনা` : '',
@@ -289,7 +290,6 @@ function renderCategoryItems() {
   const input = document.getElementById('catSearchInput');
   const query = input ? input.value.toLowerCase().trim() : '';
 
-  // শিক্ষা প্রতিষ্ঠান হলে Education ট্যাব থেকে ডেটা নেওয়া হবে
   let sourceList = placesData;
   if (currentCategory === 'শিক্ষা প্রতিষ্ঠান') {
     sourceList = educationData.length > 0 ? educationData : placesData;
@@ -314,7 +314,7 @@ function renderCategoryItems() {
       matchCat = (itemCat === 'শিক্ষা প্রতিষ্ঠান' || itemCat === 'স্কুল' || itemCat === 'কলেজ' || itemCat === 'মাদরাসা');
     } else if (currentCategory === 'জেনারেল স্টোর') {
       matchCat = (itemCat === 'জেনারেল স্টোর' || itemCat.includes('স্টোর') || itemCat.includes('মুদি'));
-	} else if (currentCategory === 'দর্শনীয় স্থান' || currentCategory === 'পর্যটন ও বিনোদন' || currentCategory === 'বিনোদন') {
+    } else if (currentCategory === 'দর্শনীয় স্থান' || currentCategory === 'পর্যটন ও বিনোদন' || currentCategory === 'বিনোদন') {
       matchCat = (itemCat.includes('দর্শনীয়') || itemCat.includes('পর্যটন') || itemCat.includes('বিনোদন') || itemCat.includes('পার্ক') || itemCat.includes('ঐতিহাসিক'));
     } else {
       matchCat = itemCat.toLowerCase().includes(currentCategory.toLowerCase());
@@ -327,7 +327,6 @@ function renderCategoryItems() {
       if (targetArea === 'চাষাড়া' && (itemArea.includes('সদর') || itemAddress.includes('সদর'))) matchArea = true;
     }
 
-    // ব্যাকগ্রাউন্ড অনুবাদ ও EIIN সার্চ (শুধুমাত্র খাঁটি বাংলা নাম ডিসপ্লে হবে)
     const matchSearch = 
       (item.name || '').toLowerCase().includes(query) ||
       (item.name_en || '').toLowerCase().includes(query) ||
@@ -356,7 +355,6 @@ function renderCategoryItems() {
     card.className = 'place-card';
     card.onclick = () => openDetails(item);
 
-    // স্পন্সরড হলে হালকা স্পেশাল বর্ডার
     if (isFeatured) {
       card.style.borderColor = '#F59E0B';
       card.style.background = '#FFFDF5';
@@ -737,7 +735,6 @@ function openDetails(item) {
   if (deptsBox && deptsList) {
     deptsList.innerHTML = '';
 
-    // ১. ক্যাটাগরি অনুযায়ী শিরোনাম পরিবর্তন
     const deptsTitleDiv = deptsBox.querySelector('div');
     if (deptsTitleDiv) {
       if (isCinema) {
@@ -747,7 +744,6 @@ function openDetails(item) {
       }
     }
 
-    // ২. সাব-টাইটেল পরিবর্তন
     if (deptsSub) {
       if (isEdu) {
         deptsSub.innerText = 'অনুমোদিত অনুষদ, স্তর ও বিভাগ';
@@ -758,7 +754,6 @@ function openDetails(item) {
       }
     }
 
-    // ৩. গুগল শিটের departments কলাম থেকে সাধারণ ব্যাজ তৈরি
     const rawDepts = (item.departments || '').trim();
     if (rawDepts) {
       rawDepts.split(',').forEach(dept => {
@@ -796,7 +791,6 @@ function openDetails(item) {
         const timesStr = parts.slice(1).join(':').trim();
         const times = timesStr ? timesStr.split(',').map(t => t.trim()).filter(Boolean) : [];
 
-        // আপনার স্কেচ অনুযায়ী কার্ড
         const card = document.createElement('div');
         card.style.cssText = "background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px;";
 
@@ -820,7 +814,6 @@ function openDetails(item) {
       cinemaBox.style.display = 'block';
     }
   } else {
-    // showtimes খালি থাকলে বা সিনেমা হল না হলে সম্পূর্ণ বন্ধ থাকবে
     if (cinemaBox) cinemaBox.style.display = 'none';
   }
 
@@ -932,9 +925,9 @@ function openDetails(item) {
     }
   }
   
+  // শিক্ষা প্রতিষ্ঠান ও সংবাদপত্র সেকশন
   const eduBox = document.getElementById('eduSectionBox');
   if (eduBox) {
-    const isEdu = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা');
     const isNews = (cat === 'সংবাদপত্র');
 
     if (isEdu || isNews) {
@@ -946,7 +939,6 @@ function openDetails(item) {
       const principalIcon = document.getElementById('eduPrincipalIcon');
       const resultsNavCard = eduBox.querySelector('.doc-nav-card');
 
-      // ১. প্রধান ব্যক্তি (অধ্যক্ষ / সম্পাদক) হ্যান্ডলিং
       if (principalCard && principalName) {
         if (item.principal && item.principal.trim() !== '') {
           principalName.innerText = item.principal.trim();
@@ -978,12 +970,10 @@ function openDetails(item) {
         }
       }
 
-      // ২. পরীক্ষার ফলাফল বাটন
       if (resultsNavCard) {
         resultsNavCard.style.display = isEdu ? 'flex' : 'none';
       }
 
-      // ৩. নতুন ফিল্ডসমূহ: প্রাতিষ্ঠানিক তথ্য ও ইমেইল
       const infoGridBox = document.getElementById('eduInfoGridBox');
       const mgtEl = document.getElementById('eduManagement');
       const whomEl = document.getElementById('eduForWhom');
@@ -993,7 +983,6 @@ function openDetails(item) {
       const emailLink = document.getElementById('eduEmailLink');
 
       if (infoGridBox) {
-        // শুধুমাত্র শিক্ষা প্রতিষ্ঠান হলেই এই ইনফো গ্রিডটি দেখাবে
         if (isEdu) {
           infoGridBox.style.display = 'block';
           if (mgtEl) mgtEl.innerText = item.management || 'সাধারণ';
@@ -1017,6 +1006,32 @@ function openDetails(item) {
 
     } else {
       eduBox.style.display = 'none';
+    }
+  }
+
+  // ট্রিভিয়া কার্ড রেন্ডারিং
+  const triviaBox = document.getElementById('eduTriviaBox');
+  const triviaList = document.getElementById('eduTriviaList');
+
+  if (triviaBox && triviaList) {
+    const rawTrivia = (item.trivia || '').trim();
+    if (rawTrivia) {
+      triviaList.innerHTML = '';
+      const facts = rawTrivia.split('|').map(f => f.trim()).filter(Boolean);
+
+      facts.forEach(fact => {
+        const itemDiv = document.createElement('div');
+        itemDiv.style.cssText = "display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #78350F; line-height: 1.4;";
+        itemDiv.innerHTML = `
+          <i class="fa-solid fa-circle-check" style="color: #F59E0B; font-size: 12px; margin-top: 3px; flex-shrink: 0;"></i>
+          <span>${fact}</span>
+        `;
+        triviaList.appendChild(itemDiv);
+      });
+
+      triviaBox.style.display = 'block';
+    } else {
+      triviaBox.style.display = 'none';
     }
   }
 
@@ -1218,7 +1233,6 @@ function viewInstitutionResults() {
 
   const cleanInst = (activeItem.name || '').toLowerCase().replace(/সরকারি|কলেজ|স্কুল|মাদরাসা/g, '').trim();
 
-  // EIIN অথবা নাম দিয়ে নিখুঁত রেজাল্ট ফিল্টার
   const matchedResults = (resultsData || []).filter(r => {
     if (!r) return false;
     if (activeItem.eiin && r.eiin && r.eiin.toString().trim() === activeItem.eiin.toString().trim()) {
@@ -1339,21 +1353,18 @@ function toBanglaNumber(num) {
 
 // হোমপেজের কার্ডে স্বয়ংক্রিয়ভাবে সংখ্যা আপডেট করার ফাংশন
 function updateCategoryCounts() {
-  // ১. শিক্ষা প্রতিষ্ঠান গণনা
   const eduCount = educationData.length;
   const eduSub = document.getElementById('countSubEdu');
   if (eduSub && eduCount > 0) {
     eduSub.innerText = `${toBanglaNumber(eduCount)}+ স্কুল ও কলেজ`;
   }
 
-  // ২. বিশেষজ্ঞ ডাক্তার গণনা
   const docCount = doctorsData.length;
   const docSub = document.getElementById('countSubDoctors');
   if (docSub && docCount > 0) {
     docSub.innerText = `${toBanglaNumber(docCount)}+ বিশেষজ্ঞ চিকিৎসক`;
   }
 
-  // ৩. বেসরকারি হাসপাতাল গণনা
   const pvtHospCount = placesData.filter(p => {
     const c = (p.category || '').trim();
     return c === 'বেসরকারি হাসপাতাল' || c === 'হাসপাতাল';
@@ -1363,14 +1374,12 @@ function updateCategoryCounts() {
     pvtSub.innerText = `${toBanglaNumber(pvtHospCount)}+ ক্লিনিক ও সেবা`;
   }
 
-  // ৪. ডায়াগনস্টিক সেন্টার গণনা
   const diagCount = placesData.filter(p => (p.category || '').includes('ডায়াগনস্টিক')).length;
   const diagSub = document.getElementById('countSubDiag');
   if (diagSub && diagCount > 0) {
     diagSub.innerText = `${toBanglaNumber(diagCount)}+ টেস্ট ল্যাব`;
   }
 
-  // ৫. ডেন্টাল ক্লিনিক গণনা
   const dentalCount = placesData.filter(p => (p.category || '').includes('ডেন্টাল')).length;
   const dentalSub = document.getElementById('countSubDental');
   if (dentalSub && dentalCount > 0) {
@@ -1387,12 +1396,11 @@ async function loadData() {
 
     const [pData, dData, rData, eData] = await Promise.all([fetchPlaces, fetchDocs, fetchResults, fetchEdu]);
     
-    // ডাটা লোড হওয়ার সাথে সাথে স্পন্সরড পিন ও সাধারণগুলো র‍্যান্ডমাইজেশন
     placesData = Array.isArray(pData) ? organizeListings(pData) : [];
     doctorsData = Array.isArray(dData) ? organizeListings(dData) : [];
     resultsData = Array.isArray(rData) ? rData : [];
     educationData = Array.isArray(eData) ? organizeListings(eData.map(normalizeEducationItem)) : [];
-	updateCategoryCounts();
+    updateCategoryCounts();
   } catch (err) {
     console.warn("ডাটা লোড হতে সমস্যা হয়েছে:", err);
   }
@@ -1405,7 +1413,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const docInput = document.getElementById('docSearchInput');
   if (docInput) docInput.addEventListener('input', renderDoctorItems);
 
-  // হোম পেজের সার্চ সক্রিয় করা
   const homeInput = document.getElementById('homeSearchInput');
   if (homeInput) {
     homeInput.addEventListener('input', (e) => {
