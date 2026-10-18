@@ -1009,7 +1009,7 @@ function openDetails(item) {
     }
   }
 
-  // ট্রিভিয়া কার্ড রেন্ডারিং
+  // ট্রিভিয়া হরাইজন্টাল স্লাইড কার্ড রেন্ডারিং
   const triviaBox = document.getElementById('eduTriviaBox');
   const triviaList = document.getElementById('eduTriviaList');
 
@@ -1019,14 +1019,48 @@ function openDetails(item) {
       triviaList.innerHTML = '';
       const facts = rawTrivia.split('|').map(f => f.trim()).filter(Boolean);
 
-      facts.forEach(fact => {
-        const itemDiv = document.createElement('div');
-        itemDiv.style.cssText = "display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #78350F; line-height: 1.4;";
-        itemDiv.innerHTML = `
-          <i class="fa-solid fa-circle-check" style="color: #F59E0B; font-size: 12px; margin-top: 3px; flex-shrink: 0;"></i>
-          <span>${fact}</span>
+      facts.forEach((fact, idx) => {
+        // কোলন (:) থাকলে শিরোনাম ও বিস্তারিত আলাদা করা
+        let title = `তথ্য #${toBanglaNumber(idx + 1)}`;
+        let desc = fact;
+
+        if (fact.includes(':')) {
+          const parts = fact.split(':');
+          title = parts[0].replace(/^[•\-\*]\s*/, '').trim();
+          desc = parts.slice(1).join(':').trim();
+        } else {
+          desc = fact.replace(/^[•\-\*]\s*/, '').trim();
+        }
+
+        const card = document.createElement('div');
+        card.style.cssText = `
+          min-width: 220px;
+          max-width: 250px;
+          flex-shrink: 0;
+          background: #FFFFFF;
+          border: 1px solid #FDE68A;
+          border-radius: 10px;
+          padding: 10px 12px;
+          box-shadow: 0 1px 3px rgba(180, 83, 9, 0.05);
+          scroll-snap-align: start;
+          display: flex;
+          flex-direction: column;
         `;
-        triviaList.appendChild(itemDiv);
+
+        card.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+            <div style="width: 22px; height: 22px; border-radius: 50%; background: #FEF3C7; color: #D97706; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0;">
+              <i class="fa-solid fa-bookmark"></i>
+            </div>
+            <span style="font-weight: 700; font-size: 12px; color: #92400E;">${title}</span>
+          </div>
+          <div style="height: 1px; background: #FEF3C7; margin-bottom: 6px;"></div>
+          <div style="font-size: 12px; color: #451A03; line-height: 1.45;">
+            ${desc}
+          </div>
+        `;
+
+        triviaList.appendChild(card);
       });
 
       triviaBox.style.display = 'block';
