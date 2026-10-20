@@ -31,14 +31,14 @@
         </div>
         <div class="search-box">
           <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
-          <input type="text" id="homeSearchInput" placeholder="ডাক্তার, হাসপাতাল বা সেবা খুঁজুন...">
+          <input type="text" id="homeSearchInput" placeholder="ডাক্তার, হাসপাতাল, রেস্টুরেন্ট বা সেবা খুঁজুন...">
         </div>
       </header>
 
       <div class="banner">
         <div>
           <h3>নারায়ণগঞ্জের এ টু জেড</h3>
-          <p>ডাক্তার, চিকিৎসা, জরুরি সেবা ও শহরের গাইড</p>
+          <p>ডাক্তার, চিকিৎসা, খাবার ও শহরের পূর্ণাঙ্গ গাইড</p>
         </div>
         <i class="fa-solid fa-city" style="font-size: 32px; opacity: 0.9;"></i>
       </div>
@@ -67,7 +67,6 @@
             <div class="home-cat-icon theme-doctor"><i class="fa-solid fa-user-doctor"></i></div>
             <div class="home-cat-info">
               <h4>বিশেষজ্ঞ ডাক্তার</h4>
-              <!-- id="countSubDoctors" যোগ করা হয়েছে -->
               <p id="countSubDoctors">চেম্বার ও সিরিয়াল</p>
             </div>
           </div>
@@ -84,7 +83,6 @@
             <div class="home-cat-icon theme-pvt-hospital"><i class="fa-solid fa-square-h"></i></div>
             <div class="home-cat-info">
               <h4>বেসরকারি হাসপাতাল</h4>
-              <!-- id="countSubPvtHosp" যোগ করা হয়েছে -->
               <p id="countSubPvtHosp">প্রাইভেট ক্লিনিক ও সেবা</p>
             </div>
           </div>
@@ -93,7 +91,6 @@
             <div class="home-cat-icon theme-diagnostic"><i class="fa-solid fa-hospital"></i></div>
             <div class="home-cat-info">
               <h4>ডায়াগনস্টিক সেন্টার</h4>
-              <!-- id="countSubDiag" যোগ করা হয়েছে -->
               <p id="countSubDiag">প্যাথলজি ও টেস্ট ল্যাব</p>
             </div>
           </div>
@@ -102,7 +99,6 @@
             <div class="home-cat-icon theme-dental"><i class="fa-solid fa-tooth"></i></div>
             <div class="home-cat-info">
               <h4>ডেন্টাল ক্লিনিক</h4>
-              <!-- id="countSubDental" যোগ করা হয়েছে -->
               <p id="countSubDental">দাঁতের ডাক্তার ও চিকিৎসা</p>
             </div>
           </div>
@@ -117,7 +113,6 @@
             <div class="home-cat-icon theme-edu"><i class="fa-solid fa-school"></i></div>
             <div class="home-cat-info">
               <h4>শিক্ষা প্রতিষ্ঠান</h4>
-              <!-- id="countSubEdu" যোগ করা হয়েছে -->
               <p id="countSubEdu">কলেজ, স্কুল ও একাডেমি</p>
             </div>
           </div>
@@ -132,7 +127,7 @@
         </div>
       </div>
 
-      <!-- ৩. বিনোদন -->
+      <!-- ৩. বিনোদন ও দর্শনীয় স্থান -->
       <div id="section-entertainment">
         <div class="section-title"><i class="fa-solid fa-film"></i> বিনোদন ও ভ্রমণ</div>
         <div class="home-categories-grid">
@@ -154,10 +149,19 @@
         </div>
       </div>
 
-      <!-- ৪. দৈনন্দিন নাগরিক সেবা -->
+      <!-- ৪. রেস্তোরাঁ ও দৈনন্দিন নাগরিক সেবা -->
       <div id="section-citizen">
-        <div class="section-title"><i class="fa-solid fa-city"></i> নাগরিক সেবা ও অন্যান্য</div>
+        <div class="section-title"><i class="fa-solid fa-city"></i> খাবার ও নাগরিক সেবা</div>
         <div class="home-categories-grid">
+          <!-- রেস্টুরেন্ট ক্যাটাগরি কার্ড -->
+          <div class="home-cat-card" onclick="openCategoryPage('রেস্টুরেন্ট', 'রেস্তোরাঁ, ক্যাফে ও ফাস্টফুড')">
+            <div class="home-cat-icon theme-food"><i class="fa-solid fa-utensils"></i></div>
+            <div class="home-cat-info">
+              <h4>রেস্টুরেন্ট ও ক্যাফে</h4>
+              <p id="countSubFood">মেনু ও খাবারের তালিকা</p>
+            </div>
+          </div>
+
           <div class="home-cat-card" onclick="openCategoryPage('জরুরি সেবা', 'থানা, অ্যাম্বুলেন্স ও ফায়ার সার্ভিস')">
             <div class="home-cat-icon theme-emergency"><i class="fa-solid fa-truck-medical"></i></div>
             <div class="home-cat-info">
@@ -187,14 +191,6 @@
             <div class="home-cat-info">
               <h4>শপিং ও ব্যবসা</h4>
               <p>মার্কেট ও পাইকারি আড়ত</p>
-            </div>
-          </div>
-
-          <div class="home-cat-card" onclick="openCategoryPage('মিষ্টি ও খাবার', 'বিখ্যাত মিষ্টি, রেস্তোরাঁ ও ক্যাফে')">
-            <div class="home-cat-icon theme-food"><i class="fa-solid fa-utensils"></i></div>
-            <div class="home-cat-info">
-              <h4>মিষ্টি ও খাবার</h4>
-              <p>ঐতিহ্যবাহী মিষ্টি ও খাবার</p>
             </div>
           </div>
 
@@ -421,7 +417,7 @@
         <div class="dept-badge-grid" id="hospitalDeptsList"></div>
       </div>
 
-      <!-- ২. সেবাসমূহ ও সুযোগ-সুবিধা (গুগল শিট থেকে ডাইনামিক রেন্ডার হবে) -->
+      <!-- ২. সেবাসমূহ ও সুযোগ-সুবিধা -->
       <div id="hospitalServicesBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-bell-concierge" style="color: #0284C7;"></i> সেবাসমূহ ও অন্যান্য সুবিধা
@@ -430,7 +426,7 @@
         <div class="dept-badge-grid" id="hospitalServicesList"></div>
       </div>
 	  
-      <!-- ৩. ডায়াগনস্টিক সার্ভিস ও টেস্ট (গুগল শিট থেকে ডাইনামিক রেন্ডার হবে) -->
+      <!-- ৩. ডায়াগনস্টিক সার্ভিস ও টেস্ট -->
       <div id="hospitalDiagBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-microscope" style="color: #D97706;"></i> ডায়াগনস্টিক সার্ভিস ও টেস্ট
@@ -439,7 +435,7 @@
         <div class="dept-badge-grid" id="hospitalDiagList"></div>
       </div>
 
-		<!-- সিনেমা হলের লাইভ মুভি ও শো-টাইম কার্ড ব্লক -->
+      <!-- সিনেমা হলের লাইভ মুভি ও শো-টাইম কার্ড ব্লক -->
       <div id="cinemaShowtimeBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -448,12 +444,10 @@
           <span style="font-size: 10px; background: #FFE4E6; color: #E11D48; padding: 2px 6px; border-radius: 4px; font-weight: 600;">নাও শোয়িং</span>
         </div>
         <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">আজকের নির্ধারিত শো-টাইম তালিকা</p>
-        
-        <!-- আপনার স্কেচ অনুযায়ী এখানে মুভির কার্ডগুলো বসবে -->
         <div id="cinemaMovieList" style="display: flex; flex-direction: column; gap: 10px;"></div>
       </div>
 
-      <!-- ৪. লাইভ সংবাদ ও হেডলাইন ব্লক (শুধুমাত্র সংবাদপত্রের জন্য) -->
+      <!-- লাইভ সংবাদ ও হেডলাইন ব্লক -->
       <div id="newspaperFeedBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -462,44 +456,35 @@
           <span style="font-size: 10px; background: #FEE2E2; color: #DC2626; padding: 2px 6px; border-radius: 4px; font-weight: 600;">লাইভ আপডেট</span>
         </div>
         <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">সংবাদ পড়তে শিরোনামে ক্লিক করুন</p>
-        
-        <div id="newspaperFeedList" style="display: flex; flex-direction: column; gap: 8px;">
-          <!-- এখানে লাইভ সংবাদ লোড হবে -->
-        </div>
+        <div id="newspaperFeedList" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
 	  
-	  <!-- খাঁটি প্রিমিয়াম ট্রিভিয়া ক্যারোজেল স্লাইডার -->
-<div id="eduTriviaBox" style="display: none; background: #FFFDF7; border: 1px solid #FDE68A; border-radius: 14px; padding: 14px; position: relative; overflow: hidden; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.05);">
-  
-  <!-- হেডার -->
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-    <div style="font-size: 14px; font-weight: 700; color: #92400E; display: flex; align-items: center; gap: 6px;">
-      <i class="fa-solid fa-lightbulb" style="color: #F59E0B;"></i> জানা-অজানা তথ্য ও ট্রিভিয়া
-    </div>
-    
-    <!-- স্লাইড কন্ট্রোল বোতাম -->
-    <div style="display: flex; gap: 6px;">
-      <button type="button" onclick="slideTrivia(-1)" style="width: 26px; height: 26px; border-radius: 50%; border: 1px solid #FDE68A; background: #FFFFFF; color: #B45309; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 11px;">
-        <i class="fa-solid fa-chevron-left"></i>
-      </button>
-      <button type="button" onclick="slideTrivia(1)" style="width: 26px; height: 26px; border-radius: 50%; border: 1px solid #FDE68A; background: #FFFFFF; color: #B45309; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 11px;">
-        <i class="fa-solid fa-chevron-right"></i>
-      </button>
-    </div>
-  </div>
+      <!-- খাঁটি প্রিমিয়াম ট্রিভিয়া ক্যারোজেল স্লাইডার -->
+      <div id="eduTriviaBox" style="display: none; background: #FFFDF7; border: 1px solid #FDE68A; border-radius: 14px; padding: 14px; position: relative; overflow: hidden; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.05);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div style="font-size: 14px; font-weight: 700; color: #92400E; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-lightbulb" style="color: #F59E0B;"></i> জানা-অজানা তথ্য ও ট্রিভিয়া
+          </div>
+          
+          <div style="display: flex; gap: 6px;">
+            <button type="button" onclick="slideTrivia(-1)" style="width: 26px; height: 26px; border-radius: 50%; border: 1px solid #FDE68A; background: #FFFFFF; color: #B45309; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 11px;">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button type="button" onclick="slideTrivia(1)" style="width: 26px; height: 26px; border-radius: 50%; border: 1px solid #FDE68A; background: #FFFFFF; color: #B45309; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 11px;">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
 
-  <!-- স্লাইডার ট্র্যাক (এখানে স্ক্রোল নয়, ট্রানজিশন দিয়ে কার্ড সরবে) -->
-  <div style="overflow: hidden; width: 100%;">
-    <div id="triviaTrack" style="display: flex; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); width: 100%;"></div>
-  </div>
+        <div style="overflow: hidden; width: 100%;">
+          <div id="triviaTrack" style="display: flex; transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); width: 100%;"></div>
+        </div>
 
-  <!-- পেজিং ডটস -->
-  <div id="triviaDots" style="display: flex; justify-content: center; gap: 5px; margin-top: 10px;"></div>
-</div>
+        <div id="triviaDots" style="display: flex; justify-content: center; gap: 5px; margin-top: 10px;"></div>
+      </div>
 
       <!-- শুধু শিক্ষা প্রতিষ্ঠানের জন্য প্রিমিয়াম ব্লক -->
       <div id="eduSectionBox" style="display: none; flex-direction: column; gap: 12px;">
-	  
         <div id="eduPrincipalCard" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
           <div id="eduPrincipalIcon" style="width: 44px; height: 44px; border-radius: 50%; background: #EDE9FE; color: #7C3AED; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
             <i class="fa-solid fa-user-tie"></i>
@@ -551,7 +536,6 @@
             <a href="#" id="eduEmailLink" style="color: #0284C7; font-weight: 600; margin-left: 4px; word-break: break-all;">-</a>
           </div>
         </div>
-
       </div>
 
       <!-- নিয়মিত তথ্য তালিকা -->
@@ -572,13 +556,13 @@
           </div>
         </div>
 		
-		<div class="info-item" id="detailsTimingBox">
-		  <i class="fa-solid fa-clock"></i>
-			<div>
-			<strong style="color: var(--text);">সময়সূচি:</strong>
-			<div id="detailsTiming" style="color: var(--text-muted); margin-top: 2px;">-</div>
-			</div>
-		</div>
+        <div class="info-item" id="detailsTimingBox">
+          <i class="fa-solid fa-clock"></i>
+          <div>
+            <strong style="color: var(--text);">সময়সূচি:</strong>
+            <div id="detailsTiming" style="color: var(--text-muted); margin-top: 2px;">-</div>
+          </div>
+        </div>
 		
         <div class="info-item">
           <i class="fa-solid fa-phone"></i>
@@ -588,6 +572,49 @@
           </div>
         </div>
       </div>
+	  
+	  <!-- স্পেশাল অফার ও ক্যাম্পেইন ব্যানার (অটো-এক্সপায়ারি সাপোর্টসহ) -->
+      <div id="restaurantOfferBox" style="display: none; background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); border: 1.5px dashed #F59E0B; border-radius: var(--radius); padding: 14px; margin-top: 14px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+          <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; color: #92400E;">
+            <i class="fa-solid fa-fire-flame-curry" style="color: #EA580C; font-size: 16px;"></i>
+            <span>স্পেশাল অফার ও ক্যাম্পেইন</span>
+          </div>
+          <span style="font-size: 10px; font-weight: 700; background: #DC2626; color: #FFFFFF; padding: 2px 8px; border-radius: 20px;">
+            লাইভ অফার
+          </span>
+        </div>
+        
+        <!-- ডাইনামিক অফার ব্লক তালিকা -->
+        <div id="restaurantOfferContent" style="display: flex; flex-direction: column; gap: 12px;"></div>
+      </div>
+
+      <!-- রেস্টুরেন্ট মেনু ও মূল্যতালিকা ব্লক (সবার নিচে) -->
+      <div id="restaurantMenuBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 14px;">
+        <div style="font-size: 14px; font-weight: 700; color: #B45309; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-utensils" style="color: #F59E0B;"></i> মেনু ও মূল্যতালিকা
+          </div>
+          <span style="font-size: 10px; background: #FEF3C7; color: #B45309; padding: 2px 7px; border-radius: 4px; font-weight: 600;">খাবার তালিকা</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">রেস্টুরেন্টের জনপ্রিয় আইটেম ও নির্ধারিত মূল্য</p>
+        <div id="restaurantMenuList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+      </div>
+
+      <!-- সোশ্যাল মিডিয়া ও অনলাইন প্রোফাইল বার -->
+      <div id="socialLinksBox" style="display: none; background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-top: 14px;">
+        <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">
+          অফিসিয়াল ওয়েবসাইট ও সামাজিক মাধ্যম
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <a href="#" id="linkWebsite" target="_blank" rel="noopener noreferrer" class="social-btn btn-web" style="display: none;" title="ওয়েবসাইট"><i class="fa-solid fa-globe"></i></a>
+          <a href="#" id="linkFacebook" target="_blank" rel="noopener noreferrer" class="social-btn btn-fb" style="display: none;" title="ফেসবুক"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" id="linkYoutube" target="_blank" rel="noopener noreferrer" class="social-btn btn-yt" style="display: none;" title="ইউটিউব"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" id="linkLinkedin" target="_blank" rel="noopener noreferrer" class="social-btn btn-li" style="display: none;" title="লিংকডইন"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a href="#" id="linkInstagram" target="_blank" rel="noopener noreferrer" class="social-btn btn-ig" style="display: none;" title="ইনস্টাগ্রাম"><i class="fa-brands fa-instagram"></i></a>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -608,8 +635,8 @@
       <h2 id="docProfileName" style="font-size: 20px; font-weight: 700; color: #0C4A6E; line-height: 1.2;">ডাক্তারের নাম</h2>
       <div id="docProfileSpecialty" style="font-size: 14px; font-weight: 600; color: #0284C7; margin-top: 4px;">স্পেশালিটি</div>
       <div id="docProfileDegrees" style="font-size: 12px; color: #475569; margin-top: 2px;">ডিগ্রি সমূহ</div>
-	  <div id="docProfileDesignation" style="display: none; font-size: 12px; color: #0C4A6E; background: rgba(255,255,255,0.7); border: 1px solid #BAE6FD; border-radius: 6px; padding: 4px 10px; margin: 6px auto 0; max-width: 90%; font-weight: 500;">
-		<i class="fa-solid fa-building-user" style="color: #0284C7;"></i> <span id="docProfileDesignationText"></span>
+      <div id="docProfileDesignation" style="display: none; font-size: 12px; color: #0C4A6E; background: rgba(255,255,255,0.7); border: 1px solid #BAE6FD; border-radius: 6px; padding: 4px 10px; margin: 6px auto 0; max-width: 90%; font-weight: 500;">
+        <i class="fa-solid fa-building-user" style="color: #0284C7;"></i> <span id="docProfileDesignationText"></span>
       </div>
       <div id="docProfileFee" style="font-size: 13px; font-weight: 600; color: #0F5132; margin-top: 6px; background: #DCFCE7; display: inline-block; padding: 2px 10px; border-radius: 20px;">ভিজিট ফি: -</div>
     </div>
@@ -619,7 +646,7 @@
       <span>সিরিয়ালের জন্য নির্ধারিত চেম্বারের নম্বরে কল করুন</span>
     </div>
 
-    <div style="padding: 10px 20px 95px; display: flex; flex-direction: column; gap: 14px;">
+    <div style="padding: 10px 20px 95px; display: flex; flex-direction: column; gap: 12px;">
       <h4 style="font-size: 16px; font-weight: 700; color: var(--text);">চেম্বার ও সময়সূচি</h4>
       <div id="docProfileChambersList" style="display: flex; flex-direction: column; gap: 12px;"></div>
     </div>
@@ -637,21 +664,6 @@
 
     <div class="page-listings" id="eduResultsListings"></div>
   </div>
-  
-        <!-- সোশ্যাল মিডিয়া ও অনলাইন প্রোফাইল বার -->
-      <div id="socialLinksBox" style="display: none; background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px;">
-        <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">
-          অফিসিয়াল ওয়েবসাইট ও সামাজিক মাধ্যম
-        </div>
-        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-          <a href="#" id="linkWebsite" target="_blank" rel="noopener noreferrer" class="social-btn btn-web" style="display: none;" title="ওয়েবসাইট"><i class="fa-solid fa-globe"></i></a>
-          <a href="#" id="linkFacebook" target="_blank" rel="noopener noreferrer" class="social-btn btn-fb" style="display: none;" title="ফেসবুক"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#" id="linkYoutube" target="_blank" rel="noopener noreferrer" class="social-btn btn-yt" style="display: none;" title="ইউটিউব"><i class="fa-brands fa-youtube"></i></a>
-          <a href="#" id="linkLinkedin" target="_blank" rel="noopener noreferrer" class="social-btn btn-li" style="display: none;" title="লিংকডইন"><i class="fa-brands fa-linkedin-in"></i></a>
-          <a href="#" id="linkInstagram" target="_blank" rel="noopener noreferrer" class="social-btn btn-ig" style="display: none;" title="ইনস্টাগ্রাম"><i class="fa-brands fa-instagram"></i></a>
-        </div>
-      </div>
-	  
 
   <script src="app.js"></script>
 </body>

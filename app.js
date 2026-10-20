@@ -3,11 +3,13 @@ const API_PLACES = `https://opensheet.elk.sh/${SHEET_ID}/Sheet1`;
 const API_DOCTORS = `https://opensheet.elk.sh/${SHEET_ID}/Doctors`;
 const API_RESULTS = `https://opensheet.elk.sh/${SHEET_ID}/Results`;
 const API_EDUCATION = `https://opensheet.elk.sh/${SHEET_ID}/Education`;
+const API_RESTAURANTS = `https://opensheet.elk.sh/${SHEET_ID}/Restaurants`;
 
 let placesData = [];
 let doctorsData = [];
 let resultsData = [];
 let educationData = [];
+let restaurantsData = [];
 let currentCategory = 'সব';
 let currentChamberFilter = null;
 let selectedCatArea = 'সব এলাকা';
@@ -16,7 +18,7 @@ let selectedDocDept = 'সব বিভাগ';
 let activeItem = null;
 let activeDoctor = null;
 
-// ক্যারোজেল স্লাইডার স্টেট
+// ক্যারোজেল স্লাইডার স্টেট ভ্যারিয়েবল
 let currentTriviaIndex = 0;
 let totalTriviaSlides = 0;
 
@@ -38,6 +40,68 @@ function cleanPhoneNumber(phone) {
     str = '0' + str;
   }
   return str;
+}
+
+// অফারের মেয়াদ পার হয়েছে কি না চেক করার হেল্পার
+function isOfferExpired(dateStr) {
+  if (!dateStr) return false;
+  const bnToEn = {'০':'0','১':'1','২':'2','৩':'3','৪':'4','৫':'5','৬':'6','৭':'7','৮':'8','৯':'9'};
+  const cleanStr = dateStr.toString().replace(/[০-৯]/g, d => bnToEn[d]).trim();
+  const match = cleanStr.match(/(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);
+  if (!match) return false;
+  
+  const year = parseInt(match[1], 10);
+  const month = parseInt(match[2], 10) - 1;
+  const day = parseInt(match[3], 10);
+  
+  // নির্ধারিত দিনের রাত ১১:৫৯:৫৯ পর্যন্ত অফার সক্রিয় থাকবে
+  const expDate = new Date(year, month, day, 23, 59, 59, 999);
+  return new Date() > expDate;
+}
+
+// অফার পার্সিং ও এক্সপায়ার ফিল্টারিং ইঞ্জিন (## ব্লক ভিত্তিক)
+function parseOffers(rawOffer) {
+  if (!rawOffer || !rawOffer.trim()) return [];
+  
+  const lines = rawOffer.trim().split(/[|\n]/).map(l => l.trim()).filter(Boolean);
+  const blocks = [];
+  let currentBlock = null;
+
+  lines.forEach(line => {
+    const isHeader = line.startsWith('##');
+    const dateMatch = line.match(/\[(.*?)\]/);
+    let cleanLine = line;
+    let lineDate = null;
+
+    if (dateMatch) {
+      lineDate = dateMatch[1].trim();
+      cleanLine = line.replace(/\[.*?\]/, '').trim();
+    }
+
+    if (isHeader) {
+      currentBlock = {
+        title: cleanLine.replace(/^##\s*/, '').trim(),
+        expDate: lineDate,
+        points: []
+      };
+      blocks.push(currentBlock);
+    } else {
+      if (!currentBlock) {
+        currentBlock = {
+          title: '',
+          expDate: lineDate,
+          points: []
+        };
+        blocks.push(currentBlock);
+      } else if (lineDate && !currentBlock.expDate) {
+        currentBlock.expDate = lineDate;
+      }
+      if (cleanLine) currentBlock.points.push(cleanLine);
+    }
+  });
+
+  // মেয়াদ পার হওয়া পুরো ব্লক স্বয়ংক্রিয়ভাবে বাতিল করবে
+  return blocks.filter(b => !isOfferExpired(b.expDate) && (b.title || b.points.length > 0));
 }
 
 // ব্যানবেইস শিক্ষা প্রতিষ্ঠান ডেটা ম্যাপিং হেল্পার
@@ -68,6 +132,31 @@ function normalizeEducationItem(item) {
     ].filter(Boolean).join(', '),
     website: item.website || item.source_url || '',
     timing: item.timing || '',
+    featured: item.featured || ''
+  };
+}
+
+// রেস্টুরেন্ট ডেটা ম্যাপিং হেল্পার
+function normalizeRestaurantItem(item) {
+  const cleanPhone = cleanPhoneNumber(item.phone || item.mobile || item.hotline || '');
+  return {
+    ...item,
+    name: item.name_bn || item.name || 'রেস্টুরেন্ট',
+    name_bn: item.name_bn || item.name || '',
+    name_en: item.name_en || '',
+    category: 'রেস্টুরেন্ট',
+    area: item.area || item.upazila || 'নারায়ণগঞ্জ',
+    address: item.address || item.area || 'নারায়ণগঞ্জ',
+    phone: cleanPhone,
+    timing: item.timing || 'সকাল ১০টা - রাত ১১টা',
+    rating: item.rating || '৪.২',
+    cuisine: item.cuisine || item.type || 'রেস্তোরাঁ ও ক্যাফে',
+    menu: item.menu || '',
+    offer: item.offer || item.campaign || '',
+    landmark: item.landmark || '',
+    image_url: item.image_url || '',
+    map_url: item.map_url || '',
+    facebook: item.facebook || '',
     featured: item.featured || ''
   };
 }
@@ -294,11 +383,14 @@ function renderCategoryItems() {
   const input = document.getElementById('catSearchInput');
   const query = input ? input.value.toLowerCase().trim() : '';
 
+  // ক্যাটাগরি অনুযায়ী সোর্স ডেটা নির্বাচন
   let sourceList = placesData;
   if (currentCategory === 'শিক্ষা প্রতিষ্ঠান') {
     sourceList = educationData.length > 0 ? educationData : placesData;
+  } else if (currentCategory === 'রেস্টুরেন্ট' || currentCategory === 'মিষ্টি ও খাবার' || currentCategory === 'খাবার') {
+    sourceList = restaurantsData.length > 0 ? restaurantsData : placesData;
   } else if (currentCategory === 'সব') {
-    sourceList = [...placesData, ...educationData];
+    sourceList = [...placesData, ...educationData, ...restaurantsData];
   }
 
   const filtered = (sourceList || []).filter(item => {
@@ -316,6 +408,8 @@ function renderCategoryItems() {
       matchCat = (itemCat === 'বেসরকারি হাসপাতাল' || itemCat === 'হাসপাতাল');
     } else if (currentCategory === 'শিক্ষা প্রতিষ্ঠান') {
       matchCat = (itemCat === 'শিক্ষা প্রতিষ্ঠান' || itemCat === 'স্কুল' || itemCat === 'কলেজ' || itemCat === 'মাদরাসা');
+    } else if (currentCategory === 'রেস্টুরেন্ট' || currentCategory === 'মিষ্টি ও খাবার') {
+      matchCat = (itemCat === 'রেস্টুরেন্ট' || itemCat.includes('রেস্টুরেন্ট') || itemCat.includes('রেস্তোরাঁ') || itemCat.includes('ক্যাফে') || itemCat.includes('খাবার') || itemCat.includes('মিষ্টি'));
     } else if (currentCategory === 'জেনারেল স্টোর') {
       matchCat = (itemCat === 'জেনারেল স্টোর' || itemCat.includes('স্টোর') || itemCat.includes('মুদি'));
     } else if (currentCategory === 'দর্শনীয় স্থান' || currentCategory === 'পর্যটন ও বিনোদন' || currentCategory === 'বিনোদন') {
@@ -335,6 +429,7 @@ function renderCategoryItems() {
       (item.name || '').toLowerCase().includes(query) ||
       (item.name_en || '').toLowerCase().includes(query) ||
       (item.eiin || '').toString().includes(query) ||
+      (item.cuisine || '').toLowerCase().includes(query) ||
       itemArea.includes(query) ||
       itemAddress.includes(query) ||
       (item.landmark || '').toLowerCase().includes(query);
@@ -355,6 +450,10 @@ function renderCategoryItems() {
     const isFeatured = (item.featured || '').toString().toLowerCase().trim() === 'yes';
     const mapUrl = item.map_url || `https://maps.google.com/?q=${encodeURIComponent(name + ' ' + area)}`;
 
+    // স্মার্ট অফার ভ্যালিডেশন (মেয়াদ থাকা অফার থাকলে তবেই লাল ব্যাজ দেখাবে)
+    const validOffers = parseOffers(item.offer || item.campaign || '');
+    const hasLiveOffer = validOffers.length > 0;
+
     const card = document.createElement('div');
     card.className = 'place-card';
     card.onclick = () => openDetails(item);
@@ -369,7 +468,9 @@ function renderCategoryItems() {
         <div>
           <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
             <div class="place-title">${name}</div>
+            ${hasLiveOffer ? '<span style="background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;"><i class="fa-solid fa-tag"></i> অফার</span>' : ''}
             ${item.eiin ? `<span class="eiin-badge" style="font-size: 10px; padding: 1px 6px; border-radius: 4px;">EIIN: ${item.eiin}</span>` : ''}
+            ${item.cuisine ? `<span style="background: #F1F5F9; color: #475569; font-size: 10px; padding: 1px 6px; border-radius: 4px;">${item.cuisine}</span>` : ''}
             ${isFeatured ? '<span style="background: #FEF3C7; color: #B45309; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; border: 1px solid #FDE68A;"><i class="fa-solid fa-bolt"></i> স্পন্সরড</span>' : ''}
           </div>
           <div class="place-area"><i class="fa-solid fa-location-dot"></i> ${area}</div>
@@ -971,56 +1072,6 @@ function openDetails(item) {
     }
   }
 
-  const socialBox = document.getElementById('socialLinksBox');
-  const webBtn = document.getElementById('linkWebsite');
-  const fbBtn = document.getElementById('linkFacebook');
-  const ytBtn = document.getElementById('linkYoutube');
-  const liBtn = document.getElementById('linkLinkedin');
-  const igBtn = document.getElementById('linkInstagram');
-
-  let hasSocial = false;
-  if (webBtn) {
-    if (item.website && item.website.trim() !== '') {
-      webBtn.href = item.website.startsWith('http') ? item.website : `https://${item.website}`;
-      webBtn.style.display = 'flex';
-      hasSocial = true;
-    } else { webBtn.style.display = 'none'; }
-  }
-
-  if (fbBtn) {
-    if (item.facebook && item.facebook.trim() !== '') {
-      fbBtn.href = item.facebook;
-      fbBtn.style.display = 'flex';
-      hasSocial = true;
-    } else { fbBtn.style.display = 'none'; }
-  }
-
-  if (ytBtn) {
-    if (item.youtube && item.youtube.trim() !== '') {
-      ytBtn.href = item.youtube;
-      ytBtn.style.display = 'flex';
-      hasSocial = true;
-    } else { ytBtn.style.display = 'none'; }
-  }
-
-  if (liBtn) {
-    if (item.linkedin && item.linkedin.trim() !== '') {
-      liBtn.href = item.linkedin;
-      liBtn.style.display = 'flex';
-      hasSocial = true;
-    } else { liBtn.style.display = 'none'; }
-  }
-
-  if (igBtn) {
-    if (item.instagram && item.instagram.trim() !== '') {
-      igBtn.href = item.instagram;
-      igBtn.style.display = 'flex';
-      hasSocial = true;
-    } else { igBtn.style.display = 'none'; }
-  }
-
-  if (socialBox) socialBox.style.display = hasSocial ? 'block' : 'none';
-
   const feedBox = document.getElementById('newspaperFeedBox');
   if (feedBox) {
     if (item.feed_url && item.feed_url.trim() !== '') {
@@ -1115,6 +1166,200 @@ function openDetails(item) {
       eduBox.style.display = 'none';
     }
   }
+
+  // <--- স্পেশাল অফার ও ক্যাম্পেইন রেন্ডারিং (স্মার্ট প্ল্যাটফর্ম ও অটো-এক্সপায়ারি সাপোর্ট) --->
+  const offerBox = document.getElementById('restaurantOfferBox');
+  const offerContent = document.getElementById('restaurantOfferContent');
+
+  if (offerBox && offerContent) {
+    const validOffers = parseOffers(item.offer || item.campaign || '');
+    
+    if (validOffers.length > 0) {
+      offerContent.innerHTML = '';
+
+      validOffers.forEach((block, idx) => {
+        const blockDiv = document.createElement('div');
+        blockDiv.style.cssText = `
+          background: rgba(255, 255, 255, 0.7);
+          border: 1px solid #FDE68A;
+          border-radius: 8px;
+          padding: 10px 12px;
+          ${idx > 0 ? 'margin-top: 4px;' : ''}
+        `;
+
+        let headerHtml = '';
+        if (block.title) {
+          headerHtml = `
+            <div style="font-weight: 700; font-size: 13px; color: #92400E; display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; border-bottom: 1px dashed #FCD34D; padding-bottom: 4px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-store" style="color: #D97706; font-size: 11px;"></i>
+                <span>${block.title}</span>
+              </div>
+              ${block.expDate ? `<span style="font-size: 10px; color: #B45309; background: #FEF3C7; padding: 1px 6px; border-radius: 4px; font-weight: 600;">মেয়াদ: ${block.expDate}</span>` : ''}
+            </div>
+          `;
+        }
+
+        const pointsHtml = block.points.map(pt => `
+          <div style="display: flex; align-items: flex-start; gap: 6px; margin-top: 4px; font-size: 12.5px; color: #78350F; line-height: 1.5;">
+            <i class="fa-solid fa-circle-check" style="color: #D97706; font-size: 11px; margin-top: 3px; flex-shrink: 0;"></i>
+            <span>${pt}</span>
+          </div>
+        `).join('');
+
+        blockDiv.innerHTML = headerHtml + pointsHtml;
+        offerContent.appendChild(blockDiv);
+      });
+
+      offerBox.style.display = 'block';
+    } else {
+      offerBox.style.display = 'none';
+    }
+  }
+
+  // <--- রেস্টুরেন্ট মেনু ও সেকশন টাইটেল রেন্ডারিং --->
+  const menuBox = document.getElementById('restaurantMenuBox');
+  const menuList = document.getElementById('restaurantMenuList');
+
+  if (menuBox && menuList) {
+    const rawMenu = (item.menu || '').trim();
+    if (rawMenu) {
+      menuList.innerHTML = '';
+      
+      // পাইপ (|), দাঁড়ি (।), সেমিকোলন (;) বা নতুন লাইন দিয়ে আইটেম আলাদা করা
+      const menuEntries = rawMenu.split(/[|\n।;]/).map(m => m.trim()).filter(Boolean);
+
+      menuEntries.forEach((entry, idx) => {
+        // ১. সেকশন টাইটেল চেক (## দিয়ে শুরু অথবা [...] ব্র্যাকেটে থাকলে)
+        const isHeader = entry.startsWith('#') || (entry.startsWith('[') && entry.endsWith(']'));
+
+        if (isHeader) {
+          const titleText = entry.replace(/^[#\[\]\s]+|[#\[\]\s]+$/g, '').trim();
+          
+          const headerEl = document.createElement('div');
+          headerEl.style.cssText = `
+            font-size: 14px;
+            font-weight: 700;
+            color: #0F172A;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: ${idx === 0 ? '4px' : '14px'};
+            margin-bottom: 2px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #F1F5F9;
+          `;
+          headerEl.innerHTML = `
+            <i class="fa-solid fa-layer-group" style="font-size: 12px; color: #F59E0B;"></i>
+            <span>${titleText}</span>
+          `;
+          menuList.appendChild(headerEl);
+          return; // টাইটেল রেন্ডার শেষে পরের আইটেমে যাবে
+        }
+
+        // ২. সাধারণ খাবার ও দাম রেন্ডার
+        let name = entry;
+        let price = '';
+
+        // শেষ ড্যাশ (-, –, —) বা সমান (=) চিহ্ন দিয়ে দাম আলাদা করা (১:১ বা ১ঃ৩ অক্ষত থাকবে)
+        const lastSepIndex = Math.max(
+          entry.lastIndexOf('-'),
+          entry.lastIndexOf('–'),
+          entry.lastIndexOf('—'),
+          entry.lastIndexOf('=')
+        );
+
+        if (lastSepIndex !== -1) {
+          name = entry.substring(0, lastSepIndex).trim();
+          price = entry.substring(lastSepIndex + 1).trim();
+        }
+
+        const row = document.createElement('div');
+        row.style.cssText = `
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 14px;
+          background: #FFFFFF;
+          border: 1px solid #E2E8F0;
+          border-left: 3px solid #F59E0B;
+          border-radius: 8px;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+          box-sizing: border-box;
+          width: 100%;
+        `;
+        
+        row.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #1E293B; text-align: left;">
+            <i class="fa-solid fa-utensils" style="font-size: 11px; color: #F59E0B; flex-shrink: 0;"></i>
+            <span>${name}</span>
+          </div>
+
+          ${price ? `
+            <div style="font-size: 13px; font-weight: 700; color: #0F5132; background: #DCFCE7; border: 1px solid #BBF7D0; padding: 4px 12px; border-radius: 20px; white-space: nowrap; margin-left: auto; text-align: right; flex-shrink: 0;">
+              ${price}
+            </div>
+          ` : ''}
+        `;
+        menuList.appendChild(row);
+      });
+
+      menuBox.style.display = 'block';
+    } else {
+      menuBox.style.display = 'none';
+    }
+  }
+
+  // সোশ্যাল মিডিয়া হ্যান্ডলিং
+  const socialBox = document.getElementById('socialLinksBox');
+  const webBtn = document.getElementById('linkWebsite');
+  const fbBtn = document.getElementById('linkFacebook');
+  const ytBtn = document.getElementById('linkYoutube');
+  const liBtn = document.getElementById('linkLinkedin');
+  const igBtn = document.getElementById('linkInstagram');
+
+  let hasSocial = false;
+  if (webBtn) {
+    if (item.website && item.website.trim() !== '') {
+      webBtn.href = item.website.startsWith('http') ? item.website : `https://${item.website}`;
+      webBtn.style.display = 'flex';
+      hasSocial = true;
+    } else { webBtn.style.display = 'none'; }
+  }
+
+  if (fbBtn) {
+    if (item.facebook && item.facebook.trim() !== '') {
+      fbBtn.href = item.facebook;
+      fbBtn.style.display = 'flex';
+      hasSocial = true;
+    } else { fbBtn.style.display = 'none'; }
+  }
+
+  if (ytBtn) {
+    if (item.youtube && item.youtube.trim() !== '') {
+      ytBtn.href = item.youtube;
+      ytBtn.style.display = 'flex';
+      hasSocial = true;
+    } else { ytBtn.style.display = 'none'; }
+  }
+
+  if (liBtn) {
+    if (item.linkedin && item.linkedin.trim() !== '') {
+      liBtn.href = item.linkedin;
+      liBtn.style.display = 'flex';
+      hasSocial = true;
+    } else { liBtn.style.display = 'none'; }
+  }
+
+  if (igBtn) {
+    if (item.instagram && item.instagram.trim() !== '') {
+      igBtn.href = item.instagram;
+      igBtn.style.display = 'flex';
+      hasSocial = true;
+    } else { igBtn.style.display = 'none'; }
+  }
+
+  if (socialBox) socialBox.style.display = hasSocial ? 'block' : 'none';
 
   const callBtn = document.getElementById('detailsCallBtn');
   if (callBtn) {
@@ -1466,6 +1711,13 @@ function updateCategoryCounts() {
   if (dentalSub && dentalCount > 0) {
     dentalSub.innerText = `${toBanglaNumber(dentalCount)}+ ডেন্টাল কেয়ার`;
   }
+
+  // রেস্টুরেন্ট সংখ্যা আপডেট
+  const restCount = restaurantsData.length;
+  const restSub = document.getElementById('countSubFood');
+  if (restSub && restCount > 0) {
+    restSub.innerText = `${toBanglaNumber(restCount)}+ রেস্তোরাঁ ও ক্যাফে`;
+  }
 }
 
 async function loadData() {
@@ -1474,13 +1726,18 @@ async function loadData() {
     const fetchDocs = fetch(API_DOCTORS).then(r => r.json()).catch(() => []);
     const fetchResults = fetch(API_RESULTS).then(r => r.json()).catch(() => []);
     const fetchEdu = fetch(API_EDUCATION).then(r => r.json()).catch(() => []);
+    const fetchRestaurants = fetch(API_RESTAURANTS).then(r => r.json()).catch(() => []);
 
-    const [pData, dData, rData, eData] = await Promise.all([fetchPlaces, fetchDocs, fetchResults, fetchEdu]);
+    const [pData, dData, rData, eData, restData] = await Promise.all([
+      fetchPlaces, fetchDocs, fetchResults, fetchEdu, fetchRestaurants
+    ]);
     
     placesData = Array.isArray(pData) ? organizeListings(pData) : [];
     doctorsData = Array.isArray(dData) ? organizeListings(dData) : [];
     resultsData = Array.isArray(rData) ? rData : [];
     educationData = Array.isArray(eData) ? organizeListings(eData.map(normalizeEducationItem)) : [];
+    restaurantsData = Array.isArray(restData) ? organizeListings(restData.map(normalizeRestaurantItem)) : [];
+    
     updateCategoryCounts();
   } catch (err) {
     console.warn("ডাটা লোড হতে সমস্যা হয়েছে:", err);
