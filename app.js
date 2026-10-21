@@ -162,23 +162,28 @@ function normalizeRestaurantItem(item) {
   };
 }
 
-// নতুন: প্রশাসনিক ডেটা ম্যাপিং হেল্পার (Administration Tab)
+// ডেডিকেটেড প্রশাসনিক ডেটা ম্যাপিং হেল্পার (Administration Tab)
 function normalizeAdminItem(item) {
   const cleanPhone = cleanPhoneNumber(item.leader_phone || item.phone || item.mobile || '');
   return {
     ...item,
     name: item.title || item.name || 'প্রশাসনিক দপ্তর',
     category: item.type || item.category || 'প্রশাসন',
+    code: item.code || '',
+    territory: item.territory || item.area || '',
+    voters: item.voters || '',
+    established: item.established || '',
+	history: item.history || '',
     area: item.upazila || item.area || 'নারায়ণগঞ্জ',
-    sub_area: item.area || '',
-    address: item.address || item.area || 'নারায়ণগঞ্জ',
+    address: item.office_address || item.address || item.area || 'নারায়ণগঞ্জ',
     phone: cleanPhone,
     timing: item.timing || 'রবি-বৃহঃ সকাল ৯টা - বিকাল ৪টা',
     rating: 'সরকারি',
     leader_name: item.leader_name || '',
     leader_title: item.leader_title || 'দায়িত্বপ্রাপ্ত কর্মকর্তা / প্রতিনিধি',
+    leader_phone: cleanPhone,
     sub_leader: item.sub_leader || '',
-    landmark: item.area ? `আওতাধীন এলাকা: ${item.area}` : '',
+    landmark: item.territory ? `অন্তর্ভুক্ত এলাকা: ${item.territory}` : '',
     email: item.email || '',
     website: item.website || '',
     image_url: item.image_url || 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&auto=format&fit=crop&q=80',
@@ -399,6 +404,63 @@ function closeCategoryPage() {
   if (el) el.classList.remove('open');
 }
 
+// সাধারণ কার্ড রেন্ডার করার হেল্পার
+function renderStandardPlaceCard(item, container) {
+  const name = item.name || 'তথ্য নেই';
+  const area = item.area || 'নারায়ণগঞ্জ';
+  const rating = item.rating || '৪.০';
+  const phone = item.phone || '';
+  const isFeatured = (item.featured || '').toString().toLowerCase().trim() === 'yes';
+  const mapUrl = item.map_url || `https://maps.google.com/?q=${encodeURIComponent(name + ' ' + area)}`;
+
+  const validOffers = parseOffers(item.offer || item.campaign || '');
+  const hasLiveOffer = validOffers.length > 0;
+
+  const card = document.createElement('div');
+  card.className = 'place-card';
+  card.onclick = () => openDetails(item);
+
+  if (isFeatured) {
+    card.style.borderColor = '#F59E0B';
+    card.style.background = '#FFFDF5';
+  }
+
+  let subInfoLine = '';
+  if (item.leader_name) {
+    subInfoLine = `<div style="font-size: 11.5px; color: #0284C7; margin-top: 3px; font-weight: 500;"><i class="fa-solid fa-user-tie"></i> ${item.leader_title ? item.leader_title + ': ' : ''}${item.leader_name}</div>`;
+  } else if (item.territory) {
+    subInfoLine = `<div style="font-size: 11.5px; color: #475569; margin-top: 3px;"><i class="fa-solid fa-map-pin"></i> ${item.territory}</div>`;
+  }
+
+  card.innerHTML = `
+    <div class="place-header">
+      <div>
+        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <div class="place-title">${name}</div>
+          ${item.code ? `<span style="background: #E0E7FF; color: #3730A3; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;">${item.code}</span>` : ''}
+          ${hasLiveOffer ? '<span style="background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;"><i class="fa-solid fa-tag"></i> অফার</span>' : ''}
+          ${item.leader_title && !item.code ? `<span style="background: #E0E7FF; color: #4338CA; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px;">${item.leader_title}</span>` : ''}
+          ${item.eiin ? `<span class="eiin-badge" style="font-size: 10px; padding: 1px 6px; border-radius: 4px;">EIIN: ${item.eiin}</span>` : ''}
+          ${item.cuisine ? `<span style="background: #F1F5F9; color: #475569; font-size: 10px; padding: 1px 6px; border-radius: 4px;">${item.cuisine}</span>` : ''}
+          ${isFeatured ? '<span style="background: #FEF3C7; color: #B45309; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; border: 1px solid #FDE68A;"><i class="fa-solid fa-bolt"></i> স্পন্সরড</span>' : ''}
+        </div>
+        ${subInfoLine}
+        <div class="place-area"><i class="fa-solid fa-location-dot"></i> ${area}</div>
+      </div>
+      <div class="rating-badge"><i class="fa-solid fa-star"></i> ${rating}</div>
+    </div>
+    <div class="action-buttons">
+      <a href="${phone ? 'tel:' + phone : '#'}" class="btn-action btn-call" onclick="event.stopPropagation()">
+        <i class="fa-solid fa-phone"></i> কল করুন
+      </a>
+      <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="btn-action btn-map" onclick="event.stopPropagation()">
+        <i class="fa-solid fa-diamond-turn-right"></i> ম্যাপ
+      </a>
+    </div>
+  `;
+  container.appendChild(card);
+}
+
 function renderCategoryItems() {
   const container = document.getElementById('categoryListings');
   if (!container) return;
@@ -407,7 +469,6 @@ function renderCategoryItems() {
   const input = document.getElementById('catSearchInput');
   const query = input ? input.value.toLowerCase().trim() : '';
 
-  // ক্যাটাগরি অনুযায়ী সোর্স ডেটা নির্বাচন (নতুন Administration সহ)
   let sourceList = placesData;
   const isAdminCategory = ['জেলা প্রশাসন', 'সংসদীয় আসন', 'সিটি কর্পোরেশন', 'উপজেলা প্রশাসন', 'ইউনিয়ন পরিষদ', 'পৌরসভা'].includes(currentCategory);
 
@@ -443,7 +504,7 @@ function renderCategoryItems() {
     } else if (currentCategory === 'দর্শনীয় স্থান' || currentCategory === 'পর্যটন ও বিনোদন' || currentCategory === 'বিনোদন') {
       matchCat = (itemCat.includes('দর্শনীয়') || itemCat.includes('পর্যটন') || itemCat.includes('বিনোদন') || itemCat.includes('পার্ক') || itemCat.includes('ঐতিহাসিক'));
     } 
-    // প্রশাসনিক ও জনপ্রতিনিধি ক্যাটাগরি ফিল্টার
+    // প্রশাসনিক ও জনপ্রতিনিধি ফিল্টারিং
     else if (currentCategory === 'জেলা প্রশাসন') {
       matchCat = (itemCat.includes('জেলা') || itemCat.includes('প্রশাসন') || itemCat.includes('পুলিশ') || itemCat.includes('ডিসি') || itemCat.includes('এসপি'));
     } else if (currentCategory === 'সংসদীয় আসন') {
@@ -455,7 +516,7 @@ function renderCategoryItems() {
     } else if (currentCategory === 'ইউনিয়ন পরিষদ') {
       matchCat = (itemCat.includes('ইউনিয়ন') || itemCat.includes('ইউপি') || itemCat.includes('চেয়ারম্যান'));
     }
-    // অন্যান্য নাগরিক সেবা
+    // নাগরিক সেবা
     else if (currentCategory === 'ব্লাড ব্যাংক' || currentCategory === 'রক্তদান') {
       matchCat = (itemCat.includes('ব্লাড') || itemCat.includes('রক্ত'));
     } else if (currentCategory === '২৪ ঘণ্টা ফার্মেসী' || currentCategory === 'ফার্মেসী') {
@@ -486,10 +547,11 @@ function renderCategoryItems() {
     const matchSearch = 
       (item.name || '').toLowerCase().includes(query) ||
       (item.name_en || '').toLowerCase().includes(query) ||
+      (item.code || '').toLowerCase().includes(query) ||
+      (item.territory || '').toLowerCase().includes(query) ||
       (item.leader_name || '').toLowerCase().includes(query) ||
       (item.leader_title || '').toLowerCase().includes(query) ||
       (item.sub_leader || '').toLowerCase().includes(query) ||
-      (item.sub_area || '').toLowerCase().includes(query) ||
       itemArea.includes(query) ||
       itemAddress.includes(query) ||
       (item.landmark || '').toLowerCase().includes(query);
@@ -497,65 +559,66 @@ function renderCategoryItems() {
     return matchCat && matchArea && matchSearch;
   });
 
-  if (filtered.length === 0) {
+ if (filtered.length === 0) {
     container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px 0;">কোনো তথ্য পাওয়া যায়নি।</div>`;
     return;
   }
 
-  filtered.forEach(item => {
-    const name = item.name || 'তথ্য নেই';
-    const area = item.area || 'নারায়ণগঞ্জ';
-    const rating = item.rating || '৪.০';
-    const phone = item.phone || '';
-    const isFeatured = (item.featured || '').toString().toLowerCase().trim() === 'yes';
-    const mapUrl = item.map_url || `https://maps.google.com/?q=${encodeURIComponent(name + ' ' + area)}`;
+  // সিটি কর্পোরেশনের জন্য মেয়রের কার্ড শীর্ষে রাখার লজিক
+  if (currentCategory === 'সিটি কর্পোরেশন') {
+    const mayorItem = filtered.find(it => (it.leader_title || '').includes('মেয়র') || (it.leader_title || '').includes('প্রশাসক') || (it.name || '').includes('মেয়র'));
+    const counselors = filtered.filter(it => it !== mayorItem);
 
-    const validOffers = parseOffers(item.offer || item.campaign || '');
-    const hasLiveOffer = validOffers.length > 0;
-
-    const card = document.createElement('div');
-    card.className = 'place-card';
-    card.onclick = () => openDetails(item);
-
-    if (isFeatured) {
-      card.style.borderColor = '#F59E0B';
-      card.style.background = '#FFFDF5';
-    }
-
-    // কার্ডে কর্মকর্তা বা আওতাধীন এলাকার ছোট উপ-তথ্য
-    let subInfoLine = '';
-    if (item.leader_name) {
-      subInfoLine = `<div style="font-size: 11.5px; color: #0284C7; margin-top: 3px; font-weight: 500;"><i class="fa-solid fa-user-tie"></i> ${item.leader_title ? item.leader_title + ': ' : ''}${item.leader_name}</div>`;
-    } else if (item.sub_area) {
-      subInfoLine = `<div style="font-size: 11.5px; color: #475569; margin-top: 3px;"><i class="fa-solid fa-map-pin"></i> ${item.sub_area}</div>`;
-    }
-
-    card.innerHTML = `
-      <div class="place-header">
-        <div>
-          <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-            <div class="place-title">${name}</div>
-            ${hasLiveOffer ? '<span style="background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px;"><i class="fa-solid fa-tag"></i> অফার</span>' : ''}
-            ${item.leader_title ? `<span style="background: #E0E7FF; color: #4338CA; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px;">${item.leader_title}</span>` : ''}
-            ${item.eiin ? `<span class="eiin-badge" style="font-size: 10px; padding: 1px 6px; border-radius: 4px;">EIIN: ${item.eiin}</span>` : ''}
-            ${item.cuisine ? `<span style="background: #F1F5F9; color: #475569; font-size: 10px; padding: 1px 6px; border-radius: 4px;">${item.cuisine}</span>` : ''}
-            ${isFeatured ? '<span style="background: #FEF3C7; color: #B45309; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; border: 1px solid #FDE68A;"><i class="fa-solid fa-bolt"></i> স্পন্সরড</span>' : ''}
-          </div>
-          ${subInfoLine}
-          <div class="place-area"><i class="fa-solid fa-location-dot"></i> ${area}</div>
+    // ১. মেয়রের কার্ড (সবার উপরে হাইলাইট হয়ে থাকবে)
+    if (mayorItem) {
+      const mayorCard = document.createElement('div');
+      mayorCard.innerHTML = `
+        <div style="font-size: 13.5px; font-weight: 700; color: #0F5132; margin: 4px 0 6px; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-crown" style="color: #D97706;"></i> নগর প্রধান
         </div>
-        <div class="rating-badge"><i class="fa-solid fa-star"></i> ${rating}</div>
-      </div>
-      <div class="action-buttons">
-        <a href="${phone ? 'tel:' + phone : '#'}" class="btn-action btn-call" onclick="event.stopPropagation()">
-          <i class="fa-solid fa-phone"></i> কল করুন
-        </a>
-        <a href="${mapUrl}" target="_blank" rel="noopener noreferrer" class="btn-action btn-map" onclick="event.stopPropagation()">
-          <i class="fa-solid fa-diamond-turn-right"></i> ম্যাপ
-        </a>
-      </div>
-    `;
-    container.appendChild(card);
+        <div class="place-card" style="border: 2px solid #16A34A; background: #F0FDF4; padding: 14px; border-radius: 12px; margin-bottom: 14px; cursor: pointer;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <div style="font-size: 16px; font-weight: 800; color: #0F5132;">${mayorItem.leader_name || mayorItem.name}</div>
+              <div style="font-size: 12px; color: #166534; font-weight: 600; margin-top: 2px;">${mayorItem.name || 'নারায়ণগঞ্জ সিটি কর্পোরেশন'}</div>
+            </div>
+            <span style="background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px;">
+              ${mayorItem.leader_title || 'মেয়র / প্রশাসক'}
+            </span>
+          </div>
+          <div style="font-size: 12px; color: #475569; margin-top: 8px;">
+            <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> ${mayorItem.address || mayorItem.area || 'নগর ভবন, নারায়ণগঞ্জ'}
+          </div>
+          <div class="action-buttons" style="grid-template-columns: 1fr; margin-top: 10px;">
+            <a href="${mayorItem.phone ? 'tel:' + mayorItem.phone : '#'}" class="btn-action btn-call" onclick="event.stopPropagation()">
+              <i class="fa-solid fa-phone"></i> দপ্তরে যোগাযোগ করুন
+            </a>
+          </div>
+        </div>
+      `;
+      mayorCard.querySelector('.place-card').onclick = () => openDetails(mayorItem);
+      container.appendChild(mayorCard);
+    }
+
+    // ২. ওয়ার্ড কাউন্সিলরদের সেকশন হেডার
+    if (counselors.length > 0) {
+      const cHeader = document.createElement('div');
+      cHeader.style.cssText = "font-size: 13.5px; font-weight: 700; color: #1E293B; margin: 10px 0 8px; display: flex; align-items: center; gap: 6px;";
+      cHeader.innerHTML = '<i class="fa-solid fa-users" style="color: #10664F;"></i> ওয়ার্ড কাউন্সিলর ও সংরক্ষিত সদস্যবৃন্দ';
+      container.appendChild(cHeader);
+    }
+
+    // বাকি সব কাউন্সিলরের সাধারণ কার্ড রেন্ডার
+    counselors.forEach(item => {
+      renderStandardPlaceCard(item, container);
+    });
+
+    return;
+  }
+
+  // সিটি কর্পোরেশন বাদে অন্যান্য সকল সাধারণ ক্যাটাগরির জন্য
+  filtered.forEach(item => {
+    renderStandardPlaceCard(item, container);
   });
 }
 
@@ -901,7 +964,9 @@ function openDetails(item) {
   const isEdu = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা');
   const isNews = (cat === 'সংবাদপত্র');
   const isCinema = (cat === 'সিনেমা হল' || cat.includes('সিনেমা') || cat.includes('সিনেপ্লেক্স'));
-  const isAdmin = Boolean(item.leader_name || item.sub_leader || cat.includes('প্রশাসন') || cat.includes('সিটি কর্পোরেশন') || cat.includes('ইউনিয়ন'));
+  
+  // সম্পূর্ণ আলাদা প্রশাসনিক ফ্ল্যাগ
+  const isAdmin = Boolean(item.code || item.territory || item.voters || item.leader_name || ['জেলা প্রশাসন', 'সংসদীয় আসন', 'সিটি কর্পোরেশন', 'উপজেলা প্রশাসন', 'ইউনিয়ন পরিষদ', 'পৌরসভা'].includes(cat));
   
   const imgEl = document.getElementById('detailsImg');
   if (imgEl) {
@@ -1150,10 +1215,10 @@ function openDetails(item) {
 
   renderTriviaSlider(item.trivia);
   
-  // শিক্ষা প্রতিষ্ঠান ও প্রশাসনিক কর্মকর্তা সেকশন
+  // শিক্ষা প্রতিষ্ঠান ও সংবাদপত্র সেকশন (সম্পূর্ণ স্বতন্ত্র)
   const eduBox = document.getElementById('eduSectionBox');
   if (eduBox) {
-    if (isEdu || isNews || isAdmin) {
+    if (isEdu || isNews) {
       eduBox.style.display = 'flex';
 
       const principalCard = document.getElementById('eduPrincipalCard');
@@ -1162,23 +1227,12 @@ function openDetails(item) {
       const principalIcon = document.getElementById('eduPrincipalIcon');
       const resultsNavCard = eduBox.querySelector('.doc-nav-card');
 
-      const officialPersonName = item.leader_name || item.principal;
       if (principalCard && principalName) {
-        if (officialPersonName && officialPersonName.trim() !== '') {
-          principalName.innerText = officialPersonName.trim();
+        if (item.principal && item.principal.trim() !== '') {
+          principalName.innerText = item.principal.trim();
           principalCard.style.display = 'flex';
 
-          if (isAdmin) {
-            if (principalLabel) {
-              principalLabel.innerText = item.leader_title || 'দায়িত্বপ্রাপ্ত কর্মকর্তা / প্রতিনিধি';
-              principalLabel.style.color = '#0F5132';
-            }
-            if (principalIcon) {
-              principalIcon.innerHTML = '<i class="fa-solid fa-user-tie"></i>';
-              principalIcon.style.background = '#DCFCE7';
-              principalIcon.style.color = '#0F5132';
-            }
-          } else if (isNews) {
+          if (isNews) {
             if (principalLabel) {
               principalLabel.innerText = 'সম্পাদক ও প্রকাশক';
               principalLabel.style.color = '#0284C7';
@@ -1233,26 +1287,6 @@ function openDetails(item) {
               emailRow.style.display = 'none';
             }
           }
-        } else if (isAdmin && (item.sub_leader || item.sub_area || item.email)) {
-          // প্রশাসনিক তথ্যাবলী বক্স
-          infoGridBox.style.display = 'block';
-          const infoTitle = infoGridBox.querySelector('div');
-          if (infoTitle) infoTitle.innerHTML = '<i class="fa-solid fa-circle-info"></i> প্রশাসনিক ও সহকারী বিবরণ';
-
-          if (mgtEl) mgtEl.innerText = item.category || 'স্থানীয় সরকার';
-          if (whomEl) whomEl.innerText = item.area || 'নারায়ণগঞ্জ';
-          if (dateEl) dateEl.innerText = item.sub_area || 'আওতাধীন এলাকা';
-          if (constEl) constEl.innerText = item.sub_leader || 'সহকারী / সংরক্ষিত সদস্য';
-
-          if (emailRow && emailLink) {
-            if (item.email && item.email.trim() !== '') {
-              emailLink.href = `mailto:${item.email.trim()}`;
-              emailLink.innerText = item.email.trim();
-              emailRow.style.display = 'block';
-            } else {
-              emailRow.style.display = 'none';
-            }
-          }
         } else {
           infoGridBox.style.display = 'none';
         }
@@ -1260,6 +1294,122 @@ function openDetails(item) {
 
     } else {
       eduBox.style.display = 'none';
+    }
+  }
+
+  // <--- প্রশাসন ও জনপ্রতিনিধি ডেডিকেটেড রেন্ডারিং (নতুন) --->
+  const adminBox = document.getElementById('adminSectionBox');
+  if (adminBox) {
+    if (isAdmin) {
+      adminBox.style.display = 'flex';
+
+      const leaderTitle = document.getElementById('adminLeaderTitle');
+      const leaderName = document.getElementById('adminLeaderName');
+      const leaderCallBtn = document.getElementById('adminLeaderCallBtn');
+      const leaderCard = document.getElementById('adminLeaderCard');
+
+      if (item.leader_name && item.leader_name.trim() !== '') {
+        if (leaderTitle) leaderTitle.innerText = item.leader_title || 'দায়িত্বপ্রাপ্ত প্রতিনিধি';
+        if (leaderName) leaderName.innerText = item.leader_name.trim();
+        if (leaderCallBtn) {
+          if (item.leader_phone) {
+            leaderCallBtn.href = `tel:${item.leader_phone}`;
+            leaderCallBtn.style.display = 'flex';
+          } else {
+            leaderCallBtn.style.display = 'none';
+          }
+        }
+        if (leaderCard) leaderCard.style.display = 'flex';
+      } else {
+        if (leaderCard) leaderCard.style.display = 'none';
+      }
+
+      // তথ্য কার্ডের ভ্যালু সেট
+      const codeVal = document.getElementById('adminCodeVal');
+      const votersVal = document.getElementById('adminVotersVal');
+      const terrVal = document.getElementById('adminTerritoryVal');
+      const estVal = document.getElementById('adminEstVal');
+      const upazilaVal = document.getElementById('adminUpazilaVal');
+
+      const codeCard = document.getElementById('adminCodeCard');
+      const votersCard = document.getElementById('adminVotersCard');
+      const terrCard = document.getElementById('adminTerritoryCard');
+      const estCard = document.getElementById('adminEstCard');
+
+      if (codeVal) codeVal.innerText = item.code || '-';
+      if (votersVal) votersVal.innerText = item.voters || '-';
+      if (terrVal) terrVal.innerText = item.territory || item.area || 'সমগ্র এলাকা';
+      if (estVal) estVal.innerText = item.established || '-';
+      if (upazilaVal) upazilaVal.innerText = item.upazila || item.area || 'নারায়ণগঞ্জ';
+
+      if (codeCard) codeCard.style.display = item.code ? 'block' : 'none';
+      if (votersCard) votersCard.style.display = item.voters ? 'block' : 'none';
+      if (terrCard) terrCard.style.display = (item.territory || item.area) ? 'block' : 'none';
+      if (estCard) estCard.style.display = item.established ? 'block' : 'none';
+
+      // সহকারী / সংরক্ষিত প্রতিনিধি / সচিব
+      const subBox = document.getElementById('adminSubLeaderBox');
+      const subText = document.getElementById('adminSubLeaderText');
+      if (subBox && subText) {
+        if (item.sub_leader && item.sub_leader.trim() !== '') {
+          if (item.sub_leader.includes('|')) {
+            subText.innerHTML = item.sub_leader.split('|').map(s => `<div>• ${s.trim()}</div>`).join('');
+          } else {
+            subText.innerText = item.sub_leader.trim();
+          }
+          subBox.style.display = 'block';
+        } else {
+          subBox.style.display = 'none';
+        }
+      }
+
+    } else {
+      adminBox.style.display = 'none';
+    }
+  }
+  
+  // বিগত সংসদ ও প্রতিনিধি ইতিহাস রেন্ডারিং
+  const historyBox = document.getElementById('adminHistoryBox');
+  const historyList = document.getElementById('adminHistoryList');
+
+  if (historyBox && historyList) {
+    const rawHistory = (item.history || '').trim();
+    if (isAdmin && rawHistory) {
+      historyList.innerHTML = '';
+      const entries = rawHistory.split(/[|\n]/).map(e => e.trim()).filter(Boolean);
+      let currentCard = null;
+
+      entries.forEach(entry => {
+        if (entry.startsWith('##') || entry.startsWith('#')) {
+          const sessionTitle = entry.replace(/^[#\s]+/, '').trim();
+          currentCard = document.createElement('div');
+          currentCard.style.cssText = `
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 12px;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-left: 3px solid #16A34A;
+            border-radius: 8px;
+          `;
+          currentCard.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; color: #0F5132;">
+              <i class="fa-solid fa-calendar-check" style="color: #16A34A; font-size: 11px;"></i>
+              <span>${sessionTitle}</span>
+            </div>
+            <div class="hist-person" style="font-size: 13px; font-weight: 600; color: #1E293B;">-</div>
+          `;
+          historyList.appendChild(currentCard);
+        } else if (currentCard) {
+          const pEl = currentCard.querySelector('.hist-person');
+          if (pEl) pEl.innerText = entry;
+        }
+      });
+
+      historyBox.style.display = 'block';
+    } else {
+      historyBox.style.display = 'none';
     }
   }
 
@@ -1401,7 +1551,7 @@ function openDetails(item) {
     }
   }
 
-  // সোশ্যাল মিডিয়া ও অনলাইন পোর্টাল হ্যান্ডলিং
+  // সোশ্যাল মিডিয়া হ্যান্ডলিং
   const socialBox = document.getElementById('socialLinksBox');
   const webBtn = document.getElementById('linkWebsite');
   const fbBtn = document.getElementById('linkFacebook');

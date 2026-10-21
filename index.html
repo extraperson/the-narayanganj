@@ -275,19 +275,9 @@
           </div>
         </div>
       </div>
-
-    </div>
-
-    <!-- বটম বার -->
-    <nav class="bottom-nav">
-      <div class="nav-item active" onclick="goHome()"><i class="fa-solid fa-house"></i>হোম</div>
-      <div class="nav-item" onclick="openDoctorList(null, 'সকল ডাক্তার')"><i class="fa-solid fa-user-doctor"></i>ডাক্তার</div>
-      <div class="nav-item" onclick="openBookmarkPage()"><i class="fa-solid fa-bookmark"></i>সংরক্ষণ</div>
-      <div class="nav-item" onclick="openCategoryPage('সব', 'সকল তালিকা')"><i class="fa-solid fa-compass"></i>এক্সপ্লোর</div>
-    </nav>
-  </div>
-  
-  <!-- প্রশাসন ও জনপ্রতিনিধি সেকশন -->
+	  
+	  	
+	<!-- প্রশাসন ও জনপ্রতিনিধি সেকশন -->
       <div id="section-administration">
         <div class="section-title"><i class="fa-solid fa-landmark-dome"></i> প্রশাসন ও জনপ্রতিনিধি</div>
         <div class="home-categories-grid">
@@ -339,6 +329,20 @@
 
         </div>
       </div>
+
+    </div>
+
+
+    <!-- বটম বার -->
+    <nav class="bottom-nav">
+      <div class="nav-item active" onclick="goHome()"><i class="fa-solid fa-house"></i>হোম</div>
+      <div class="nav-item" onclick="openDoctorList(null, 'সকল ডাক্তার')"><i class="fa-solid fa-user-doctor"></i>ডাক্তার</div>
+      <div class="nav-item" onclick="openBookmarkPage()"><i class="fa-solid fa-bookmark"></i>সংরক্ষণ</div>
+      <div class="nav-item" onclick="openCategoryPage('সব', 'সকল তালিকা')"><i class="fa-solid fa-compass"></i>এক্সপ্লোর</div>
+    </nav>
+  </div>
+  
+  
 
   <!-- ২. ক্যাটাগরি তালিকা স্ক্রিন -->
   <div class="slide-page" id="categoryPage">
@@ -661,6 +665,63 @@
           </div>
         </div>
       </div>
+	  
+	  <!-- প্রশাসন ও জনপ্রতিনিধি ডেডিকেটেড সেকশন -->
+      <div id="adminSectionBox" style="display: none; flex-direction: column; gap: 12px;">
+        <!-- প্রধান প্রতিনিধি / কর্মকর্তা কার্ড -->
+        <div id="adminLeaderCard" style="background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); border: 1px solid #BBF7D0; border-radius: 12px; padding: 14px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background: #16A34A; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+              <i class="fa-solid fa-user-tie"></i>
+            </div>
+            <div>
+              <span id="adminLeaderTitle" style="font-size: 11px; font-weight: 700; color: #166534; text-transform: uppercase; background: #BBF7D0; padding: 2px 8px; border-radius: 4px;">দায়িত্বপ্রাপ্ত প্রতিনিধি</span>
+              <div id="adminLeaderName" style="font-size: 16px; font-weight: 700; color: #064E3B; margin-top: 3px;">-</div>
+            </div>
+          </div>
+          <a href="#" id="adminLeaderCallBtn" class="btn-action" style="background: #16A34A; color: #fff; padding: 7px 12px; font-size: 12px; border-radius: 8px; flex-shrink: 0; display: none;">
+            <i class="fa-solid fa-phone"></i> কল
+          </a>
+        </div>
+
+        <!-- প্রশাসনিক ও নির্বাচনী তথ্যাবলী গ্রিড -->
+        <div id="adminInfoGridBox" style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
+          <div style="font-size: 13px; font-weight: 700; color: #0F5132; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-landmark"></i> প্রশাসনিক ও নির্বাচনী বিবরণ
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 12px;">
+            <div id="adminCodeCard" style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 10px; border-radius: 8px;">
+              <span style="font-size: 10px; color: var(--text-muted); display: block;">আসন / ওয়ার্ড কোড</span>
+              <strong id="adminCodeVal" style="color: var(--text); font-size: 12px;">-</strong>
+            </div>
+            <div id="adminVotersCard" style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 10px; border-radius: 8px;">
+              <span style="font-size: 10px; color: var(--text-muted); display: block;">ভোটার / জনসংখ্যা</span>
+              <strong id="adminVotersVal" style="color: var(--text); font-size: 12px;">-</strong>
+            </div>
+            <div id="adminTerritoryCard" style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 10px; border-radius: 8px; grid-column: span 2;">
+              <span style="font-size: 10px; color: var(--text-muted); display: block;">অন্তর্ভুক্ত এলাকা / সীমানা</span>
+              <strong id="adminTerritoryVal" style="color: var(--text); font-size: 12px;">-</strong>
+            </div>
+            <div id="adminEstCard" style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 10px; border-radius: 8px;">
+              <span style="font-size: 10px; color: var(--text-muted); display: block;">প্রতিষ্ঠা / সীমানা সাল</span>
+              <strong id="adminEstVal" style="color: var(--text); font-size: 12px;">-</strong>
+            </div>
+            <div id="adminUpazilaCard" style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 10px; border-radius: 8px;">
+              <span style="font-size: 10px; color: var(--text-muted); display: block;">উপজেলা / থানা</span>
+              <strong id="adminUpazilaVal" style="color: var(--text); font-size: 12px;">-</strong>
+            </div>
+          </div>
+
+          <!-- সহকারী / সংরক্ষিত প্রতিনিধি / সচিব কার্ড -->
+          <div id="adminSubLeaderBox" style="margin-top: 10px; padding: 10px; background: #F0FDF4; border: 1px dashed #86EFAC; border-radius: 8px; font-size: 12px; display: none;">
+            <div style="font-weight: 700; color: #166534; margin-bottom: 3px;">
+              <i class="fa-solid fa-users"></i> সহকারী ও সংশ্লিষ্ট প্রতিনিধি / সচিব:
+            </div>
+            <div id="adminSubLeaderText" style="color: #14532D; font-size: 12px; line-height: 1.5;">-</div>
+          </div>
+        </div>
+      </div>
 
       <!-- নিয়মিত তথ্য তালিকা -->
       <div class="info-list">
@@ -695,6 +756,18 @@
             <div id="detailsPhone" style="color: var(--text-muted); margin-top: 2px;">-</div>
           </div>
         </div>
+      </div>
+	  
+	  <!-- বিগত সংসদ সদস্য ও নির্বাচনী ইতিহাস টাইমলাইন -->
+      <div id="adminHistoryBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 14px;">
+        <div style="font-size: 14px; font-weight: 700; color: #0F5132; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-clock-rotate-left" style="color: #16A34A;"></i> বিগত জনপ্রতিনিধি ও নির্বাচনের ইতিহাস
+          </div>
+          <span style="font-size: 10px; background: #DCFCE7; color: #166534; padding: 2px 7px; border-radius: 4px; font-weight: 600;">রেকর্ড তালিকা</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">পূর্বে নির্বাচিত সংসদ সদস্য ও প্রতিনিধিদের বিবরণ</p>
+        <div id="adminHistoryList" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
 
       <!-- স্পেশাল অফার ও ক্যাম্পেইন ব্যানার -->
