@@ -187,7 +187,10 @@ function normalizeAdminItem(item) {
     email: item.email || '',
     website: item.website || '',
     image_url: item.image_url || 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&auto=format&fit=crop&q=80',
-    featured: item.featured || ''
+    featured: item.featured || '',
+	admin_units: item.admin_units || item.unions || '',
+    attractions: item.attractions || item.spots || '',
+    admin_stats: item.admin_stats || item.stats || '',
   };
 }
 
@@ -511,8 +514,10 @@ function renderCategoryItems() {
       matchCat = (itemCat.includes('সংসদ') || itemCat.includes('আসন') || itemCat.includes('এমপি'));
     } else if (currentCategory === 'সিটি কর্পোরেশন') {
       matchCat = (itemCat.includes('সিটি কর্পোরেশন') || itemCat.includes('নাসিক') || itemCat.includes('কাউন্সিলর') || itemCat.includes('ওয়ার্ড'));
-    } else if (currentCategory === 'উপজেলা প্রশাসন' || currentCategory === 'পৌরসভা') {
-      matchCat = (itemCat.includes('উপজেলা') || itemCat.includes('পৌরসভা') || itemCat.includes('ইউএনও') || itemCat.includes('এসিল্যান্ড'));
+    } else if (currentCategory === 'উপজেলা প্রশাসন') {
+      matchCat = (itemCat === 'উপজেলা প্রশাসন' || (itemCat.includes('উপজেলা') && !itemCat.includes('পৌরসভা')));
+    } else if (currentCategory === 'পৌরসভা') {
+      matchCat = (itemCat === 'পৌরসভা' || itemCat.includes('পৌরসভা'));
     } else if (currentCategory === 'ইউনিয়ন পরিষদ') {
       matchCat = (itemCat.includes('ইউনিয়ন') || itemCat.includes('ইউপি') || itemCat.includes('চেয়ারম্যান'));
     }
@@ -1365,6 +1370,84 @@ function openDetails(item) {
 
     } else {
       adminBox.style.display = 'none';
+    }
+  }
+  
+  // ১. উপজেলার প্রশাসনিক এলাকা (পৌরসভা ও ইউনিয়ন তালিকা) রেন্ডারিং
+  const unitsBox = document.getElementById('adminUnitsBox');
+  const unitsList = document.getElementById('adminUnitsList');
+  const unitsStats = document.getElementById('adminUnitsStats');
+
+  if (unitsBox && unitsList) {
+    const rawUnits = (item.admin_units || '').trim();
+    if (isAdmin && rawUnits) {
+      unitsList.innerHTML = '';
+      
+      if (unitsStats) {
+        if (item.admin_stats && item.admin_stats.trim() !== '') {
+          unitsStats.innerText = item.admin_stats.trim();
+          unitsStats.style.display = 'block';
+        } else {
+          unitsStats.style.display = 'none';
+        }
+      }
+
+      const lines = rawUnits.split(/[|\n]/).map(l => l.trim()).filter(Boolean);
+      let currentSection = null;
+      let currentBadgeGrid = null;
+
+      lines.forEach(line => {
+        if (line.startsWith('##') || line.startsWith('#')) {
+          const secTitle = line.replace(/^[#\s]+/, '').trim();
+          
+          currentSection = document.createElement('div');
+          currentSection.innerHTML = `
+            <div style="font-size: 13px; font-weight: 700; color: #0F5132; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-circle-dot" style="font-size: 9px; color: #16A34A;"></i> ${secTitle}
+            </div>
+          `;
+          
+          currentBadgeGrid = document.createElement('div');
+          currentBadgeGrid.style.cssText = "display: flex; flex-wrap: wrap; gap: 6px;";
+          currentSection.appendChild(currentBadgeGrid);
+          unitsList.appendChild(currentSection);
+        } else if (currentBadgeGrid) {
+          const badge = document.createElement('span');
+          badge.style.cssText = "background: #F8FAFC; border: 1px solid #E2E8F0; color: #1E293B; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 6px;";
+          badge.innerText = line;
+          currentBadgeGrid.appendChild(badge);
+        }
+      });
+
+      unitsBox.style.display = 'block';
+    } else {
+      unitsBox.style.display = 'none';
+    }
+  }
+
+  // ২. উপজেলার দর্শনীয় স্থানসমূহ রেন্ডারিং
+  const attractionsBox = document.getElementById('adminAttractionsBox');
+  const attractionsList = document.getElementById('adminAttractionsList');
+
+  if (attractionsBox && attractionsList) {
+    const rawAttractions = (item.attractions || '').trim();
+    if (isAdmin && rawAttractions) {
+      attractionsList.innerHTML = '';
+      const spots = rawAttractions.split(/[|\n]/).map(s => s.trim().replace(/^[•\-\*\d\.]+\s*/, '')).filter(Boolean);
+
+      spots.forEach(spot => {
+        const itemEl = document.createElement('div');
+        itemEl.style.cssText = "display: flex; align-items: flex-start; gap: 8px; background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px; padding: 8px 12px; font-size: 12.5px; color: #78350F; font-weight: 600;";
+        itemEl.innerHTML = `
+          <i class="fa-solid fa-location-dot" style="color: #D97706; margin-top: 3px; font-size: 12px; flex-shrink: 0;"></i>
+          <span>${spot}</span>
+        `;
+        attractionsList.appendChild(itemEl);
+      });
+
+      attractionsBox.style.display = 'block';
+    } else {
+      attractionsBox.style.display = 'none';
     }
   }
   

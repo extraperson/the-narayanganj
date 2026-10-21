@@ -309,12 +309,21 @@
             </div>
           </div>
 
-          <!-- ৪. উপজেলা ও পৌরসভা -->
-          <div class="home-cat-card" onclick="openCategoryPage('উপজেলা প্রশাসন', 'উপজেলা প্রশাসন, ইউএনও ও পৌরসভা')">
+          <!-- ৪. উপজেলা প্রশাসন (আলাদা) -->
+          <div class="home-cat-card" onclick="openCategoryPage('উপজেলা প্রশাসন', 'উপজেলা পরিষদ, ইউএনও ও এসিল্যান্ড')">
             <div class="home-cat-icon" style="background: #F1F5F9; color: #334155;"><i class="fa-solid fa-landmark"></i></div>
             <div class="home-cat-info">
-              <h4>উপজেলা ও পৌরসভা</h4>
-              <p>ইউএনও, এসিল্যান্ড ও পৌরসভা</p>
+              <h4>উপজেলা প্রশাসন</h4>
+              <p>ইউএনও, এসিল্যান্ড ও পরিষদ</p>
+            </div>
+          </div>
+
+          <!-- ৫. পৌরসভা (আলাদা) -->
+          <div class="home-cat-card" onclick="openCategoryPage('পৌরসভা', 'পৌর মেয়র, কাউন্সিলর ও পৌরসভা')">
+            <div class="home-cat-icon" style="background: #E0F2FE; color: #0284C7;"><i class="fa-solid fa-building-user"></i></div>
+            <div class="home-cat-info">
+              <h4>পৌরসভা</h4>
+              <p>কাঞ্চন, তারাব, আড়াইহাজার ও গোপালদী</p>
             </div>
           </div>
 
@@ -722,6 +731,24 @@
           </div>
         </div>
       </div>
+	  
+	  <!-- উপজেলার প্রশাসনিক এলাকা (পৌরসভা ও ইউনিয়ন তালিকা) -->
+        <div id="adminUnitsBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 12px;">
+          <div style="font-size: 14px; font-weight: 700; color: #0F5132; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-sitemap" style="color: #16A34A;"></i> প্রশাসনিক এলাকা ও আওতাধীন ইউনিট
+          </div>
+          <div id="adminUnitsStats" style="font-size: 11.5px; color: #475569; background: #F8FAFC; border: 1px solid #E2E8F0; padding: 6px 10px; border-radius: 6px; margin: 8px 0 10px; display: none;"></div>
+          <div id="adminUnitsList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+
+        <!-- উপজেলার দর্শনীয় স্থানসমূহ -->
+        <div id="adminAttractionsBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 12px;">
+          <div style="font-size: 14px; font-weight: 700; color: #92400E; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-monument" style="color: #D97706;"></i> দর্শনীয় স্থানসমূহ
+          </div>
+          <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">ঐতিহাসিক ও পর্যটন আকর্ষণ</p>
+          <div id="adminAttractionsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+        </div>
 
       <!-- নিয়মিত তথ্য তালিকা -->
       <div class="info-list">
