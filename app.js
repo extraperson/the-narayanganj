@@ -509,7 +509,7 @@ function renderCategoryItems() {
     } 
     // প্রশাসনিক ও জনপ্রতিনিধি ফিল্টারিং
     else if (currentCategory === 'জেলা প্রশাসন') {
-      matchCat = (itemCat.includes('জেলা') || itemCat.includes('প্রশাসন') || itemCat.includes('পুলিশ') || itemCat.includes('ডিসি') || itemCat.includes('এসপি'));
+      matchCat = (itemCat === 'জেলা প্রশাসন' || (!itemCat.includes('উপজেলা') && (itemCat.includes('জেলা') || itemCat.includes('পুলিশ') || itemCat.includes('ডিসি') || itemCat.includes('এসপি') || itemCat.includes('প্রশাসন'))));
     } else if (currentCategory === 'সংসদীয় আসন') {
       matchCat = (itemCat.includes('সংসদ') || itemCat.includes('আসন') || itemCat.includes('এমপি'));
     } else if (currentCategory === 'সিটি কর্পোরেশন') {
