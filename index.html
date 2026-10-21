@@ -59,7 +59,7 @@
         <span>আপনার চেম্বার বা ব্যবসার বিজ্ঞাপন দিন এখানে</span>
       </div>
 
-      <!-- ১. স্বাস্থ্য সেবা -->
+      <!-- ১. স্বাস্থ্য ও চিকিৎসা সেবা -->
       <div id="section-health">
         <div class="section-title"><i class="fa-solid fa-notes-medical"></i> স্বাস্থ্য সেবা</div>
         <div class="home-categories-grid">
@@ -102,6 +102,24 @@
               <p id="countSubDental">দাঁতের ডাক্তার ও চিকিৎসা</p>
             </div>
           </div>
+
+          <!-- নতুন: ব্লাড ব্যাংক -->
+          <div class="home-cat-card" onclick="openCategoryPage('ব্লাড ব্যাংক', 'রক্তদান ও জরুরি রক্তদাতা সংগঠন')">
+            <div class="home-cat-icon" style="background: #FEE2E2; color: #DC2626;"><i class="fa-solid fa-droplet"></i></div>
+            <div class="home-cat-info">
+              <h4>ব্লাড ব্যাংক ও রক্তদান</h4>
+              <p>জরুরি রক্তের সন্ধান</p>
+            </div>
+          </div>
+
+          <!-- নতুন: ২৪ ঘণ্টা ফার্মেসী -->
+          <div class="home-cat-card" onclick="openCategoryPage('২৪ ঘণ্টা ফার্মেসী', 'দিবারাত্রি ওষুধের দোকান ও ফার্মেসী')">
+            <div class="home-cat-icon" style="background: #ECFDF5; color: #059669;"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
+            <div class="home-cat-info">
+              <h4>২৪ ঘণ্টা ফার্মেসী</h4>
+              <p>দিবারাত্রি ঔষধের দোকান</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -129,7 +147,7 @@
 
       <!-- ৩. বিনোদন ও দর্শনীয় স্থান -->
       <div id="section-entertainment">
-        <div class="section-title"><i class="fa-solid fa-film"></i> বিনোদন ও ভ্রমণ</div>
+        <div class="section-title"><i class="fa-solid fa-film"></i> বিনোদন ও অনুষ্ঠান</div>
         <div class="home-categories-grid">
           <div class="home-cat-card" onclick="openCategoryPage('সিনেমা হল', 'মুভি থিয়েটার ও প্রেক্ষাগৃহ')">
             <div class="home-cat-icon theme-movie"><i class="fa-solid fa-film"></i></div>
@@ -146,14 +164,23 @@
               <p>সোনারগাঁও, দুর্গ ও পার্ক</p>
             </div>
           </div>
+
+          <!-- নতুন: কমিউনিটি সেন্টার -->
+          <div class="home-cat-card" onclick="openCategoryPage('কমিউনিটি সেন্টার', 'কনভেনশন হল ও পার্টি সেন্টার')">
+            <div class="home-cat-icon" style="background: #FDF2F8; color: #DB2777;"><i class="fa-solid fa-cake-candles"></i></div>
+            <div class="home-cat-info">
+              <h4>কমিউনিটি সেন্টার</h4>
+              <p>কনভেনশন হল ও বুকিং</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- ৪. রেস্তোরাঁ ও দৈনন্দিন নাগরিক সেবা -->
+      <!-- ৪. খাবার ও দৈনন্দিন নাগরিক সেবা -->
       <div id="section-citizen">
         <div class="section-title"><i class="fa-solid fa-city"></i> খাবার ও নাগরিক সেবা</div>
         <div class="home-categories-grid">
-          <!-- রেস্টুরেন্ট ক্যাটাগরি কার্ড -->
+          <!-- রেস্টুরেন্ট -->
           <div class="home-cat-card" onclick="openCategoryPage('রেস্টুরেন্ট', 'রেস্তোরাঁ, ক্যাফে ও ফাস্টফুড')">
             <div class="home-cat-icon theme-food"><i class="fa-solid fa-utensils"></i></div>
             <div class="home-cat-info">
@@ -170,11 +197,56 @@
             </div>
           </div>
 
+          <!-- নতুন: কুরিয়ার সার্ভিস -->
+          <div class="home-cat-card" onclick="openCategoryPage('কুরিয়ার সার্ভিস', 'পার্সেল বুকিং ও ডেলিভারি হাব')">
+            <div class="home-cat-icon" style="background: #EFF6FF; color: #2563EB;"><i class="fa-solid fa-truck-fast"></i></div>
+            <div class="home-cat-info">
+              <h4>কুরিয়ার ও পার্সেল</h4>
+              <p>সুন্দরবন, এসএ ও হাব</p>
+            </div>
+          </div>
+
+          <!-- নতুন: ইউটিলিটি ও বিল সেবা -->
+          <div class="home-cat-card" onclick="openCategoryPage('ইউটিলিটি সেবা', 'বিদ্যুৎ, গ্যাস, পানি ও অভিযোগ কেন্দ্র')">
+            <div class="home-cat-icon" style="background: #FEF3C7; color: #D97706;"><i class="fa-solid fa-bolt-lightning"></i></div>
+            <div class="home-cat-info">
+              <h4>বিদ্যুৎ, গ্যাস ও পানি</h4>
+              <p>অভিযোগ ও হেল্পলাইন</p>
+            </div>
+          </div>
+
+          <!-- নতুন: রেন্ট-এ-কার -->
+          <div class="home-cat-card" onclick="openCategoryPage('রেন্ট-এ-কার', 'গাড়ি ভাড়া, মাইক্রোবাস ও ড্রাইভার')">
+            <div class="home-cat-icon" style="background: #F0FDF4; color: #16A34A;"><i class="fa-solid fa-car-side"></i></div>
+            <div class="home-cat-info">
+              <h4>রেন্ট-এ-কার ও গাড়ি</h4>
+              <p>প্রাইভেট কার ও মাইক্রো</p>
+            </div>
+          </div>
+
+          <!-- নতুন: আইনজীবী ও কোর্ট -->
+          <div class="home-cat-card" onclick="openCategoryPage('আইনজীবী ও আইনি সেবা', 'জজ কোর্ট ও আইনজীবী চেম্বার')">
+            <div class="home-cat-icon" style="background: #F1F5F9; color: #334155;"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div class="home-cat-info">
+              <h4>আইনজীবী ও আইনি সেবা</h4>
+              <p>উকিল পাড়া ও পরামর্শ</p>
+            </div>
+          </div>
+
+          <!-- নতুন: পার্লার ও সেলুন -->
+          <div class="home-cat-card" onclick="openCategoryPage('পার্লার ও সেলুন', 'বিউটি পার্লার ও জেন্টস সেলুন')">
+            <div class="home-cat-icon" style="background: #FAF5FF; color: #9333EA;"><i class="fa-solid fa-scissors"></i></div>
+            <div class="home-cat-info">
+              <h4>পার্লার ও সেলুন</h4>
+              <p>লেডিস পার্লার ও গ্রুমিং</p>
+            </div>
+          </div>
+
           <div class="home-cat-card" onclick="openCategoryPage('জেনারেল স্টোর', 'মুদি দোকান, ডিপার্টমেন্টাল ও জেনারেল স্টোর')">
             <div class="home-cat-icon theme-shop"><i class="fa-solid fa-store"></i></div>
             <div class="home-cat-info">
               <h4>জেনারেল স্টোর</h4>
-              <p>মুদি ও নিত্যপ্রয়োজনীয় দোকান</p>
+              <p>মুদি ও নিত্যপ্রয়োজনীয়</p>
             </div>
           </div>
 		  
@@ -214,6 +286,59 @@
       <div class="nav-item" onclick="openCategoryPage('সব', 'সকল তালিকা')"><i class="fa-solid fa-compass"></i>এক্সপ্লোর</div>
     </nav>
   </div>
+  
+  <!-- প্রশাসন ও জনপ্রতিনিধি সেকশন -->
+      <div id="section-administration">
+        <div class="section-title"><i class="fa-solid fa-landmark-dome"></i> প্রশাসন ও জনপ্রতিনিধি</div>
+        <div class="home-categories-grid">
+          
+          <!-- ১. জেলা প্রশাসন ও পুলিশ -->
+          <div class="home-cat-card" onclick="openCategoryPage('জেলা প্রশাসন', 'ডিসি, এসপি, পাসপোর্ট ও সরকারি দপ্তর')">
+            <div class="home-cat-icon" style="background: #E0E7FF; color: #4338CA;"><i class="fa-solid fa-building-columns"></i></div>
+            <div class="home-cat-info">
+              <h4>জেলা প্রশাসন ও পুলিশ</h4>
+              <p>ডিসি, এসপি ও সরকারি দপ্তর</p>
+            </div>
+          </div>
+
+          <!-- ২. সংসদীয় আসন -->
+          <div class="home-cat-card" onclick="openCategoryPage('সংসদীয় আসন', 'নারায়ণগঞ্জের ৫টি জাতীয় সংসদ আসন')">
+            <div class="home-cat-icon" style="background: #FEF3C7; color: #B45309;"><i class="fa-solid fa-users-rectangle"></i></div>
+            <div class="home-cat-info">
+              <h4>সংসদীয় আসন</h4>
+              <p>১ থেকে ৫ নম্বর আসন</p>
+            </div>
+          </div>
+
+          <!-- ৩. সিটি কর্পোরেশন (নাসিক) -->
+          <div class="home-cat-card" onclick="openCategoryPage('সিটি কর্পোরেশন', 'মেয়র ও ২৭টি ওয়ার্ডের কাউন্সিলর')">
+            <div class="home-cat-icon" style="background: #DCFCE7; color: #15803D;"><i class="fa-solid fa-city"></i></div>
+            <div class="home-cat-info">
+              <h4>সিটি কর্পোরেশন</h4>
+              <p>নাসিক মেয়র ও ওয়ার্ড কাউন্সিলর</p>
+            </div>
+          </div>
+
+          <!-- ৪. উপজেলা ও পৌরসভা -->
+          <div class="home-cat-card" onclick="openCategoryPage('উপজেলা প্রশাসন', 'উপজেলা প্রশাসন, ইউএনও ও পৌরসভা')">
+            <div class="home-cat-icon" style="background: #F1F5F9; color: #334155;"><i class="fa-solid fa-landmark"></i></div>
+            <div class="home-cat-info">
+              <h4>উপজেলা ও পৌরসভা</h4>
+              <p>ইউএনও, এসিল্যান্ড ও পৌরসভা</p>
+            </div>
+          </div>
+
+          <!-- ৫. ইউনিয়ন পরিষদ -->
+          <div class="home-cat-card" onclick="openCategoryPage('ইউনিয়ন পরিষদ', 'সকল ইউনিয়ন পরিষদ ও চেয়ারম্যান')">
+            <div class="home-cat-icon" style="background: #FFEDD5; color: #C2410C;"><i class="fa-solid fa-people-roof"></i></div>
+            <div class="home-cat-info">
+              <h4>ইউনিয়ন পরিষদ</h4>
+              <p>ইউপি ভবন ও চেয়ারম্যান তালিকা</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
 
   <!-- ২. ক্যাটাগরি তালিকা স্ক্রিন -->
   <div class="slide-page" id="categoryPage">
@@ -306,7 +431,7 @@
     <div class="page-listings" id="bookmarkListings"></div>
   </div>
 
-  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন (z-index: 1400) -->
+  <!-- ৫. প্রতিষ্ঠান বিস্তারিত স্ক্রিন -->
   <div class="details-view" id="detailsView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
@@ -408,7 +533,7 @@
         </div>
       </div>
 
-      <!-- ১. বিভাগসমূহ (হাসপাতাল ও শিক্ষা প্রতিষ্ঠান উভয়ের জন্য ডাইনামিক) -->
+      <!-- ১. বিভাগসমূহ -->
       <div id="hospitalDeptsBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-layer-group" style="color: var(--primary);"></i> বিভাগসমূহ
@@ -435,7 +560,7 @@
         <div class="dept-badge-grid" id="hospitalDiagList"></div>
       </div>
 
-      <!-- সিনেমা হলের লাইভ মুভি ও শো-টাইম কার্ড ব্লক -->
+      <!-- সিনেমা হলের লাইভ মুভি ও শো-টাইম -->
       <div id="cinemaShowtimeBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -459,7 +584,7 @@
         <div id="newspaperFeedList" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
 	  
-      <!-- খাঁটি প্রিমিয়াম ট্রিভিয়া ক্যারোজেল স্লাইডার -->
+      <!-- ট্রিভিয়া ক্যারোজেল স্লাইডার -->
       <div id="eduTriviaBox" style="display: none; background: #FFFDF7; border: 1px solid #FDE68A; border-radius: 14px; padding: 14px; position: relative; overflow: hidden; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.05);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <div style="font-size: 14px; font-weight: 700; color: #92400E; display: flex; align-items: center; gap: 6px;">
@@ -483,7 +608,7 @@
         <div id="triviaDots" style="display: flex; justify-content: center; gap: 5px; margin-top: 10px;"></div>
       </div>
 
-      <!-- শুধু শিক্ষা প্রতিষ্ঠানের জন্য প্রিমিয়াম ব্লক -->
+      <!-- শিক্ষা প্রতিষ্ঠান সেকশন -->
       <div id="eduSectionBox" style="display: none; flex-direction: column; gap: 12px;">
         <div id="eduPrincipalCard" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
           <div id="eduPrincipalIcon" style="width: 44px; height: 44px; border-radius: 50%; background: #EDE9FE; color: #7C3AED; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
@@ -506,7 +631,6 @@
           <i class="fa-solid fa-chevron-right" style="color: #16A34A; font-size: 14px;"></i>
         </div>
 
-        <!-- প্রাতিষ্ঠানিক তথ্যাবলী গ্রিড -->
         <div id="eduInfoGridBox" style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
           <div style="font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
             <i class="fa-solid fa-circle-info"></i> প্রাতিষ্ঠানিক তথ্যাবলী
@@ -572,8 +696,8 @@
           </div>
         </div>
       </div>
-	  
-	  <!-- স্পেশাল অফার ও ক্যাম্পেইন ব্যানার (অটো-এক্সপায়ারি সাপোর্টসহ) -->
+
+      <!-- স্পেশাল অফার ও ক্যাম্পেইন ব্যানার -->
       <div id="restaurantOfferBox" style="display: none; background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); border: 1.5px dashed #F59E0B; border-radius: var(--radius); padding: 14px; margin-top: 14px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
           <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; color: #92400E;">
@@ -584,12 +708,10 @@
             লাইভ অফার
           </span>
         </div>
-        
-        <!-- ডাইনামিক অফার ব্লক তালিকা -->
         <div id="restaurantOfferContent" style="display: flex; flex-direction: column; gap: 12px;"></div>
       </div>
 
-      <!-- রেস্টুরেন্ট মেনু ও মূল্যতালিকা ব্লক (সবার নিচে) -->
+      <!-- রেস্টুরেন্ট মেনু ও মূল্যতালিকা ব্লক -->
       <div id="restaurantMenuBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: #B45309; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -618,7 +740,7 @@
     </div>
   </div>
 
-  <!-- ৬. স্বতন্ত্র ডাক্তার প্রোফাইল স্ক্রিন (z-index: 1200) -->
+  <!-- ৬. ডাক্তার প্রোফাইল স্ক্রিন -->
   <div class="details-view" id="doctorProfileView">
     <div class="top-sub-header" style="justify-content: space-between;">
       <button class="btn-circle" onclick="closeDoctorProfile()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -652,7 +774,7 @@
     </div>
   </div>
 
-  <!-- ৭. পরীক্ষার ফলাফল ডেডিকেটেড পেজ (z-index: 1600) -->
+  <!-- ৭. পরীক্ষার ফলাফল পেজ -->
   <div class="slide-page" id="eduResultsPage">
     <div class="top-sub-header">
       <button class="btn-circle" onclick="closeInstitutionResults()"><i class="fa-solid fa-arrow-left"></i></button>
