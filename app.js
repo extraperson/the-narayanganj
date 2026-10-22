@@ -1,3 +1,12 @@
+/* ==========================================================================
+   THE NARAYANGANJ - CORE SCRIPT (PART 1)
+   --------------------------------------------------------------------------
+   ১. কনফিগারেশন ও স্টেট ভ্যারিয়েবল
+   ২. ডেটা নরমালাইজেশন ও ফেচিং হেল্পার
+   ৩. ক্যাটাগরি পেজ ও সুবিন্যস্ত ফিল্টারিং ইঞ্জিন (হোম স্ক্রিন সিকোয়েন্স)
+   ========================================================================== */
+
+// --- ১. কনফিগারেশন ও স্টেট ভ্যারিয়েবল ---
 const SHEET_ID = "1ctXswktft11lTCw_TiTbwoF2jgmLsHaf4Zno23QImjQ";
 const API_PLACES = `https://opensheet.elk.sh/${SHEET_ID}/Sheet1`;
 const API_DOCTORS = `https://opensheet.elk.sh/${SHEET_ID}/Doctors`;
@@ -21,7 +30,6 @@ let selectedDocDept = 'সব বিভাগ';
 let activeItem = null;
 let activeDoctor = null;
 
-// ক্যারোজেল স্লাইডার স্টেট ভ্যারিয়েবল
 let currentTriviaIndex = 0;
 let totalTriviaSlides = 0;
 
@@ -33,19 +41,23 @@ try {
   bookmarks = { places: [], doctors: [] };
 }
 
-// ফোন নম্বরের সামনের শূন্য ও ফরম্যাট ঠিক করার হেল্পার
+// ১. সার্বজনীন বাংলা থেকে ইংরেজি ডিজিট কনভার্টার (EIIN, সাল, ফোন, আইডি সবকিছুর জন্য)
+function toEnDigits(val) {
+  if (val === null || val === undefined) return '';
+  const bnToEn = {'০':'0', '১':'1', '২':'2', '৩':'3', '৪':'4', '৫':'5', '৬':'6', '৭':'7', '৮':'8', '৯':'9'};
+  return val.toString().trim().replace(/[০-৯]/g, d => bnToEn[d]);
+}
+
+// ২. সার্বজনীন ফোন নম্বর ক্লিনার (উপরে তৈরি toEnDigits ব্যবহার করে)
 function cleanPhoneNumber(phone) {
   if (!phone) return '';
-  let str = phone.toString().trim();
-  const banglaDigits = {'০':'0', '১':'1', '২':'2', '৩':'3', '৪':'4', '৫':'5', '৬':'6', '৭':'7', '৮':'8', '৯':'9'};
-  str = str.replace(/[০-৯]/g, m => banglaDigits[m]).replace(/[^\d+]/g, '');
+  let str = toEnDigits(phone).replace(/[^\d+]/g, '');
   if (str.length === 10 && str.startsWith('1')) {
     str = '0' + str;
   }
   return str;
 }
 
-// অফারের মেয়াদ পার হয়েছে কি না চেক করার হেল্পার
 function isOfferExpired(dateStr) {
   if (!dateStr) return false;
   const bnToEn = {'০':'0','১':'1','২':'2','৩':'3','৪':'4','৫':'5','৬':'6','৭':'7','৮':'8','৯':'9'};
@@ -57,14 +69,11 @@ function isOfferExpired(dateStr) {
   const month = parseInt(match[2], 10) - 1;
   const day = parseInt(match[3], 10);
   
-  const expDate = new Date(year, month, day, 23, 59, 59, 999);
-  return new Date() > expDate;
+  return new Date() > new Date(year, month, day, 23, 59, 59, 999);
 }
 
-// অফার পার্সিং ও এক্সপায়ার ফিল্টারিং ইঞ্জিন (## ব্লক ভিত্তিক)
 function parseOffers(rawOffer) {
   if (!rawOffer || !rawOffer.trim()) return [];
-  
   const lines = rawOffer.trim().split(/[|\n]/).map(l => l.trim()).filter(Boolean);
   const blocks = [];
   let currentBlock = null;
@@ -81,19 +90,11 @@ function parseOffers(rawOffer) {
     }
 
     if (isHeader) {
-      currentBlock = {
-        title: cleanLine.replace(/^##\s*/, '').trim(),
-        expDate: lineDate,
-        points: []
-      };
+      currentBlock = { title: cleanLine.replace(/^##\s*/, '').trim(), expDate: lineDate, points: [] };
       blocks.push(currentBlock);
     } else {
       if (!currentBlock) {
-        currentBlock = {
-          title: '',
-          expDate: lineDate,
-          points: []
-        };
+        currentBlock = { title: '', expDate: lineDate, points: [] };
         blocks.push(currentBlock);
       } else if (lineDate && !currentBlock.expDate) {
         currentBlock.expDate = lineDate;
@@ -105,12 +106,9 @@ function parseOffers(rawOffer) {
   return blocks.filter(b => !isOfferExpired(b.expDate) && (b.title || b.points.length > 0));
 }
 
-// ব্যানবেইস শিক্ষা প্রতিষ্ঠান ডেটা ম্যাপিং হেল্পার
 function normalizeEducationItem(item) {
   const cleanPhone = cleanPhoneNumber(item.mobile || item.phone || item.telephone || '');
-  const addr = [item.address, item.mouza, item.post_office ? `${item.post_office} (${item.post_code || ''})` : '']
-    .filter(Boolean)
-    .join(', ');
+  const addr = [item.address, item.mouza, item.post_office ? `${item.post_office} (${item.post_code || ''})` : ''].filter(Boolean).join(', ');
 
   return {
     ...item,
@@ -137,7 +135,6 @@ function normalizeEducationItem(item) {
   };
 }
 
-// রেস্টুরেন্ট ডেটা ম্যাপিং হেল্পার
 function normalizeRestaurantItem(item) {
   const cleanPhone = cleanPhoneNumber(item.phone || item.mobile || item.hotline || '');
   return {
@@ -162,7 +159,6 @@ function normalizeRestaurantItem(item) {
   };
 }
 
-// ডেডিকেটেড প্রশাসনিক ডেটা ম্যাপিং হেল্পার (Administration Tab)
 function normalizeAdminItem(item) {
   const cleanPhone = cleanPhoneNumber(item.leader_phone || item.phone || item.mobile || '');
   return {
@@ -173,7 +169,7 @@ function normalizeAdminItem(item) {
     territory: item.territory || item.area || '',
     voters: item.voters || '',
     established: item.established || '',
-	history: item.history || '',
+    history: item.history || '',
     area: item.upazila || item.area || 'নারায়ণগঞ্জ',
     address: item.office_address || item.address || item.area || 'নারায়ণগঞ্জ',
     phone: cleanPhone,
@@ -188,13 +184,12 @@ function normalizeAdminItem(item) {
     website: item.website || '',
     image_url: item.image_url || 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&auto=format&fit=crop&q=80',
     featured: item.featured || '',
-	admin_units: item.admin_units || item.unions || '',
+    admin_units: item.admin_units || item.unions || '',
     attractions: item.attractions || item.spots || '',
     admin_stats: item.admin_stats || item.stats || '',
   };
 }
 
-// র‍্যান্ডমাইজেশন হেল্পার
 function shuffleArray(array) {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -210,172 +205,7 @@ function organizeListings(dataList) {
   return [...featured, ...shuffleArray(normal)];
 }
 
-function saveBookmarks() {
-  try {
-    localStorage.setItem('narayanganj_bookmarks', JSON.stringify(bookmarks));
-  } catch (e) {}
-}
-
-function isItemBookmarked(name) {
-  return (bookmarks.places || []).some(p => p.name === name);
-}
-
-function isDocBookmarked(name) {
-  return (bookmarks.doctors || []).some(d => d.name === name);
-}
-
-function updateHeartIcon(btnElement, isActive) {
-  if (!btnElement) return;
-  if (isActive) {
-    btnElement.classList.add('active-heart');
-    btnElement.innerHTML = '<i class="fa-solid fa-heart"></i>';
-  } else {
-    btnElement.classList.remove('active-heart');
-    btnElement.innerHTML = '<i class="fa-regular fa-heart"></i>';
-  }
-}
-
-function toggleBookmarkActiveItem() {
-  if (!activeItem) return;
-  if (!bookmarks.places) bookmarks.places = [];
-  const idx = bookmarks.places.findIndex(p => p.name === activeItem.name);
-  if (idx > -1) {
-    bookmarks.places.splice(idx, 1);
-    updateHeartIcon(document.getElementById('detailsHeartBtn'), false);
-  } else {
-    bookmarks.places.push(activeItem);
-    updateHeartIcon(document.getElementById('detailsHeartBtn'), true);
-  }
-  saveBookmarks();
-}
-
-function toggleBookmarkActiveDoctor() {
-  if (!activeDoctor) return;
-  if (!bookmarks.doctors) bookmarks.doctors = [];
-  const idx = bookmarks.doctors.findIndex(d => d.name === activeDoctor.name);
-  if (idx > -1) {
-    bookmarks.doctors.splice(idx, 1);
-    updateHeartIcon(document.getElementById('docHeartBtn'), false);
-  } else {
-    bookmarks.doctors.push(activeDoctor);
-    updateHeartIcon(document.getElementById('docHeartBtn'), true);
-  }
-  saveBookmarks();
-}
-
-function openBookmarkPage() {
-  const container = document.getElementById('bookmarkListings');
-  if (!container) return;
-  container.innerHTML = '';
-
-  const total = (bookmarks.places?.length || 0) + (bookmarks.doctors?.length || 0);
-  if (total === 0) {
-    container.innerHTML = `
-      <div style="text-align: center; color: var(--text-muted); padding: 50px 20px;">
-        <i class="fa-regular fa-bookmark" style="font-size: 38px; color: #CBD5E1; margin-bottom: 12px;"></i>
-        <p>আপনার সংরক্ষিত তালিকায় এখনো কিছু নেই।</p>
-        <p style="font-size: 12px; margin-top: 4px;">যেকোনো ডাক্তার বা প্রতিষ্ঠানের পেজে গিয়ে হার্ট আইকনে চাপ দিলে এখানে সেভ থাকবে।</p>
-      </div>
-    `;
-  } else {
-    if (bookmarks.doctors && bookmarks.doctors.length > 0) {
-      const docTitle = document.createElement('h4');
-      docTitle.innerText = "সংরক্ষিত ডাক্তারগণ";
-      docTitle.style.cssText = "font-size: 15px; color: var(--primary); margin: 6px 0 2px;";
-      container.appendChild(docTitle);
-
-      bookmarks.doctors.forEach(doc => {
-        const card = document.createElement('div');
-        card.className = 'doctor-card';
-        card.onclick = () => openDoctorProfile(doc);
-        const firstPhone = (doc.serial_phone || '').split(';')[0].split(',')[0].trim();
-        card.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <div>
-              <div class="place-title" style="color: #0F5132;">${doc.name || ''}</div>
-              <div class="doc-specialty">${doc.specialty || ''}</div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 13px;"></i>
-          </div>
-          <div class="action-buttons" style="grid-template-columns: 1fr;">
-            <a href="${firstPhone ? 'tel:' + firstPhone : '#'}" class="btn-action btn-call" onclick="event.stopPropagation()">
-              <i class="fa-solid fa-phone"></i> সিরিয়াল দিন (${firstPhone || 'কল'})
-            </a>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    if (bookmarks.places && bookmarks.places.length > 0) {
-      const placeTitle = document.createElement('h4');
-      placeTitle.innerText = "সংরক্ষিত প্রতিষ্ঠান ও সেবা";
-      placeTitle.style.cssText = "font-size: 15px; color: var(--primary); margin: 12px 0 2px;";
-      container.appendChild(placeTitle);
-
-      bookmarks.places.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'place-card';
-        card.onclick = () => openDetails(item);
-        card.innerHTML = `
-          <div class="place-header">
-            <div>
-              <div class="place-title">${item.name || ''}</div>
-              <div class="place-area"><i class="fa-solid fa-location-dot"></i> ${item.area || ''}</div>
-            </div>
-            <div class="rating-badge"><i class="fa-solid fa-star"></i> ${item.rating || '৪.০'}</div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-  }
-
-  const el = document.getElementById('bookmarkPage');
-  if (el) {
-    el.classList.add('open');
-    window.history.pushState({ page: 'bookmarks' }, '');
-  }
-}
-
-function closeBookmarkPage() {
-  const el = document.getElementById('bookmarkPage');
-  if (el) el.classList.remove('open');
-}
-
-function openSubmitForm() {
-  window.open("https://forms.gle/sample", '_blank');
-}
-
-function setCategoryAreaFilter(areaName, chipElement) {
-  selectedCatArea = areaName;
-  const bar = document.getElementById('catAreaFilterBar');
-  if (bar) {
-    bar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
-    if (chipElement) chipElement.classList.add('active');
-  }
-  renderCategoryItems();
-}
-
-function setDoctorAreaFilter(areaName, chipElement) {
-  selectedDocArea = areaName;
-  const bar = document.getElementById('docAreaFilterBar');
-  if (bar) {
-    bar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
-    if (chipElement) chipElement.classList.add('active');
-  }
-  renderDoctorItems();
-}
-
-function setDoctorDeptFilter(deptName, chipElement) {
-  selectedDocDept = deptName;
-  const bar = document.getElementById('docDeptFilterBar');
-  if (bar) {
-    bar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
-    if (chipElement) chipElement.classList.add('active');
-  }
-  renderDoctorItems();
-}
+// --- ৩. ক্যাটাগরি পেজ ও ফিল্টারিং ইঞ্জিন ---
 
 function openCategoryPage(category, subtitle = '') {
   currentCategory = category;
@@ -407,7 +237,16 @@ function closeCategoryPage() {
   if (el) el.classList.remove('open');
 }
 
-// সাধারণ কার্ড রেন্ডার করার হেল্পার
+function setCategoryAreaFilter(areaName, chipElement) {
+  selectedCatArea = areaName;
+  const bar = document.getElementById('catAreaFilterBar');
+  if (bar) {
+    bar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+    if (chipElement) chipElement.classList.add('active');
+  }
+  renderCategoryItems();
+}
+
 function renderStandardPlaceCard(item, container) {
   const name = item.name || 'তথ্য নেই';
   const area = item.area || 'নারায়ণগঞ্জ';
@@ -477,7 +316,7 @@ function renderCategoryItems() {
 
   if (currentCategory === 'শিক্ষা প্রতিষ্ঠান') {
     sourceList = educationData.length > 0 ? educationData : placesData;
-  } else if (currentCategory === 'রেস্টুরেন্ট' || currentCategory === 'মিষ্টি ও খাবার' || currentCategory === 'খাবার') {
+  } else if (currentCategory === 'রেস্টুরেন্ট' || currentCategory === 'রেস্টুরেন্ট ও ক্যাফে' || currentCategory === 'মিষ্টি ও খাবার' || currentCategory === 'খাবার') {
     sourceList = restaurantsData.length > 0 ? restaurantsData : placesData;
   } else if (isAdminCategory) {
     sourceList = adminData.length > 0 ? adminData : placesData;
@@ -492,24 +331,43 @@ function renderCategoryItems() {
     const itemAddress = (item.address || '').toLowerCase();
     
     let matchCat = false;
+
+    // --- ১. স্বাস্থ্য সেবা ---
     if (currentCategory === 'সব') {
       matchCat = true;
     } else if (currentCategory === 'সরকারি হাসপাতাল') {
       matchCat = (itemCat === 'সরকারি হাসপাতাল');
     } else if (currentCategory === 'বেসরকারি হাসপাতাল') {
       matchCat = (itemCat === 'বেসরকারি হাসপাতাল' || itemCat === 'হাসপাতাল');
-    } else if (currentCategory === 'শিক্ষা প্রতিষ্ঠান') {
+    } else if (currentCategory === 'ডায়াগনস্টিক' || currentCategory === 'ডায়াগনস্টিক সেন্টার') {
+      matchCat = (itemCat.includes('ডায়াগনস্টিক') || itemCat.includes('ল্যাব') || itemCat.includes('প্যাথলজি'));
+    } else if (currentCategory === 'ডেন্টাল' || currentCategory === 'ডেন্টাল ক্লিনিক') {
+      matchCat = (itemCat.includes('ডেন্টাল') || itemCat.includes('দাঁত'));
+    } else if (currentCategory === 'ব্লাড ব্যাংক' || currentCategory === 'ব্লাড ব্যাংক ও রক্তদান' || currentCategory === 'রক্তদান') {
+      matchCat = (itemCat.includes('ব্লাড') || itemCat.includes('রক্ত'));
+    } else if (currentCategory === '২৪ ঘণ্টা ফার্মেসী' || currentCategory === 'ফার্মেসী') {
+      matchCat = (itemCat.includes('ফার্মেসী') || itemCat.includes('ফার্মেসি') || itemCat.includes('ওষুধ') || itemCat.includes('ঔষধ'));
+    }
+
+    // --- ২. শিক্ষা ও সংবাদ ---
+    else if (currentCategory === 'শিক্ষা প্রতিষ্ঠান') {
       matchCat = (itemCat === 'শিক্ষা প্রতিষ্ঠান' || itemCat === 'স্কুল' || itemCat === 'কলেজ' || itemCat === 'মাদরাসা');
-    } else if (currentCategory === 'রেস্টুরেন্ট' || currentCategory === 'মিষ্টি ও খাবার') {
-      matchCat = (itemCat === 'রেস্টুরেন্ট' || itemCat.includes('রেস্টুরেন্ট') || itemCat.includes('রেস্তোরাঁ') || itemCat.includes('ক্যাফে') || itemCat.includes('খাবার') || itemCat.includes('মিষ্টি'));
-    } else if (currentCategory === 'জেনারেল স্টোর') {
-      matchCat = (itemCat === 'জেনারেল স্টোর' || itemCat.includes('স্টোর') || itemCat.includes('মুদি'));
-    } else if (currentCategory === 'দর্শনীয় স্থান' || currentCategory === 'পর্যটন ও বিনোদন' || currentCategory === 'বিনোদন') {
+    } else if (currentCategory === 'সংবাদপত্র') {
+      matchCat = (itemCat.includes('সংবাদ') || itemCat.includes('পত্রিকা') || itemCat.includes('নিউজ'));
+    }
+
+    // --- ৩. বিনোদন ও অনুষ্ঠান ---
+    else if (currentCategory === 'সিনেমা হল') {
+      matchCat = (itemCat.includes('সিনেমা') || itemCat.includes('সিনেপ্লেক্স') || itemCat.includes('থিয়েটার'));
+    } else if (currentCategory === 'পর্যটন ও বিনোদন' || currentCategory === 'দর্শনীয় স্থান' || currentCategory === 'বিনোদন') {
       matchCat = (itemCat.includes('দর্শনীয়') || itemCat.includes('পর্যটন') || itemCat.includes('বিনোদন') || itemCat.includes('পার্ক') || itemCat.includes('ঐতিহাসিক'));
-    } 
-    // প্রশাসনিক ও জনপ্রতিনিধি ফিল্টারিং
-    else if (currentCategory === 'জেলা প্রশাসন') {
-      matchCat = (itemCat === 'জেলা প্রশাসন' || (!itemCat.includes('উপজেলা') && (itemCat.includes('জেলা') || itemCat.includes('পুলিশ') || itemCat.includes('ডিসি') || itemCat.includes('এসপি') || itemCat.includes('প্রশাসন'))));
+    } else if (currentCategory === 'কমিউনিটি সেন্টার') {
+      matchCat = (itemCat.includes('কমিউনিটি') || itemCat.includes('কনভেনশন') || itemCat.includes('পার্টি সেন্টার'));
+    }
+
+    // --- ৪. প্রশাসন ও জনপ্রতিনিধি ---
+    else if (currentCategory === 'জেলা প্রশাসন' || currentCategory === 'জেলা প্রশাসন ও পুলিশ') {
+      matchCat = (itemCat === 'জেলা প্রশাসন' || (!itemCat.includes('উপজেলা') && !itemCat.includes('থানা') && (itemCat.includes('জেলা') || itemCat.includes('পুলিশ') || itemCat.includes('ডিসি') || itemCat.includes('এসপি') || itemCat.includes('প্রশাসন'))));
     } else if (currentCategory === 'সংসদীয় আসন') {
       matchCat = (itemCat.includes('সংসদ') || itemCat.includes('আসন') || itemCat.includes('এমপি'));
     } else if (currentCategory === 'সিটি কর্পোরেশন') {
@@ -521,26 +379,31 @@ function renderCategoryItems() {
     } else if (currentCategory === 'ইউনিয়ন পরিষদ') {
       matchCat = (itemCat.includes('ইউনিয়ন') || itemCat.includes('ইউপি') || itemCat.includes('চেয়ারম্যান'));
     }
-    // নাগরিক সেবা
-    else if (currentCategory === 'ব্লাড ব্যাংক' || currentCategory === 'রক্তদান') {
-      matchCat = (itemCat.includes('ব্লাড') || itemCat.includes('রক্ত'));
-    } else if (currentCategory === '২৪ ঘণ্টা ফার্মেসী' || currentCategory === 'ফার্মেসী') {
-      matchCat = (itemCat.includes('ফার্মেসী') || itemCat.includes('ফার্মেসি') || itemCat.includes('ওষুধ') || itemCat.includes('ঔষধ'));
-    } else if (currentCategory === 'কুরিয়ার সার্ভিস') {
+
+    // --- ৫. খাবার ও নাগরিক সেবা ---
+    else if (currentCategory === 'রেস্টুরেন্ট' || currentCategory === 'রেস্টুরেন্ট ও ক্যাফে' || currentCategory === 'খাবার') {
+      matchCat = (itemCat === 'রেস্টুরেন্ট' || itemCat.includes('রেস্টুরেন্ট') || itemCat.includes('রেস্তোরাঁ') || itemCat.includes('ক্যাফে') || itemCat.includes('খাবার') || itemCat.includes('মিষ্টি'));
+    } else if (currentCategory === 'জরুরি সেবা') {
+      matchCat = (itemCat.includes('জরুরি') || itemCat.includes('থানা') || itemCat.includes('পুলিশ ফাঁড়ি') || itemCat.includes('ফায়ার') || itemCat.includes('ফায়ার') || itemCat.includes('অ্যাম্বুলেন্স'));
+    } else if (currentCategory === 'কুরিয়ার সার্ভিস' || currentCategory === 'কুরিয়ার ও পার্সেল') {
       matchCat = (itemCat.includes('কুরিয়ার') || itemCat.includes('পার্সেল'));
-    } else if (currentCategory === 'ইউটিলিটি সেবা' || currentCategory === 'বিদ্যুৎ ও গ্যাস') {
+    } else if (currentCategory === 'ইউটিলিটি সেবা' || currentCategory === 'বিদ্যুৎ, গ্যাস ও পানি' || currentCategory === 'বিদ্যুৎ ও গ্যাস') {
       matchCat = (itemCat.includes('বিদ্যুৎ') || itemCat.includes('গ্যাস') || itemCat.includes('পানি') || itemCat.includes('ডিপিডিসি') || itemCat.includes('তিতাস') || itemCat.includes('ইউটিলিটি'));
+    } else if (currentCategory === 'রেন্ট-এ-কার' || currentCategory === 'রেন্ট-এ-কার ও গাড়ি') {
+      matchCat = (itemCat.includes('রেন্ট') || itemCat.includes('কার') || itemCat.includes('গাড়ি ভাড়া') || itemCat.includes('মাইক্রো'));
     } else if (currentCategory === 'আইনজীবী ও আইনি সেবা') {
       matchCat = (itemCat.includes('আইনজীবী') || itemCat.includes('উকিল') || itemCat.includes('কোর্ট') || itemCat.includes('আইন'));
-    } else if (currentCategory === 'কমিউনিটি সেন্টার') {
-      matchCat = (itemCat.includes('কমিউনিটি') || itemCat.includes('কনভেনশন') || itemCat.includes('পার্টি সেন্টার'));
-    } else if (currentCategory === 'রেন্ট-এ-কার') {
-      matchCat = (itemCat.includes('রেন্ট') || itemCat.includes('কার') || itemCat.includes('গাড়ি ভাড়া') || itemCat.includes('মাইক্রো'));
     } else if (currentCategory === 'পার্লার ও সেলুন') {
       matchCat = (itemCat.includes('পার্লার') || itemCat.includes('সেলুন') || itemCat.includes('বিউটি'));
+    } else if (currentCategory === 'জেনারেল স্টোর') {
+      matchCat = (itemCat.includes('জেনারেল স্টোর') || itemCat.includes('স্টোর') || itemCat.includes('মুদি'));
+    } else if (currentCategory === 'পরিবহন') {
+      matchCat = (itemCat.includes('পরিবহন') || itemCat.includes('বাস') || itemCat.includes('ট্রেন') || itemCat.includes('রেল') || itemCat.includes('লঞ্চ') || itemCat.includes('ঘাট'));
+    } else if (currentCategory === 'শপিং ও ব্যবসা') {
+      matchCat = (itemCat.includes('শপিং') || itemCat.includes('মার্কেট') || itemCat.includes('ব্যবসা') || itemCat.includes('আড়ত') || itemCat.includes('দোকান'));
     } else {
       matchCat = itemCat.toLowerCase().includes(currentCategory.toLowerCase());
-    } 
+    }
 
     let matchArea = (selectedCatArea === 'সব এলাকা');
     if (!matchArea) {
@@ -564,17 +427,16 @@ function renderCategoryItems() {
     return matchCat && matchArea && matchSearch;
   });
 
- if (filtered.length === 0) {
+  if (filtered.length === 0) {
     container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px 0;">কোনো তথ্য পাওয়া যায়নি।</div>`;
     return;
   }
 
-  // সিটি কর্পোরেশনের জন্য মেয়রের কার্ড শীর্ষে রাখার লজিক
+  // সিটি কর্পোরেশনের মেয়র কার্ড আলাদাভাবে শীর্ষে রাখা
   if (currentCategory === 'সিটি কর্পোরেশন') {
     const mayorItem = filtered.find(it => (it.leader_title || '').includes('মেয়র') || (it.leader_title || '').includes('প্রশাসক') || (it.name || '').includes('মেয়র'));
     const counselors = filtered.filter(it => it !== mayorItem);
 
-    // ১. মেয়রের কার্ড (সবার উপরে হাইলাইট হয়ে থাকবে)
     if (mayorItem) {
       const mayorCard = document.createElement('div');
       mayorCard.innerHTML = `
@@ -605,7 +467,6 @@ function renderCategoryItems() {
       container.appendChild(mayorCard);
     }
 
-    // ২. ওয়ার্ড কাউন্সিলরদের সেকশন হেডার
     if (counselors.length > 0) {
       const cHeader = document.createElement('div');
       cHeader.style.cssText = "font-size: 13.5px; font-weight: 700; color: #1E293B; margin: 10px 0 8px; display: flex; align-items: center; gap: 6px;";
@@ -613,354 +474,26 @@ function renderCategoryItems() {
       container.appendChild(cHeader);
     }
 
-    // বাকি সব কাউন্সিলরের সাধারণ কার্ড রেন্ডার
     counselors.forEach(item => {
       renderStandardPlaceCard(item, container);
     });
-
     return;
   }
 
-  // সিটি কর্পোরেশন বাদে অন্যান্য সকল সাধারণ ক্যাটাগরির জন্য
   filtered.forEach(item => {
     renderStandardPlaceCard(item, container);
   });
 }
 
-function openDoctorList(chamberName = null, title = 'বিশেষজ্ঞ ডাক্তারগণ') {
-  currentChamberFilter = chamberName;
-  const tEl = document.getElementById('docPageTitle');
-  const sEl = document.getElementById('docPageSub');
-  const iEl = document.getElementById('docSearchInput');
-  if (tEl) tEl.innerText = chamberName ? chamberName : title;
-  if (sEl) sEl.innerText = chamberName ? 'এই সেন্টারের বিশেষজ্ঞ চিকিৎসকগণ' : 'চেম্বার, ভিজিটিং সময় ও সিরিয়াল';
-  if (iEl) iEl.value = '';
+/* ==========================================================================
+   THE NARAYANGANJ - CORE SCRIPT (PART 2)
+   --------------------------------------------------------------------------
+   ৪. একক বিস্তারিত স্ক্রিন ইঞ্জিন (openDetails - প্রশাসন, হাসপাতাল, খাবার ইত্যাদি)
+   ৫. বিশেষজ্ঞ ডাক্তার মডিউল
+   ৬. বুকমার্ক, সাধারণ হেল্পার ও স্টার্টআপ
+   ========================================================================== */
 
-  selectedDocArea = 'সব এলাকা';
-  const docBar = document.getElementById('docAreaFilterBar');
-  if (docBar) {
-    docBar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
-    const f = docBar.querySelector('.area-chip');
-    if (f) f.classList.add('active');
-    docBar.style.display = chamberName ? 'none' : 'flex';
-  }
-
-  selectedDocDept = 'সব বিভাগ';
-  const deptBar = document.getElementById('docDeptFilterBar');
-  if (deptBar) {
-    deptBar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
-    const f = deptBar.querySelector('.area-chip');
-    if (f) f.classList.add('active');
-    deptBar.style.display = chamberName ? 'none' : 'flex';
-  }
-
-  renderDoctorItems();
-  
-  const docPage = document.getElementById('doctorPage');
-  if (docPage) {
-    docPage.classList.add('open');
-    docPage.scrollTop = 0;
-    window.history.pushState({ page: 'doctors' }, '');
-  }
-}
-
-function closeDoctorPage() {
-  const el = document.getElementById('doctorPage');
-  if (el) el.classList.remove('open');
-}
-
-function renderDoctorItems() {
-  const container = document.getElementById('doctorListings');
-  if (!container) return;
-  container.innerHTML = '';
-
-  const input = document.getElementById('docSearchInput');
-  const query = input ? input.value.toLowerCase().trim() : '';
-
-  const deptKeywords = {
-    'মেডিসিন': ['মেডিসিন', 'ইন্টারনাল', 'medicine'],
-    'কার্ডিওলজি': ['কার্ডিওলজি', 'কার্ডিওলজিস্ট', 'কার্ডিয়াক', 'হৃদরোগ', 'কার্ডিও', 'হার্ট', 'cardio'],
-    'গাইনী': ['গাইনী', 'গাইনি', 'প্রসূতি', 'স্ত্রী রোগ', 'স্ত্রী-রোগ', 'obs', 'gynae', 'মহিলা রোগ'],
-    'শিশু': ['শিশু', 'নবজাতক', 'কিশোর রোগ', 'pediatric', 'paediatric', 'শিশু রোগ'],
-    'অর্থোপেডিক': ['অর্থোপেডিক', 'অর্থোপেডিক্স', 'হাড়ভাঙ্গা', 'হাড়', 'ট্রমা', 'স্পাইন', 'বাত-ব্যথা', 'জোড়াবাত', 'ortho'],
-    'সার্জারি': ['সার্জারি', 'সার্জন', 'অপারেশন', 'surgery', 'surgeon', 'ল্যাপারোস্কোপিক'],
-    'ইউরোলজি': ['ইউরোলজি', 'ইউরোলজিস্ট', 'কিডনি', 'মূত্রনালী', 'প্রোস্টেট', 'urology'],
-    'নিউরো': ['নিউরো', 'নিউরোসার্জারি', 'নিউরোমেডিসিন', 'মস্তিষ্ক', 'মেরুদণ্ড', 'স্নায়ু', 'neuro'],
-    'গ্যাস্ট্রো': ['গ্যাস্ট্রো', 'গ্যাস্ট্রোএন্টারোলজি', 'লিভার', 'পরিপাকতন্ত্র', 'হেপাটোলজি', 'gastro', 'liver'],
-    'চর্ম ও যৌন': ['চর্ম', 'যৌন', 'ডার্মাটোলজি', 'ত্বক', 'skin', 'derma'],
-    'ইএনটি': ['নাক', 'কান', 'গলা', 'ইএনটি', 'ent'],
-    'ডেন্টাল': ['ডেন্টাল', 'দাঁত', 'মুখের রোগ', 'dental', 'দাঁতের']
-  };
-
-  const filtered = (doctorsData || []).filter(doc => {
-    if (!doc) return false;
-    
-    let matchChamber = true;
-    if (currentChamberFilter) {
-      const cleanTarget = currentChamberFilter.toLowerCase()
-        .replace(/ডায়াগনস্টিক|সেন্টার|হাসপাতাল|মেডিকেল|সার্ভিসেস|কলেজ|এন্ড|লিঃ|\(প্রাঃ\)|\(pvt\.\)|ltd\.|লিমিটেড|-/g, ' ')
-        .trim();
-      const keywords = cleanTarget.split(/\s+/).filter(w => w.length >= 3);
-      const chamberText = (doc.chamber || '').toLowerCase();
-      
-      if (keywords.length > 0) {
-        matchChamber = keywords.some(kw => chamberText.includes(kw));
-      } else {
-        matchChamber = chamberText.includes(currentChamberFilter.toLowerCase());
-      }
-    }
-
-    let matchArea = (selectedDocArea === 'সব এলাকা');
-    if (!matchArea) {
-      const targetArea = selectedDocArea.toLowerCase();
-      const docArea = (doc.area || '').toLowerCase();
-      const docChamber = (doc.chamber || '').toLowerCase();
-      matchArea = docArea.includes(targetArea) || docChamber.includes(targetArea);
-      if (targetArea === 'চাষাড়া' && (docArea.includes('সদর') || docChamber.includes('সদর'))) matchArea = true;
-    }
-
-    let matchDept = (selectedDocDept === 'সব বিভাগ');
-    if (!matchDept) {
-      const keys = deptKeywords[selectedDocDept] || [selectedDocDept.toLowerCase()];
-      const fullDocText = ((doc.specialty || '') + ' ' + (doc.degrees || '') + ' ' + (doc.name || '')).toLowerCase();
-      matchDept = keys.some(k => fullDocText.includes(k.toLowerCase()));
-    }
-
-    const matchSearch = 
-      (doc.name || '').toLowerCase().includes(query) ||
-      (doc.specialty || '').toLowerCase().includes(query) ||
-      (doc.chamber || '').toLowerCase().includes(query) ||
-      (doc.area || '').toLowerCase().includes(query) ||
-      (doc.degrees || '').toLowerCase().includes(query);
-
-    return matchChamber && matchArea && matchDept && matchSearch;
-  });
-
-  if (filtered.length === 0) {
-    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px 0;">কোনো ডাক্তারের তথ্য পাওয়া যায়নি।</div>`;
-    return;
-  }
-
-  filtered.forEach(doc => {
-    const card = document.createElement('div');
-    card.className = 'doctor-card';
-    card.onclick = () => openDoctorProfile(doc);
-
-    const firstPhone = (doc.serial_phone || '').split(';')[0].split(',')[0].trim();
-    const firstChamber = (doc.chamber || '').split(';')[0].trim();
-    const firstArea = (doc.area || 'চাষাড়া').split(';')[0].trim();
-    const firstTiming = (doc.timing || 'নিয়মিত').split(';')[0].trim();
-    const isFeatured = (doc.featured || '').toString().toLowerCase().trim() === 'yes';
-
-    if (isFeatured) {
-      card.style.borderColor = '#F59E0B';
-      card.style.background = '#FFFDF5';
-    }
-
-    card.innerHTML = `
-      <div>
-        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-          <div>
-            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-              <div class="place-title" style="color: #0F5132;">${doc.name || ''}</div>
-              ${isFeatured ? '<span style="background: #FEF3C7; color: #B45309; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; border: 1px solid #FDE68A;"><i class="fa-solid fa-bolt"></i> স্পন্সরড</span>' : ''}
-            </div>
-            <div class="doc-specialty">${doc.specialty || 'বিশেষজ্ঞ চিকিৎসক'}</div>
-          </div>
-          <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 13px; margin-top: 4px;"></i>
-        </div>
-        <div class="doc-degrees">${doc.degrees || ''}</div>
-        <div class="doc-chamber-tag"><i class="fa-solid fa-hospital"></i> ${firstChamber} (${firstArea})</div>
-        <div style="font-size: 12px; color: #475569; margin-top: 6px;">
-          <i class="fa-solid fa-clock" style="color: #10664F;"></i> <strong>সময়:</strong> ${firstTiming}
-        </div>
-      </div>
-      <div class="action-buttons" style="grid-template-columns: 1fr;">
-        <a href="${firstPhone ? 'tel:' + firstPhone : '#'}" class="btn-action btn-call" onclick="event.stopPropagation()">
-          <i class="fa-solid fa-phone"></i> সিরিয়াল দিন (${firstPhone || 'হটলাইন'})
-        </a>
-      </div>
-    `;
-    container.appendChild(card);
-  });
-}
-
-async function fetchLiveNews(feedUrl) {
-  const container = document.getElementById('newspaperFeedList');
-  if (!container) return;
-  container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px;"><i class="fa-solid fa-spinner fa-spin"></i> সর্বশেষ সংবাদ লোড হচ্ছে...</div>';
-
-  const cleanUrl = feedUrl.trim();
-  let newsList = [];
-
-  try {
-    const res = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(cleanUrl)}`);
-    const xmlText = await res.text();
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-    const items = xmlDoc.querySelectorAll("item");
-    if (items && items.length > 0) {
-      items.forEach((it, idx) => {
-        if (idx < 5) {
-          const title = it.querySelector("title")?.textContent?.trim() || '';
-          const link = it.querySelector("link")?.textContent?.trim() || cleanUrl;
-          if (title) newsList.push({ title, link });
-        }
-      });
-    }
-  } catch (e) {}
-
-  if (newsList.length === 0) {
-    try {
-      const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(cleanUrl)}`);
-      const xmlText = await res.text();
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-      const items = xmlDoc.querySelectorAll("item");
-      if (items && items.length > 0) {
-        items.forEach((it, idx) => {
-          if (idx < 5) {
-            const title = it.querySelector("title")?.textContent?.trim() || '';
-            const link = it.querySelector("link")?.textContent?.trim() || cleanUrl;
-            if (title) newsList.push({ title, link });
-          }
-        });
-      }
-    } catch (e) {}
-  }
-
-  if (newsList.length > 0) {
-    renderNewsItems(container, newsList);
-  } else {
-    const mainSiteUrl = cleanUrl.replace(/\/feed\/?$/i, '');
-    container.innerHTML = `
-      <div style="background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 14px; text-align: center;">
-        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">পত্রিকার সার্ভার সুরক্ষার কারণে লাইভ হেডলাইন পেতে সমস্যা হচ্ছে।</div>
-        <a href="${mainSiteUrl}" target="_blank" rel="noopener noreferrer" class="btn-action btn-call" style="font-size: 12px; padding: 7px 14px; width: fit-content; margin: 0 auto; border-radius: 6px;">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> সরাসরি ওয়েবসাইটে খবর পড়ুন
-        </a>
-      </div>
-    `;
-  }
-}
-
-function renderNewsItems(container, items) {
-  container.innerHTML = '';
-  items.forEach(news => {
-    const item = document.createElement('a');
-    item.className = 'news-feed-item';
-    item.href = news.link;
-    item.target = '_blank';
-    item.rel = 'noopener noreferrer';
-    item.innerHTML = `
-      <i class="fa-solid fa-circle-dot"></i>
-      <div class="news-feed-title">${news.title}</div>
-    `;
-    container.appendChild(item);
-  });
-}
-
-function slideTrivia(direction) {
-  const track = document.getElementById('triviaTrack');
-  const dotsContainer = document.getElementById('triviaDots');
-  if (!track || totalTriviaSlides <= 1) return;
-
-  currentTriviaIndex += direction;
-  if (currentTriviaIndex < 0) currentTriviaIndex = totalTriviaSlides - 1;
-  if (currentTriviaIndex >= totalTriviaSlides) currentTriviaIndex = 0;
-
-  track.style.transform = `translateX(-${currentTriviaIndex * 100}%)`;
-
-  if (dotsContainer) {
-    const dots = dotsContainer.querySelectorAll('.t-dot');
-    dots.forEach((dot, idx) => {
-      if (idx === currentTriviaIndex) {
-        dot.style.background = '#F59E0B';
-        dot.style.width = '14px';
-      } else {
-        dot.style.background = '#FDE68A';
-        dot.style.width = '6px';
-      }
-    });
-  }
-}
-
-function renderTriviaSlider(rawTrivia) {
-  const triviaBox = document.getElementById('eduTriviaBox');
-  const track = document.getElementById('triviaTrack');
-  const dotsContainer = document.getElementById('triviaDots');
-
-  if (!triviaBox || !track || !dotsContainer) return;
-
-  if (!rawTrivia || rawTrivia.trim() === '') {
-    triviaBox.style.display = 'none';
-    return;
-  }
-
-  const facts = rawTrivia.split('|').map(f => f.trim()).filter(Boolean);
-  totalTriviaSlides = facts.length;
-  currentTriviaIndex = 0;
-  track.style.transform = 'translateX(0%)';
-  track.innerHTML = '';
-  dotsContainer.innerHTML = '';
-
-  if (totalTriviaSlides === 0) {
-    triviaBox.style.display = 'none';
-    return;
-  }
-
-  facts.forEach((fact, idx) => {
-    let title = `তথ্য #${toBanglaNumber(idx + 1)}`;
-    let desc = fact;
-
-    if (fact.includes(':')) {
-      const parts = fact.split(':');
-      title = parts[0].replace(/^[•\-\*]\s*/, '').trim();
-      desc = parts.slice(1).join(':').trim();
-    } else {
-      desc = fact.replace(/^[•\-\*]\s*/, '').trim();
-    }
-
-    const slide = document.createElement('div');
-    slide.style.cssText = "min-width: 100%; box-sizing: border-box; padding: 2px;";
-    slide.innerHTML = `
-      <div style="background: #FFFFFF; border: 1px solid #FDE68A; border-radius: 10px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
-        <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 8px;">
-          <div style="width: 22px; height: 22px; border-radius: 50%; background: #FEF3C7; color: #D97706; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0;">
-            <i class="fa-solid fa-bookmark"></i>
-          </div>
-          <span style="font-weight: 700; font-size: 13px; color: #92400E;">${title}</span>
-        </div>
-        <div style="font-size: 12px; color: #451A03; line-height: 1.5;">
-          ${desc}
-        </div>
-      </div>
-    `;
-    track.appendChild(slide);
-
-    const dot = document.createElement('div');
-    dot.className = 't-dot';
-    dot.style.cssText = `
-      height: 6px;
-      width: ${idx === 0 ? '14px' : '6px'};
-      border-radius: 10px;
-      background: ${idx === 0 ? '#F59E0B' : '#FDE68A'};
-      transition: all 0.25s ease;
-    `;
-    dotsContainer.appendChild(dot);
-  });
-
-  let touchStartX = 0;
-  track.ontouchstart = (e) => { touchStartX = e.touches[0].clientX; };
-  track.ontouchend = (e) => {
-    const diff = touchStartX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) {
-      slideTrivia(diff > 0 ? 1 : -1);
-    }
-  };
-
-  triviaBox.style.display = 'block';
-}
+// --- ৪. একক বিস্তারিত স্ক্রিন ইঞ্জিন ---
 
 function openDetails(item) {
   if (!item) return;
@@ -969,17 +502,11 @@ function openDetails(item) {
   const isEdu = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা');
   const isNews = (cat === 'সংবাদপত্র');
   const isCinema = (cat === 'সিনেমা হল' || cat.includes('সিনেমা') || cat.includes('সিনেপ্লেক্স'));
-  
-  // সম্পূর্ণ আলাদা প্রশাসনিক ফ্ল্যাগ
   const isAdmin = Boolean(item.code || item.territory || item.voters || item.leader_name || ['জেলা প্রশাসন', 'সংসদীয় আসন', 'সিটি কর্পোরেশন', 'উপজেলা প্রশাসন', 'ইউনিয়ন পরিষদ', 'পৌরসভা'].includes(cat));
-  
+
   const imgEl = document.getElementById('detailsImg');
   if (imgEl) {
-    if (item.image_url && item.image_url.trim() !== '') {
-      imgEl.src = item.image_url.trim();
-    } else {
-      imgEl.src = 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80';
-    }
+    imgEl.src = (item.image_url && item.image_url.trim() !== '') ? item.image_url.trim() : 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80';
   }
 
   const sticky = document.getElementById('detailsStickyTitle');
@@ -1061,7 +588,6 @@ function openDetails(item) {
 
   const careBox = document.getElementById('hospitalCareBox');
   const isHospital = cat === 'সরকারি হাসপাতাল' || cat === 'বেসরকারি হাসপাতাল' || cat === 'হাসপাতাল';
-  
   if (careBox) {
     if (isHospital && (item.beds || item.facilities)) {
       careBox.style.display = 'block';
@@ -1075,29 +601,15 @@ function openDetails(item) {
   const deptsBox = document.getElementById('hospitalDeptsBox');
   const deptsList = document.getElementById('hospitalDeptsList');
   const deptsSub = document.getElementById('hospitalDeptsSub');
-
   if (deptsBox && deptsList) {
     deptsList.innerHTML = '';
-
     const deptsTitleDiv = deptsBox.querySelector('div');
     if (deptsTitleDiv) {
-      if (isCinema) {
-        deptsTitleDiv.innerHTML = '<i class="fa-solid fa-film" style="color: #E11D48;"></i> বর্তমানে রানিং';
-      } else {
-        deptsTitleDiv.innerHTML = '<i class="fa-solid fa-layer-group" style="color: var(--primary);"></i> বিভাগসমূহ';
-      }
+      deptsTitleDiv.innerHTML = isCinema ? '<i class="fa-solid fa-film" style="color: #E11D48;"></i> বর্তমানে রানিং' : '<i class="fa-solid fa-layer-group" style="color: var(--primary);"></i> বিভাগসমূহ';
     }
-
     if (deptsSub) {
-      if (isEdu) {
-        deptsSub.innerText = 'অনুমোদিত অনুষদ, স্তর ও বিভাগ';
-      } else if (isCinema) {
-        deptsSub.innerText = 'চলমান সিনেমা ও প্রদর্শনী';
-      } else {
-        deptsSub.innerText = 'চিকিৎসা ও ক্লিনিক্যাল শাখাসমূহ';
-      }
+      deptsSub.innerText = isEdu ? 'অনুমোদিত অনুষদ, স্তর ও বিভাগ' : (isCinema ? 'চলমান সিনেমা ও প্রদর্শনী' : 'চিকিৎসা ও ক্লিনিক্যাল শাখাসমূহ');
     }
-
     const rawDepts = (item.departments || '').trim();
     if (rawDepts) {
       rawDepts.split(',').forEach(dept => {
@@ -1122,12 +634,10 @@ function openDetails(item) {
 
   const cinemaBox = document.getElementById('cinemaShowtimeBox');
   const cinemaList = document.getElementById('cinemaMovieList');
-
   if (isCinema && item.showtimes && item.showtimes.trim() !== '') {
     if (cinemaBox && cinemaList) {
       cinemaList.innerHTML = '';
       const movieEntries = item.showtimes.trim().split(/[|\n]/).map(m => m.trim()).filter(Boolean);
-
       movieEntries.forEach(entry => {
         const parts = entry.split(':');
         const title = parts[0]?.trim() || 'চলচ্চিত্র';
@@ -1136,7 +646,6 @@ function openDetails(item) {
 
         const card = document.createElement('div');
         card.style.cssText = "background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px;";
-
         card.innerHTML = `
           <div style="font-weight: 700; font-size: 14px; color: #0F172A; display: flex; align-items: center; gap: 6px;">
             <i class="fa-solid fa-clapperboard" style="color: #E11D48; font-size: 13px;"></i>
@@ -1153,11 +662,10 @@ function openDetails(item) {
         `;
         cinemaList.appendChild(card);
       });
-
       cinemaBox.style.display = 'block';
     }
-  } else {
-    if (cinemaBox) cinemaBox.style.display = 'none';
+  } else if (cinemaBox) {
+    cinemaBox.style.display = 'none';
   }
 
   const servicesBox = document.getElementById('hospitalServicesBox');
@@ -1219,13 +727,12 @@ function openDetails(item) {
   }
 
   renderTriviaSlider(item.trivia);
-  
-  // শিক্ষা প্রতিষ্ঠান ও সংবাদপত্র সেকশন (সম্পূর্ণ স্বতন্ত্র)
+
+  // --- শিক্ষা প্রতিষ্ঠান ব্লক ---
   const eduBox = document.getElementById('eduSectionBox');
   if (eduBox) {
     if (isEdu || isNews) {
       eduBox.style.display = 'flex';
-
       const principalCard = document.getElementById('eduPrincipalCard');
       const principalName = document.getElementById('eduPrincipalName');
       const principalLabel = document.getElementById('eduPrincipalLabel');
@@ -1236,36 +743,19 @@ function openDetails(item) {
         if (item.principal && item.principal.trim() !== '') {
           principalName.innerText = item.principal.trim();
           principalCard.style.display = 'flex';
-
           if (isNews) {
-            if (principalLabel) {
-              principalLabel.innerText = 'সম্পাদক ও প্রকাশক';
-              principalLabel.style.color = '#0284C7';
-            }
-            if (principalIcon) {
-              principalIcon.innerHTML = '<i class="fa-solid fa-pen-nib"></i>';
-              principalIcon.style.background = '#E0F2FE';
-              principalIcon.style.color = '#0284C7';
-            }
+            if (principalLabel) { principalLabel.innerText = 'সম্পাদক ও প্রকাশক'; principalLabel.style.color = '#0284C7'; }
+            if (principalIcon) { principalIcon.innerHTML = '<i class="fa-solid fa-pen-nib"></i>'; principalIcon.style.background = '#E0F2FE'; principalIcon.style.color = '#0284C7'; }
           } else {
-            if (principalLabel) {
-              principalLabel.innerText = 'বর্তমান অধ্যক্ষ / প্রধান শিক্ষক';
-              principalLabel.style.color = '#7C3AED';
-            }
-            if (principalIcon) {
-              principalIcon.innerHTML = '<i class="fa-solid fa-user-tie"></i>';
-              principalIcon.style.background = '#EDE9FE';
-              principalIcon.style.color = '#7C3AED';
-            }
+            if (principalLabel) { principalLabel.innerText = 'বর্তমান অধ্যক্ষ / প্রধান শিক্ষক'; principalLabel.style.color = '#7C3AED'; }
+            if (principalIcon) { principalIcon.innerHTML = '<i class="fa-solid fa-user-tie"></i>'; principalIcon.style.background = '#EDE9FE'; principalIcon.style.color = '#7C3AED'; }
           }
         } else {
           principalCard.style.display = 'none';
         }
       }
 
-      if (resultsNavCard) {
-        resultsNavCard.style.display = isEdu ? 'flex' : 'none';
-      }
+      if (resultsNavCard) resultsNavCard.style.display = isEdu ? 'flex' : 'none';
 
       const infoGridBox = document.getElementById('eduInfoGridBox');
       const mgtEl = document.getElementById('eduManagement');
@@ -1282,7 +772,6 @@ function openDetails(item) {
           if (whomEl) whomEl.innerText = item.for_whom || 'সহশিক্ষা';
           if (dateEl) dateEl.innerText = item.establishment_date || item.established_date || 'তথ্য নেই';
           if (constEl) constEl.innerText = item.constituency || 'নারায়ণগঞ্জ';
-
           if (emailRow && emailLink) {
             if (item.email && item.email.trim() !== '') {
               emailLink.href = `mailto:${item.email.trim()}`;
@@ -1296,18 +785,16 @@ function openDetails(item) {
           infoGridBox.style.display = 'none';
         }
       }
-
     } else {
       eduBox.style.display = 'none';
     }
   }
 
-  // <--- প্রশাসন ও জনপ্রতিনিধি ডেডিকেটেড রেন্ডারিং (নতুন) --->
+  // --- প্রশাসন ও জনপ্রতিনিধি ব্লক ---
   const adminBox = document.getElementById('adminSectionBox');
   if (adminBox) {
     if (isAdmin) {
       adminBox.style.display = 'flex';
-
       const leaderTitle = document.getElementById('adminLeaderTitle');
       const leaderName = document.getElementById('adminLeaderName');
       const leaderCallBtn = document.getElementById('adminLeaderCallBtn');
@@ -1325,11 +812,10 @@ function openDetails(item) {
           }
         }
         if (leaderCard) leaderCard.style.display = 'flex';
-      } else {
-        if (leaderCard) leaderCard.style.display = 'none';
+      } else if (leaderCard) {
+        leaderCard.style.display = 'none';
       }
 
-      // তথ্য কার্ডের ভ্যালু সেট
       const codeVal = document.getElementById('adminCodeVal');
       const votersVal = document.getElementById('adminVotersVal');
       const terrVal = document.getElementById('adminTerritoryVal');
@@ -1352,7 +838,6 @@ function openDetails(item) {
       if (terrCard) terrCard.style.display = (item.territory || item.area) ? 'block' : 'none';
       if (estCard) estCard.style.display = item.established ? 'block' : 'none';
 
-      // সহকারী / সংরক্ষিত প্রতিনিধি / সচিব
       const subBox = document.getElementById('adminSubLeaderBox');
       const subText = document.getElementById('adminSubLeaderText');
       if (subBox && subText) {
@@ -1367,22 +852,19 @@ function openDetails(item) {
           subBox.style.display = 'none';
         }
       }
-
     } else {
       adminBox.style.display = 'none';
     }
   }
-  
-  // ১. উপজেলার প্রশাসনিক এলাকা (পৌরসভা ও ইউনিয়ন তালিকা) রেন্ডারিং
+
+  // উপজেলা প্রশাসনিক ইউনিট (স্মার্ট লিংকসহ)
   const unitsBox = document.getElementById('adminUnitsBox');
   const unitsList = document.getElementById('adminUnitsList');
   const unitsStats = document.getElementById('adminUnitsStats');
-
   if (unitsBox && unitsList) {
     const rawUnits = (item.admin_units || '').trim();
     if (isAdmin && rawUnits) {
       unitsList.innerHTML = '';
-      
       if (unitsStats) {
         if (item.admin_stats && item.admin_stats.trim() !== '') {
           unitsStats.innerText = item.admin_stats.trim();
@@ -1399,14 +881,12 @@ function openDetails(item) {
       lines.forEach(line => {
         if (line.startsWith('##') || line.startsWith('#')) {
           const secTitle = line.replace(/^[#\s]+/, '').trim();
-          
           currentSection = document.createElement('div');
           currentSection.innerHTML = `
             <div style="font-size: 13px; font-weight: 700; color: #0F5132; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
               <i class="fa-solid fa-circle-dot" style="font-size: 9px; color: #16A34A;"></i> ${secTitle}
             </div>
           `;
-          
           currentBadgeGrid = document.createElement('div');
           currentBadgeGrid.style.cssText = "display: flex; flex-wrap: wrap; gap: 6px;";
           currentSection.appendChild(currentBadgeGrid);
@@ -1415,7 +895,6 @@ function openDetails(item) {
           const badge = document.createElement('span');
           badge.style.cssText = "background: #F8FAFC; border: 1px solid #E2E8F0; color: #1E293B; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 6px; transition: all 0.2s;";
           
-          // নামের সাথে মিল রেখে শিট থেকে ইউনিয়ন/পৌরসভার প্রোফাইল খোঁজা
           const cleanUnitName = line.replace(/^[•\-\*\d\.]+\s*/, '').trim();
           const matchedUnit = (adminData || []).find(a => {
             const aName = (a.name || '').toLowerCase();
@@ -1431,33 +910,29 @@ function openDetails(item) {
             badge.innerHTML = `${cleanUnitName} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px; margin-left: 4px;"></i>`;
             badge.onclick = () => {
               const dView = document.getElementById('detailsView');
-              if (dView) dView.scrollTop = 0; // উপরে স্ক্রল করে নতুন পেজ লোড করবে
+              if (dView) dView.scrollTop = 0;
               openDetails(matchedUnit);
             };
           } else {
             badge.innerText = cleanUnitName;
           }
-
           currentBadgeGrid.appendChild(badge);
         }
       });
-
       unitsBox.style.display = 'block';
     } else {
       unitsBox.style.display = 'none';
     }
   }
 
-  // ২. উপজেলার দর্শনীয় স্থানসমূহ রেন্ডারিং
+  // দর্শনীয় স্থানসমূহ
   const attractionsBox = document.getElementById('adminAttractionsBox');
   const attractionsList = document.getElementById('adminAttractionsList');
-
   if (attractionsBox && attractionsList) {
     const rawAttractions = (item.attractions || '').trim();
     if (isAdmin && rawAttractions) {
       attractionsList.innerHTML = '';
       const spots = rawAttractions.split(/[|\n]/).map(s => s.trim().replace(/^[•\-\*\d\.]+\s*/, '')).filter(Boolean);
-
       spots.forEach(spot => {
         const itemEl = document.createElement('div');
         itemEl.style.cssText = "display: flex; align-items: flex-start; gap: 8px; background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px; padding: 8px 12px; font-size: 12.5px; color: #78350F; font-weight: 600;";
@@ -1467,17 +942,15 @@ function openDetails(item) {
         `;
         attractionsList.appendChild(itemEl);
       });
-
       attractionsBox.style.display = 'block';
     } else {
       attractionsBox.style.display = 'none';
     }
   }
-  
-  // বিগত সংসদ ও প্রতিনিধি ইতিহাস রেন্ডারিং
+
+  // বিগত সংসদ ও প্রতিনিধি ইতিহাস
   const historyBox = document.getElementById('adminHistoryBox');
   const historyList = document.getElementById('adminHistoryList');
-
   if (historyBox && historyList) {
     const rawHistory = (item.history || '').trim();
     if (isAdmin && rawHistory) {
@@ -1489,16 +962,7 @@ function openDetails(item) {
         if (entry.startsWith('##') || entry.startsWith('#')) {
           const sessionTitle = entry.replace(/^[#\s]+/, '').trim();
           currentCard = document.createElement('div');
-          currentCard.style.cssText = `
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 9px 12px;
-            background: #F8FAFC;
-            border: 1px solid #E2E8F0;
-            border-left: 3px solid #16A34A;
-            border-radius: 8px;
-          `;
+          currentCard.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; background: #F8FAFC; border: 1px solid #E2E8F0; border-left: 3px solid #16A34A; border-radius: 8px;";
           currentCard.innerHTML = `
             <div style="display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; color: #0F5132;">
               <i class="fa-solid fa-calendar-check" style="color: #16A34A; font-size: 11px;"></i>
@@ -1512,33 +976,22 @@ function openDetails(item) {
           if (pEl) pEl.innerText = entry;
         }
       });
-
       historyBox.style.display = 'block';
     } else {
       historyBox.style.display = 'none';
     }
   }
 
-  // স্পেশাল অফার ও ক্যাম্পেইন রেন্ডারিং
+  // রেস্টুরেন্ট অফার ব্যানার
   const offerBox = document.getElementById('restaurantOfferBox');
   const offerContent = document.getElementById('restaurantOfferContent');
-
   if (offerBox && offerContent) {
     const validOffers = parseOffers(item.offer || item.campaign || '');
-    
     if (validOffers.length > 0) {
       offerContent.innerHTML = '';
-
       validOffers.forEach((block, idx) => {
         const blockDiv = document.createElement('div');
-        blockDiv.style.cssText = `
-          background: rgba(255, 255, 255, 0.7);
-          border: 1px solid #FDE68A;
-          border-radius: 8px;
-          padding: 10px 12px;
-          ${idx > 0 ? 'margin-top: 4px;' : ''}
-        `;
-
+        blockDiv.style.cssText = `background: rgba(255, 255, 255, 0.7); border: 1px solid #FDE68A; border-radius: 8px; padding: 10px 12px; ${idx > 0 ? 'margin-top: 4px;' : ''}`;
         let headerHtml = '';
         if (block.title) {
           headerHtml = `
@@ -1551,119 +1004,73 @@ function openDetails(item) {
             </div>
           `;
         }
-
         const pointsHtml = block.points.map(pt => `
           <div style="display: flex; align-items: flex-start; gap: 6px; margin-top: 4px; font-size: 12.5px; color: #78350F; line-height: 1.5;">
             <i class="fa-solid fa-circle-check" style="color: #D97706; font-size: 11px; margin-top: 3px; flex-shrink: 0;"></i>
             <span>${pt}</span>
           </div>
         `).join('');
-
         blockDiv.innerHTML = headerHtml + pointsHtml;
         offerContent.appendChild(blockDiv);
       });
-
       offerBox.style.display = 'block';
     } else {
       offerBox.style.display = 'none';
     }
   }
 
-  // রেস্টুরেন্ট মেনু ও সেকশন টাইটেল রেন্ডারিং
+  // রেস্টুরেন্ট মেনু
   const menuBox = document.getElementById('restaurantMenuBox');
   const menuList = document.getElementById('restaurantMenuList');
-
   if (menuBox && menuList) {
     const rawMenu = (item.menu || '').trim();
     if (rawMenu) {
       menuList.innerHTML = '';
       const menuEntries = rawMenu.split(/[|\n।;]/).map(m => m.trim()).filter(Boolean);
-
       menuEntries.forEach((entry, idx) => {
         const isHeader = entry.startsWith('#') || (entry.startsWith('[') && entry.endsWith(']'));
-
         if (isHeader) {
           const titleText = entry.replace(/^[#\[\]\s]+|[#\[\]\s]+$/g, '').trim();
-          
           const headerEl = document.createElement('div');
-          headerEl.style.cssText = `
-            font-size: 14px;
-            font-weight: 700;
-            color: #0F172A;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: ${idx === 0 ? '4px' : '14px'};
-            margin-bottom: 2px;
-            padding-bottom: 4px;
-            border-bottom: 2px solid #F1F5F9;
-          `;
-          headerEl.innerHTML = `
-            <i class="fa-solid fa-layer-group" style="font-size: 12px; color: #F59E0B;"></i>
-            <span>${titleText}</span>
-          `;
+          headerEl.style.cssText = `font-size: 14px; font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 8px; margin-top: ${idx === 0 ? '4px' : '14px'}; margin-bottom: 2px; padding-bottom: 4px; border-bottom: 2px solid #F1F5F9;`;
+          headerEl.innerHTML = `<i class="fa-solid fa-layer-group" style="font-size: 12px; color: #F59E0B;"></i><span>${titleText}</span>`;
           menuList.appendChild(headerEl);
           return;
         }
 
         let name = entry;
         let price = '';
-
-        const lastSepIndex = Math.max(
-          entry.lastIndexOf('-'),
-          entry.lastIndexOf('–'),
-          entry.lastIndexOf('—'),
-          entry.lastIndexOf('=')
-        );
-
+        const lastSepIndex = Math.max(entry.lastIndexOf('-'), entry.lastIndexOf('–'), entry.lastIndexOf('—'), entry.lastIndexOf('='));
         if (lastSepIndex !== -1) {
           name = entry.substring(0, lastSepIndex).trim();
           price = entry.substring(lastSepIndex + 1).trim();
         }
 
         const row = document.createElement('div');
-        row.style.cssText = `
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 10px 14px;
-          background: #FFFFFF;
-          border: 1px solid #E2E8F0;
-          border-left: 3px solid #F59E0B;
-          border-radius: 8px;
-          box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-          box-sizing: border-box;
-          width: 100%;
-        `;
-        
+        row.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #FFFFFF; border: 1px solid #E2E8F0; border-left: 3px solid #F59E0B; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); box-sizing: border-box; width: 100%;";
         row.innerHTML = `
           <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #1E293B; text-align: left;">
             <i class="fa-solid fa-utensils" style="font-size: 11px; color: #F59E0B; flex-shrink: 0;"></i>
             <span>${name}</span>
           </div>
-
-          ${price ? `
-            <div style="font-size: 13px; font-weight: 700; color: #0F5132; background: #DCFCE7; border: 1px solid #BBF7D0; padding: 4px 12px; border-radius: 20px; white-space: nowrap; margin-left: auto; text-align: right; flex-shrink: 0;">
-              ${price}
-            </div>
-          ` : ''}
+          ${price ? `<div style="font-size: 13px; font-weight: 700; color: #0F5132; background: #DCFCE7; border: 1px solid #BBF7D0; padding: 4px 12px; border-radius: 20px; white-space: nowrap; margin-left: auto; text-align: right; flex-shrink: 0;">${price}</div>` : ''}
         `;
         menuList.appendChild(row);
       });
-
       menuBox.style.display = 'block';
     } else {
       menuBox.style.display = 'none';
     }
   }
 
-  // সোশ্যাল মিডিয়া হ্যান্ডলিং
+  // সোশ্যাল মিডিয়া ও ইমেইল
   const socialBox = document.getElementById('socialLinksBox');
   const webBtn = document.getElementById('linkWebsite');
   const fbBtn = document.getElementById('linkFacebook');
   const ytBtn = document.getElementById('linkYoutube');
   const liBtn = document.getElementById('linkLinkedin');
   const igBtn = document.getElementById('linkInstagram');
+  const emailBtn = document.getElementById('linkEmail');
 
   let hasSocial = false;
   if (webBtn) {
@@ -1705,16 +1112,13 @@ function openDetails(item) {
       hasSocial = true;
     } else { igBtn.style.display = 'none'; }
   }
-  
-  const emailBtn = document.getElementById('linkEmail');
+
   if (emailBtn) {
     if (item.email && item.email.trim() !== '') {
       emailBtn.href = `mailto:${item.email.trim()}`;
       emailBtn.style.display = 'flex';
       hasSocial = true;
-    } else { 
-      emailBtn.style.display = 'none'; 
-    }
+    } else { emailBtn.style.display = 'none'; }
   }
 
   if (socialBox) socialBox.style.display = hasSocial ? 'block' : 'none';
@@ -1743,48 +1147,183 @@ function openDetails(item) {
   }
 }
 
-function viewChamberDoctors() {
-  if (activeItem) {
-    openDoctorList(activeItem.name, `${activeItem.name}-এর ডাক্তারগণ`);
-  }
-}
-
 function closeDetails() {
   const el = document.getElementById('detailsView');
   if (el) el.classList.remove('open');
 }
 
-function goToChamberDetails(chamberName, chamberArea) {
-  if (!chamberName) return;
+// --- ৫. বিশেষজ্ঞ ডাক্তার মডিউল ---
 
-  closeDoctorProfile();
-  closeDoctorPage();
+function openDoctorList(chamberName = null, title = 'বিশেষজ্ঞ ডাক্তারগণ') {
+  currentChamberFilter = chamberName;
+  const tEl = document.getElementById('docPageTitle');
+  const sEl = document.getElementById('docPageSub');
+  const iEl = document.getElementById('docSearchInput');
+  if (tEl) tEl.innerText = chamberName ? chamberName : title;
+  if (sEl) sEl.innerText = chamberName ? 'এই সেন্টারের বিশেষজ্ঞ চিকিৎসকগণ' : 'চেম্বার, ভিজিটিং সময় ও সিরিয়াল';
+  if (iEl) iEl.value = '';
 
-  const cleanTarget = chamberName.toLowerCase()
-    .replace(/ডায়াগনস্টিক|সেন্টার|হাসপাতাল|\(প্রাঃ\)|\(pvt\.\)|ltd\.|লিঃ|-/g, '')
-    .trim();
-
-  let matchedPlace = (placesData || []).find(p => {
-    if (!p) return false;
-    const pName = (p.name || '').toLowerCase()
-      .replace(/ডায়াগনস্টিক|সেন্টার|হাসপাতাল|\(প্রাঃ\)|\(pvt\.\)|ltd\.|লিঃ|-/g, '')
-      .trim();
-    return pName.includes(cleanTarget) || cleanTarget.includes(pName);
-  });
-
-  if (!matchedPlace) {
-    matchedPlace = {
-      name: chamberName,
-      category: 'বেসরকারি হাসপাতাল',
-      area: chamberArea || 'নারায়ণগঞ্জ',
-      address: `${chamberName}, ${chamberArea || 'নারায়ণগঞ্জ'}`,
-      timing: 'খোলা আছে',
-      phone: '',
-      map_url: `https://maps.google.com/?q=${encodeURIComponent(chamberName + ' ' + (chamberArea || 'নারায়ণগঞ্জ'))}`
-    };
+  selectedDocArea = 'সব এলাকা';
+  const docBar = document.getElementById('docAreaFilterBar');
+  if (docBar) {
+    docBar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+    const f = docBar.querySelector('.area-chip');
+    if (f) f.classList.add('active');
+    docBar.style.display = chamberName ? 'none' : 'flex';
   }
 
-  openDetails(matchedPlace);
+  selectedDocDept = 'সব বিভাগ';
+  const deptBar = document.getElementById('docDeptFilterBar');
+  if (deptBar) {
+    deptBar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+    const f = deptBar.querySelector('.area-chip');
+    if (f) f.classList.add('active');
+    deptBar.style.display = chamberName ? 'none' : 'flex';
+  }
+
+  renderDoctorItems();
+  
+  const docPage = document.getElementById('doctorPage');
+  if (docPage) {
+    docPage.classList.add('open');
+    docPage.scrollTop = 0;
+    window.history.pushState({ page: 'doctors' }, '');
+  }
+}
+
+function closeDoctorPage() {
+  const el = document.getElementById('doctorPage');
+  if (el) el.classList.remove('open');
+}
+
+function setDoctorAreaFilter(areaName, chipElement) {
+  selectedDocArea = areaName;
+  const bar = document.getElementById('docAreaFilterBar');
+  if (bar) {
+    bar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+    if (chipElement) chipElement.classList.add('active');
+  }
+  renderDoctorItems();
+}
+
+function setDoctorDeptFilter(deptName, chipElement) {
+  selectedDocDept = deptName;
+  const bar = document.getElementById('docDeptFilterBar');
+  if (bar) {
+    bar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+    if (chipElement) chipElement.classList.add('active');
+  }
+  renderDoctorItems();
+}
+
+function renderDoctorItems() {
+  const container = document.getElementById('doctorListings');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const input = document.getElementById('docSearchInput');
+  const query = input ? input.value.toLowerCase().trim() : '';
+
+  const deptKeywords = {
+    'মেডিসিন': ['মেডিসিন', 'ইন্টারনাল', 'medicine'],
+    'কার্ডিওলজি': ['কার্ডিওলজি', 'কার্ডিওলজিস্ট', 'কার্ডিয়াক', 'হৃদরোগ', 'কার্ডিও', 'হার্ট', 'cardio'],
+    'গাইনী': ['গাইনী', 'গাইনি', 'প্রসূতি', 'স্ত্রী রোগ', 'স্ত্রী-রোগ', 'obs', 'gynae', 'মহিলা রোগ'],
+    'শিশু': ['শিশু', 'নবজাতক', 'কিশোর রোগ', 'pediatric', 'paediatric', 'শিশু রোগ'],
+    'অর্থোপেডিক': ['অর্থোপেডিক', 'অর্থোপেডিক্স', 'হাড়ভাঙ্গা', 'হাড়', 'ট্রমা', 'স্পাইন', 'বাত-ব্যথা', 'জোড়াবাত', 'ortho'],
+    'সার্জারি': ['সার্জারি', 'সার্জন', 'অপারেশন', 'surgery', 'surgeon', 'ল্যাপারোস্কোপিক'],
+    'ইউরোলজি': ['ইউরোলজি', 'ইউরোলজিস্ট', 'কিডনি', 'মূত্রনালী', 'প্রোস্টেট', 'urology'],
+    'নিউরো': ['নিউরো', 'নিউরোসার্জারি', 'নিউরোমেডিসিন', 'মস্তিষ্ক', 'মেরুদণ্ড', 'স্নায়ু', 'neuro'],
+    'গ্যাস্ট্রো': ['গ্যাস্ট্রো', 'গ্যাস্ট্রোএন্টারোলজি', 'লিভার', 'পরিপাকতন্ত্র', 'হেপাটোলজি', 'gastro', 'liver'],
+    'চর্ম ও যৌন': ['চর্ম', 'যৌন', 'ডার্মাটোলজি', 'ত্বক', 'skin', 'derma'],
+    'ইএনটি': ['নাক', 'কান', 'গলা', 'ইএনটি', 'ent'],
+    'ডেন্টাল': ['ডেন্টাল', 'দাঁত', 'মুখের রোগ', 'dental', 'দাঁতের']
+  };
+
+  const filtered = (doctorsData || []).filter(doc => {
+    if (!doc) return false;
+    let matchChamber = true;
+    if (currentChamberFilter) {
+      const cleanTarget = currentChamberFilter.toLowerCase()
+        .replace(/ডায়াগনস্টিক|সেন্টার|হাসপাতাল|মেডিকেল|সার্ভিসেস|কলেজ|এন্ড|লিঃ|\(প্রাঃ\)|\(pvt\.\)|ltd\.|লিমিটেড|-/g, ' ')
+        .trim();
+      const keywords = cleanTarget.split(/\s+/).filter(w => w.length >= 3);
+      const chamberText = (doc.chamber || '').toLowerCase();
+      matchChamber = keywords.length > 0 ? keywords.some(kw => chamberText.includes(kw)) : chamberText.includes(currentChamberFilter.toLowerCase());
+    }
+
+    let matchArea = (selectedDocArea === 'সব এলাকা');
+    if (!matchArea) {
+      const targetArea = selectedDocArea.toLowerCase();
+      const docArea = (doc.area || '').toLowerCase();
+      const docChamber = (doc.chamber || '').toLowerCase();
+      matchArea = docArea.includes(targetArea) || docChamber.includes(targetArea);
+      if (targetArea === 'চাষাড়া' && (docArea.includes('সদর') || docChamber.includes('সদর'))) matchArea = true;
+    }
+
+    let matchDept = (selectedDocDept === 'সব বিভাগ');
+    if (!matchDept) {
+      const keys = deptKeywords[selectedDocDept] || [selectedDocDept.toLowerCase()];
+      const fullDocText = ((doc.specialty || '') + ' ' + (doc.degrees || '') + ' ' + (doc.name || '')).toLowerCase();
+      matchDept = keys.some(k => fullDocText.includes(k.toLowerCase()));
+    }
+
+    const matchSearch = 
+      (doc.name || '').toLowerCase().includes(query) ||
+      (doc.specialty || '').toLowerCase().includes(query) ||
+      (doc.chamber || '').toLowerCase().includes(query) ||
+      (doc.area || '').toLowerCase().includes(query) ||
+      (doc.degrees || '').toLowerCase().includes(query);
+
+    return matchChamber && matchArea && matchDept && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px 0;">কোনো ডাক্তারের তথ্য পাওয়া যায়নি।</div>`;
+    return;
+  }
+
+  filtered.forEach(doc => {
+    const card = document.createElement('div');
+    card.className = 'doctor-card';
+    card.onclick = () => openDoctorProfile(doc);
+
+    const firstPhone = (doc.serial_phone || '').split(';')[0].split(',')[0].trim();
+    const firstChamber = (doc.chamber || '').split(';')[0].trim();
+    const firstArea = (doc.area || 'চাষাড়া').split(';')[0].trim();
+    const firstTiming = (doc.timing || 'নিয়মিত').split(';')[0].trim();
+    const isFeatured = (doc.featured || '').toString().toLowerCase().trim() === 'yes';
+
+    if (isFeatured) {
+      card.style.borderColor = '#F59E0B';
+      card.style.background = '#FFFDF5';
+    }
+
+    card.innerHTML = `
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <div class="place-title" style="color: #0F5132;">${doc.name || ''}</div>
+              ${isFeatured ? '<span style="background: #FEF3C7; color: #B45309; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; border: 1px solid #FDE68A;"><i class="fa-solid fa-bolt"></i> স্পন্সরড</span>' : ''}
+            </div>
+            <div class="doc-specialty">${doc.specialty || 'বিশেষজ্ঞ চিকিৎসক'}</div>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 13px; margin-top: 4px;"></i>
+        </div>
+        <div class="doc-degrees">${doc.degrees || ''}</div>
+        <div class="doc-chamber-tag"><i class="fa-solid fa-hospital"></i> ${firstChamber} (${firstArea})</div>
+        <div style="font-size: 12px; color: #475569; margin-top: 6px;">
+          <i class="fa-solid fa-clock" style="color: #10664F;"></i> <strong>সময়:</strong> ${firstTiming}
+        </div>
+      </div>
+      <div class="action-buttons" style="grid-template-columns: 1fr;">
+        <a href="${firstPhone ? 'tel:' + firstPhone : '#'}" class="btn-action btn-call" onclick="event.stopPropagation()">
+          <i class="fa-solid fa-phone"></i> সিরিয়াল দিন (${firstPhone || 'হটলাইন'})
+        </a>
+      </div>
+    `;
+    container.appendChild(card);
+  });
 }
 
 function openDoctorProfile(doc) {
@@ -1811,7 +1350,6 @@ function openDoctorProfile(doc) {
         const splitIdx = rawDesig.indexOf(',');
         const title = rawDesig.substring(0, splitIdx).trim();
         const inst = rawDesig.substring(splitIdx + 1).trim();
-
         desigBox.innerHTML = `
           <div style="font-weight: 700; color: #0C4A6E; font-size: 12px; line-height: 1.35;">${title}</div>
           <div style="font-size: 11px; color: #475569; margin-top: 3px; display: flex; align-items: center; justify-content: center; gap: 5px;">
@@ -1842,7 +1380,6 @@ function openDoctorProfile(doc) {
   const listContainer = document.getElementById('docProfileChambersList');
   if (listContainer) {
     listContainer.innerHTML = '';
-
     if (chambers.length === 0) {
       listContainer.innerHTML = '<div style="color: var(--text-muted); font-size: 14px;">চেম্বারের তথ্য দেওয়া নেই।</div>';
     } else {
@@ -1853,13 +1390,9 @@ function openDoctorProfile(doc) {
 
         const item = document.createElement('div');
         item.className = 'chamber-card-item';
-
         const headerRow = document.createElement('div');
         headerRow.style.cssText = "display: flex; justify-content: space-between; align-items: center; cursor: pointer;";
-        headerRow.onclick = function() {
-          goToChamberDetails(ch, area);
-        };
-
+        headerRow.onclick = function() { goToChamberDetails(ch, area); };
         headerRow.innerHTML = `
           <div style="font-weight: 700; font-size: 15px; color: #0F5132;">
             <i class="fa-solid fa-hospital" style="color: #0284C7;"></i> ${ch}
@@ -1871,19 +1404,14 @@ function openDoctorProfile(doc) {
 
         const bodyContent = document.createElement('div');
         bodyContent.innerHTML = `
-          <div style="font-size: 13px; color: #475569; margin-top: 4px;">
-            <i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> ${area}
-          </div>
-          <div style="font-size: 13px; color: #475569; margin-top: 2px;">
-            <i class="fa-solid fa-clock" style="color: var(--primary);"></i> ${time}
-          </div>
+          <div style="font-size: 13px; color: #475569; margin-top: 4px;"><i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> ${area}</div>
+          <div style="font-size: 13px; color: #475569; margin-top: 2px;"><i class="fa-solid fa-clock" style="color: var(--primary);"></i> ${time}</div>
           <div style="margin-top: 8px;">
             <a href="${ph ? 'tel:' + ph : '#'}" class="btn-action btn-call" style="width: 100%; border-radius: 8px;" onclick="event.stopPropagation()">
               <i class="fa-solid fa-phone"></i> সিরিয়াল কল (${ph || 'নম্বর নেই'})
             </a>
           </div>
         `;
-
         item.appendChild(headerRow);
         item.appendChild(bodyContent);
         listContainer.appendChild(item);
@@ -1903,41 +1431,245 @@ function closeDoctorProfile() {
   if (el) el.classList.remove('open');
 }
 
+function viewChamberDoctors() {
+  if (activeItem) openDoctorList(activeItem.name, `${activeItem.name}-এর ডাক্তারগণ`);
+}
+
+function goToChamberDetails(chamberName, chamberArea) {
+  if (!chamberName) return;
+  closeDoctorProfile();
+  closeDoctorPage();
+
+  const cleanTarget = chamberName.toLowerCase().replace(/ডায়াগনস্টিক|সেন্টার|হাসপাতাল|\(প্রাঃ\)|\(pvt\.\)|ltd\.|লিঃ|-/g, '').trim();
+  let matchedPlace = (placesData || []).find(p => {
+    if (!p) return false;
+    const pName = (p.name || '').toLowerCase().replace(/ডায়াগনস্টিক|সেন্টার|হাসপাতাল|\(প্রাঃ\)|\(pvt\.\)|ltd\.|লিঃ|-/g, '').trim();
+    return pName.includes(cleanTarget) || cleanTarget.includes(pName);
+  });
+
+  if (!matchedPlace) {
+    matchedPlace = {
+      name: chamberName,
+      category: 'বেসরকারি হাসপাতাল',
+      area: chamberArea || 'নারায়ণগঞ্জ',
+      address: `${chamberName}, ${chamberArea || 'নারায়ণগঞ্জ'}`,
+      timing: 'খোলা আছে',
+      phone: '',
+      map_url: `https://maps.google.com/?q=${encodeURIComponent(chamberName + ' ' + (chamberArea || 'নারায়ণগঞ্জ'))}`
+    };
+  }
+  openDetails(matchedPlace);
+}
+
+// --- ৬. বুকমার্ক, ইউটিলিটি ও ইনিশিয়ালাইজেশন ---
+
+function saveBookmarks() {
+  try { localStorage.setItem('narayanganj_bookmarks', JSON.stringify(bookmarks)); } catch (e) {}
+}
+
+function isItemBookmarked(name) {
+  return (bookmarks.places || []).some(p => p.name === name);
+}
+
+function updateHeartIcon(btnElement, isActive) {
+  if (!btnElement) return;
+  btnElement.classList.toggle('active-heart', isActive);
+  btnElement.innerHTML = isActive ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
+}
+
+function toggleBookmarkActiveItem() {
+  if (!activeItem) return;
+  if (!bookmarks.places) bookmarks.places = [];
+  const idx = bookmarks.places.findIndex(p => p.name === activeItem.name);
+  if (idx > -1) {
+    bookmarks.places.splice(idx, 1);
+    updateHeartIcon(document.getElementById('detailsHeartBtn'), false);
+  } else {
+    bookmarks.places.push(activeItem);
+    updateHeartIcon(document.getElementById('detailsHeartBtn'), true);
+  }
+  saveBookmarks();
+}
+
+function toggleBookmarkActiveDoctor() {
+  if (!activeDoctor) return;
+  if (!bookmarks.doctors) bookmarks.doctors = [];
+  const idx = bookmarks.doctors.findIndex(d => d.name === activeDoctor.name);
+  if (idx > -1) {
+    bookmarks.doctors.splice(idx, 1);
+    updateHeartIcon(document.getElementById('docHeartBtn'), false);
+  } else {
+    bookmarks.doctors.push(activeDoctor);
+    updateHeartIcon(document.getElementById('docHeartBtn'), true);
+  }
+  saveBookmarks();
+}
+
+function openBookmarkPage() {
+  const container = document.getElementById('bookmarkListings');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const total = (bookmarks.places?.length || 0) + (bookmarks.doctors?.length || 0);
+  if (total === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; color: var(--text-muted); padding: 50px 20px;">
+        <i class="fa-regular fa-bookmark" style="font-size: 38px; color: #CBD5E1; margin-bottom: 12px;"></i>
+        <p>আপনার সংরক্ষিত তালিকায় এখনো কিছু নেই।</p>
+      </div>
+    `;
+  } else {
+    if (bookmarks.doctors && bookmarks.doctors.length > 0) {
+      const docTitle = document.createElement('h4');
+      docTitle.innerText = "সংরক্ষিত ডাক্তারগণ";
+      docTitle.style.cssText = "font-size: 15px; color: var(--primary); margin: 6px 0 2px;";
+      container.appendChild(docTitle);
+
+      bookmarks.doctors.forEach(doc => {
+        const card = document.createElement('div');
+        card.className = 'doctor-card';
+        card.onclick = () => openDoctorProfile(doc);
+        const firstPhone = (doc.serial_phone || '').split(';')[0].split(',')[0].trim();
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <div class="place-title" style="color: #0F5132;">${doc.name || ''}</div>
+              <div class="doc-specialty">${doc.specialty || ''}</div>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 13px;"></i>
+          </div>
+          <div class="action-buttons" style="grid-template-columns: 1fr;">
+            <a href="${firstPhone ? 'tel:' + firstPhone : '#'}" class="btn-action btn-call" onclick="event.stopPropagation()">
+              <i class="fa-solid fa-phone"></i> সিরিয়াল দিন (${firstPhone || 'কল'})
+            </a>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    if (bookmarks.places && bookmarks.places.length > 0) {
+      const placeTitle = document.createElement('h4');
+      placeTitle.innerText = "সংরক্ষিত প্রতিষ্ঠান ও সেবা";
+      placeTitle.style.cssText = "font-size: 15px; color: var(--primary); margin: 12px 0 2px;";
+      container.appendChild(placeTitle);
+
+      bookmarks.places.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'place-card';
+        card.onclick = () => openDetails(item);
+        card.innerHTML = `
+          <div class="place-header">
+            <div>
+              <div class="place-title">${item.name || ''}</div>
+              <div class="place-area"><i class="fa-solid fa-location-dot"></i> ${item.area || ''}</div>
+            </div>
+            <div class="rating-badge"><i class="fa-solid fa-star"></i> ${item.rating || '৪.০'}</div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+  }
+
+  const el = document.getElementById('bookmarkPage');
+  if (el) {
+    el.classList.add('open');
+    window.history.pushState({ page: 'bookmarks' }, '');
+  }
+}
+
+function closeBookmarkPage() {
+  const el = document.getElementById('bookmarkPage');
+  if (el) el.classList.remove('open');
+}
+
 function viewInstitutionResults() {
   if (!activeItem) return;
-
   const tEl = document.getElementById('eduResultsTitle');
   const sEl = document.getElementById('eduResultsSub');
-  if (tEl) tEl.innerText = activeItem.name || 'ফলাফল';
+  if (tEl) tEl.innerText = activeItem.name || activeItem.name_bn || 'ফলাফল';
   if (sEl) sEl.innerText = 'পাবলিক পরীক্ষার বিগত ফলাফল ও সাফল্যের ইতিহাস';
 
   const container = document.getElementById('eduResultsListings');
   if (!container) return;
   container.innerHTML = '';
 
-  const cleanInst = (activeItem.name || '').toLowerCase().replace(/সরকারি|কলেজ|স্কুল|মাদরাসা/g, '').trim();
+  // ১. EIIN সংগ্রহ ও ক্লিন
+  const currentEiin = toEnDigits(activeItem.eiin || activeItem.code || '');
 
+  // ২. ইউনিকোড ও অক্ষর জটিলতা দূর করার সুপার-ক্লিনার
+  const getCoreTitle = (str) => {
+    return (str || '')
+      .toString()
+      .toLowerCase()
+      // বাংলা ও ইংরেজি সাধারণ শব্দ ছাঁটাই
+      .replace(/সরকারি|বেসরকারি|কলেজ|স্কুল|মাদরাসা|উচ্চ|বিদ্যালয়|মাধ্যমিক/g, '')
+      .replace(/govt|government|college|school|high|madrasah/gi, '')
+      .replace(/নারায়নগঞ্জ|নারায়ণগঞ্জ|narayanganj/gi, '')
+      // ণ/ন এবং য়/য ইউনিকোড সমতাকরণ
+      .replace(/ণ/g, 'ন')
+      .replace(/[য়য]/g, 'য')
+      .replace(/[\u09BC]/g, '') // নুকতা বাদ দেওয়া
+      .replace(/[\s\-_.,()]/g, '')
+      .trim();
+  };
+
+  const currentCoreName = getCoreTitle(activeItem.name || activeItem.name_bn || '');
+  const isCommerceTarget = currentCoreName.includes('কমার্') || (activeItem.name_en || '').toLowerCase().includes('commerce');
+
+  // ৩. ফিল্টারিং ইঞ্জিন
   const matchedResults = (resultsData || []).filter(r => {
     if (!r) return false;
-    if (activeItem.eiin && r.eiin && r.eiin.toString().trim() === activeItem.eiin.toString().trim()) {
+
+    // ক. EIIN দিয়ে নিখুঁত ম্যাচ (উভয় শিটে থাকলে)
+    const rowEiin = toEnDigits(r.eiin || r.code || r.eiin_number || '');
+    if (currentEiin && rowEiin && currentEiin === rowEiin) {
       return true;
     }
-    const rInst = (r.institution || '').toLowerCase().replace(/সরকারি|কলেজ|স্কুল|মাদরাসা/g, '').trim();
-    return rInst.includes(cleanInst) || cleanInst.includes(rInst);
+
+    // খ. প্রতিষ্ঠান নামের ফিল্ড রিড (institution, name, college, institute ইত্যাদি)
+    const rowRawName = r.institution || r.name || r.college || r.institute || r.institution_name || '';
+    const rowCoreName = getCoreTitle(rowRawName);
+    const rowLower = rowRawName.toLowerCase();
+
+    // গ. কমার্স কলেজের বিশেষ বাংলা-ইংরেজি ক্রস-চেক
+    if (isCommerceTarget && (rowLower.includes('commerce') || rowCoreName.includes('কমার্'))) {
+      return true;
+    }
+
+    // ঘ. সাধারণ নাম ম্যাচিং
+    if (currentCoreName && rowCoreName) {
+      if (rowCoreName.includes(currentCoreName) || currentCoreName.includes(rowCoreName)) {
+        return true;
+      }
+    }
+
+    return false;
   });
 
+  // ৪. রেন্ডারিং বা লাইভ ডায়াগনস্টিক রিপোর্ট
   if (matchedResults.length === 0) {
+    const sampleResults = (resultsData || []).slice(0, 3).map(r => r.institution || r.name || 'নাম নেই').join(', ');
     container.innerHTML = `
-      <div style="text-align: center; color: var(--text-muted); padding: 50px 20px;">
+      <div style="text-align: center; color: var(--text-muted); padding: 30px 16px;">
         <i class="fa-solid fa-folder-open" style="font-size: 38px; color: #CBD5E1; margin-bottom: 12px;"></i>
-        <p>এই প্রতিষ্ঠানের কোনো ফলাফল এখনো যুক্ত করা হয়নি।</p>
+        <p style="font-weight: 600; color: #334155;">এই প্রতিষ্ঠানের কোনো ফলাফল এখনো যুক্ত করা হয়নি।</p>
+        
+        <!-- লাইভ ডায়াগনস্টিক তথ্য (সমস্যা শনাক্ত করার জন্য) -->
+        <div style="margin-top: 20px; text-align: left; background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 12px; font-size: 11px; color: #64748B; line-height: 1.6;">
+          <div style="font-weight: 700; color: #DC2626; margin-bottom: 4px;"><i class="fa-solid fa-bug"></i> ডেটা ট্রেসার:</div>
+          <div>• অ্যাপ যা খুঁজছে: <strong>${activeItem.name || activeItem.name_bn || 'নাম নেই'}</strong></div>
+          <div>• শিট থেকে পাওয়া EIIN: <strong>${currentEiin || 'খালি (পায়নি)'}</strong></div>
+          <div>• Results শিটে মোট রো আছে: <strong>${resultsData.length}টি</strong></div>
+          <div>• Results শিটের প্রথম ৩টি নাম: <strong>${sampleResults || 'শিট খালি'}</strong></div>
+        </div>
       </div>
     `;
   } else {
     matchedResults.forEach(r => {
       const card = document.createElement('div');
       card.style.cssText = "background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);";
-
       card.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
           <div style="font-weight: 700; font-size: 16px; color: #0F5132;">
@@ -1947,20 +1679,10 @@ function viewInstitutionResults() {
             পাস: ${r.pass_rate || '-'}
           </span>
         </div>
-
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; margin-top: 4px;">
-          <div style="background: #F8FAFC; padding: 10px 4px; border-radius: 8px; border: 1px solid #E2E8F0;">
-            <div style="font-size: 11px; color: var(--text-muted);">মোট পরীক্ষার্থী</div>
-            <div style="font-weight: 700; font-size: 15px; color: var(--text); margin-top: 2px;">${r.appeared || '-'}</div>
-          </div>
-          <div style="background: #F0FDF4; padding: 10px 4px; border-radius: 8px; border: 1px solid #BBF7D0;">
-            <div style="font-size: 11px; color: #166534;">উত্তীর্ণ শিক্ষার্থী</div>
-            <div style="font-weight: 700; font-size: 15px; color: #166534; margin-top: 2px;">${r.passed || '-'}</div>
-          </div>
-          <div style="background: #FFFBEB; padding: 10px 4px; border-radius: 8px; border: 1px solid #FDE68A;">
-            <div style="font-size: 11px; color: #B45309;">জিপিএ-৫ (A+)</div>
-            <div style="font-weight: 700; font-size: 15px; color: #B45309; margin-top: 2px;">${r.gpa5 || '-'}</div>
-          </div>
+          <div style="background: #F8FAFC; padding: 8px 4px; border-radius: 8px; border: 1px solid #E2E8F0;"><div style="font-size: 11px; color: var(--text-muted);">মোট পরীক্ষার্থী</div><div style="font-weight: 700; font-size: 14px;">${r.appeared || '-'}</div></div>
+          <div style="background: #F0FDF4; padding: 8px 4px; border-radius: 8px; border: 1px solid #BBF7D0;"><div style="font-size: 11px; color: #166534;">উত্তীর্ণ</div><div style="font-weight: 700; font-size: 14px; color: #166534;">${r.passed || '-'}</div></div>
+          <div style="background: #FFFBEB; padding: 8px 4px; border-radius: 8px; border: 1px solid #FDE68A;"><div style="font-size: 11px; color: #B45309;">জিপিএ-৫</div><div style="font-weight: 700; font-size: 14px; color: #B45309;">${r.gpa5 || '-'}</div></div>
         </div>
       `;
       container.appendChild(card);
@@ -1980,6 +1702,10 @@ function closeInstitutionResults() {
   if (el) el.classList.remove('open');
 }
 
+function openSubmitForm() {
+  window.open("https://forms.gle/sample", '_blank');
+}
+
 function goHome() {
   closeInstitutionResults();
   closeDetails();
@@ -1990,19 +1716,12 @@ function goHome() {
 }
 
 window.onpopstate = function() {
-  if (document.getElementById('eduResultsPage')?.classList.contains('open')) {
-    closeInstitutionResults();
-  } else if (document.getElementById('doctorProfileView')?.classList.contains('open')) {
-    closeDoctorProfile();
-  } else if (document.getElementById('doctorPage')?.classList.contains('open')) {
-    closeDoctorPage();
-  } else if (document.getElementById('detailsView')?.classList.contains('open')) {
-    closeDetails();
-  } else if (document.getElementById('bookmarkPage')?.classList.contains('open')) {
-    closeBookmarkPage();
-  } else if (document.getElementById('categoryPage')?.classList.contains('open')) {
-    closeCategoryPage();
-  }
+  if (document.getElementById('eduResultsPage')?.classList.contains('open')) closeInstitutionResults();
+  else if (document.getElementById('doctorProfileView')?.classList.contains('open')) closeDoctorProfile();
+  else if (document.getElementById('doctorPage')?.classList.contains('open')) closeDoctorPage();
+  else if (document.getElementById('detailsView')?.classList.contains('open')) closeDetails();
+  else if (document.getElementById('bookmarkPage')?.classList.contains('open')) closeBookmarkPage();
+  else if (document.getElementById('categoryPage')?.classList.contains('open')) closeCategoryPage();
 };
 
 function shareDoctor() {
@@ -2013,7 +1732,7 @@ function shareDoctor() {
       url: window.location.href,
     }).catch(() => {});
   } else {
-    alert('লিংক কপি করা হয়েছে!');
+    alert('ডাক্তারের তথ্য কপি করা হয়েছে!');
   }
 }
 
@@ -2034,67 +1753,179 @@ function toBanglaNumber(num) {
   return num.toString().replace(/\d/g, d => bn[d]);
 }
 
+function renderTriviaSlider(rawTrivia) {
+  const triviaBox = document.getElementById('eduTriviaBox');
+  const track = document.getElementById('triviaTrack');
+  const dotsContainer = document.getElementById('triviaDots');
+  if (!triviaBox || !track || !dotsContainer) return;
+  if (!rawTrivia || rawTrivia.trim() === '') {
+    triviaBox.style.display = 'none';
+    return;
+  }
+
+  const facts = rawTrivia.split('|').map(f => f.trim()).filter(Boolean);
+  totalTriviaSlides = facts.length;
+  currentTriviaIndex = 0;
+  track.style.transform = 'translateX(0%)';
+  track.innerHTML = '';
+  dotsContainer.innerHTML = '';
+
+  if (totalTriviaSlides === 0) {
+    triviaBox.style.display = 'none';
+    return;
+  }
+
+  facts.forEach((fact, idx) => {
+    let title = `তথ্য #${toBanglaNumber(idx + 1)}`;
+    let desc = fact;
+    if (fact.includes(':')) {
+      const parts = fact.split(':');
+      title = parts[0].replace(/^[•\-\*]\s*/, '').trim();
+      desc = parts.slice(1).join(':').trim();
+    } else {
+      desc = fact.replace(/^[•\-\*]\s*/, '').trim();
+    }
+
+    const slide = document.createElement('div');
+    slide.style.cssText = "min-width: 100%; box-sizing: border-box; padding: 2px;";
+    slide.innerHTML = `
+      <div style="background: #FFFFFF; border: 1px solid #FDE68A; border-radius: 10px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+        <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 8px;">
+          <div style="width: 22px; height: 22px; border-radius: 50%; background: #FEF3C7; color: #D97706; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0;"><i class="fa-solid fa-bookmark"></i></div>
+          <span style="font-weight: 700; font-size: 13px; color: #92400E;">${title}</span>
+        </div>
+        <div style="font-size: 12px; color: #451A03; line-height: 1.5;">${desc}</div>
+      </div>
+    `;
+    track.appendChild(slide);
+
+    const dot = document.createElement('div');
+    dot.className = 't-dot';
+    dot.style.cssText = `height: 6px; width: ${idx === 0 ? '14px' : '6px'}; border-radius: 10px; background: ${idx === 0 ? '#F59E0B' : '#FDE68A'}; transition: all 0.25s ease;`;
+    dotsContainer.appendChild(dot);
+  });
+
+  let touchStartX = 0;
+  track.ontouchstart = (e) => { touchStartX = e.touches[0].clientX; };
+  track.ontouchend = (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) slideTrivia(diff > 0 ? 1 : -1);
+  };
+  triviaBox.style.display = 'block';
+}
+
+function slideTrivia(direction) {
+  const track = document.getElementById('triviaTrack');
+  const dotsContainer = document.getElementById('triviaDots');
+  if (!track || totalTriviaSlides <= 1) return;
+  currentTriviaIndex += direction;
+  if (currentTriviaIndex < 0) currentTriviaIndex = totalTriviaSlides - 1;
+  if (currentTriviaIndex >= totalTriviaSlides) currentTriviaIndex = 0;
+  track.style.transform = `translateX(-${currentTriviaIndex * 100}%)`;
+
+  if (dotsContainer) {
+    const dots = dotsContainer.querySelectorAll('.t-dot');
+    dots.forEach((dot, idx) => {
+      dot.style.background = (idx === currentTriviaIndex) ? '#F59E0B' : '#FDE68A';
+      dot.style.width = (idx === currentTriviaIndex) ? '14px' : '6px';
+    });
+  }
+}
+
+async function fetchLiveNews(feedUrl) {
+  const container = document.getElementById('newspaperFeedList');
+  if (!container) return;
+  container.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px;"><i class="fa-solid fa-spinner fa-spin"></i> সর্বশেষ সংবাদ লোড হচ্ছে...</div>';
+  const cleanUrl = feedUrl.trim();
+  let newsList = [];
+
+  try {
+    const res = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(cleanUrl)}`);
+    const xmlText = await res.text();
+    const xmlDoc = (new DOMParser()).parseFromString(xmlText, "text/xml");
+    const items = xmlDoc.querySelectorAll("item");
+    if (items && items.length > 0) {
+      items.forEach((it, idx) => {
+        if (idx < 5) {
+          const title = it.querySelector("title")?.textContent?.trim() || '';
+          const link = it.querySelector("link")?.textContent?.trim() || cleanUrl;
+          if (title) newsList.push({ title, link });
+        }
+      });
+    }
+  } catch (e) {}
+
+  if (newsList.length > 0) {
+    container.innerHTML = '';
+    newsList.forEach(news => {
+      const item = document.createElement('a');
+      item.className = 'news-feed-item';
+      item.href = news.link;
+      item.target = '_blank';
+      item.rel = 'noopener noreferrer';
+      item.innerHTML = `<i class="fa-solid fa-circle-dot"></i><div class="news-feed-title">${news.title}</div>`;
+      container.appendChild(item);
+    });
+  } else {
+    const mainSiteUrl = cleanUrl.replace(/\/feed\/?$/i, '');
+    container.innerHTML = `
+      <div style="background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 14px; text-align: center;">
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">পত্রিকার সার্ভার সুরক্ষার কারণে লাইভ হেডলাইন পেতে সমস্যা হচ্ছে।</div>
+        <a href="${mainSiteUrl}" target="_blank" rel="noopener noreferrer" class="btn-action btn-call" style="font-size: 12px; padding: 7px 14px; width: fit-content; margin: 0 auto; border-radius: 6px;">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> সরাসরি ওয়েবসাইটে খবর পড়ুন
+        </a>
+      </div>
+    `;
+  }
+}
+
 function updateCategoryCounts() {
   const eduCount = educationData.length;
   const eduSub = document.getElementById('countSubEdu');
-  if (eduSub && eduCount > 0) {
-    eduSub.innerText = `${toBanglaNumber(eduCount)}+ স্কুল ও কলেজ`;
-  }
+  if (eduSub && eduCount > 0) eduSub.innerText = `${toBanglaNumber(eduCount)}+ স্কুল ও কলেজ`;
 
   const docCount = doctorsData.length;
   const docSub = document.getElementById('countSubDoctors');
-  if (docSub && docCount > 0) {
-    docSub.innerText = `${toBanglaNumber(docCount)}+ বিশেষজ্ঞ চিকিৎসক`;
-  }
+  if (docSub && docCount > 0) docSub.innerText = `${toBanglaNumber(docCount)}+ বিশেষজ্ঞ চিকিৎসক`;
 
   const pvtHospCount = placesData.filter(p => {
     const c = (p.category || '').trim();
     return c === 'বেসরকারি হাসপাতাল' || c === 'হাসপাতাল';
   }).length;
   const pvtSub = document.getElementById('countSubPvtHosp');
-  if (pvtSub && pvtHospCount > 0) {
-    pvtSub.innerText = `${toBanglaNumber(pvtHospCount)}+ ক্লিনিক ও সেবা`;
-  }
+  if (pvtSub && pvtHospCount > 0) pvtSub.innerText = `${toBanglaNumber(pvtHospCount)}+ ক্লিনিক ও সেবা`;
 
   const diagCount = placesData.filter(p => (p.category || '').includes('ডায়াগনস্টিক')).length;
   const diagSub = document.getElementById('countSubDiag');
-  if (diagSub && diagCount > 0) {
-    diagSub.innerText = `${toBanglaNumber(diagCount)}+ টেস্ট ল্যাব`;
-  }
+  if (diagSub && diagCount > 0) diagSub.innerText = `${toBanglaNumber(diagCount)}+ টেস্ট ল্যাব`;
 
   const dentalCount = placesData.filter(p => (p.category || '').includes('ডেন্টাল')).length;
   const dentalSub = document.getElementById('countSubDental');
-  if (dentalSub && dentalCount > 0) {
-    dentalSub.innerText = `${toBanglaNumber(dentalCount)}+ ডেন্টাল কেয়ার`;
-  }
+  if (dentalSub && dentalCount > 0) dentalSub.innerText = `${toBanglaNumber(dentalCount)}+ ডেন্টাল কেয়ার`;
 
   const restCount = restaurantsData.length;
   const restSub = document.getElementById('countSubFood');
-  if (restSub && restCount > 0) {
-    restSub.innerText = `${toBanglaNumber(restCount)}+ রেস্তোরাঁ ও ক্যাফে`;
-  }
+  if (restSub && restCount > 0) restSub.innerText = `${toBanglaNumber(restCount)}+ রেস্তোরাঁ ও ক্যাফে`;
 }
 
 async function loadData() {
   try {
-    const fetchPlaces = fetch(API_PLACES).then(r => r.json()).catch(() => []);
-    const fetchDocs = fetch(API_DOCTORS).then(r => r.json()).catch(() => []);
-    const fetchResults = fetch(API_RESULTS).then(r => r.json()).catch(() => []);
-    const fetchEdu = fetch(API_EDUCATION).then(r => r.json()).catch(() => []);
-    const fetchRestaurants = fetch(API_RESTAURANTS).then(r => r.json()).catch(() => []);
-    const fetchAdmin = fetch(API_ADMIN).then(r => r.json()).catch(() => []);
-
     const [pData, dData, rData, eData, restData, aData] = await Promise.all([
-      fetchPlaces, fetchDocs, fetchResults, fetchEdu, fetchRestaurants, fetchAdmin
+      fetch(API_PLACES).then(r => r.json()).catch(() => []),
+      fetch(API_DOCTORS).then(r => r.json()).catch(() => []),
+      fetch(API_RESULTS).then(r => r.json()).catch(() => []),
+      fetch(API_EDUCATION).then(r => r.json()).catch(() => []),
+      fetch(API_RESTAURANTS).then(r => r.json()).catch(() => []),
+      fetch(API_ADMIN).then(r => r.json()).catch(() => [])
     ]);
-    
+
     placesData = Array.isArray(pData) ? organizeListings(pData) : [];
     doctorsData = Array.isArray(dData) ? organizeListings(dData) : [];
     resultsData = Array.isArray(rData) ? rData : [];
     educationData = Array.isArray(eData) ? organizeListings(eData.map(normalizeEducationItem)) : [];
     restaurantsData = Array.isArray(restData) ? organizeListings(restData.map(normalizeRestaurantItem)) : [];
     adminData = Array.isArray(aData) ? organizeListings(aData.map(normalizeAdminItem)) : [];
-    
+
     updateCategoryCounts();
   } catch (err) {
     console.warn("ডাটা লোড হতে সমস্যা হয়েছে:", err);
