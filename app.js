@@ -1413,8 +1413,31 @@ function openDetails(item) {
           unitsList.appendChild(currentSection);
         } else if (currentBadgeGrid) {
           const badge = document.createElement('span');
-          badge.style.cssText = "background: #F8FAFC; border: 1px solid #E2E8F0; color: #1E293B; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 6px;";
-          badge.innerText = line;
+          badge.style.cssText = "background: #F8FAFC; border: 1px solid #E2E8F0; color: #1E293B; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 6px; transition: all 0.2s;";
+          
+          // নামের সাথে মিল রেখে শিট থেকে ইউনিয়ন/পৌরসভার প্রোফাইল খোঁজা
+          const cleanUnitName = line.replace(/^[•\-\*\d\.]+\s*/, '').trim();
+          const matchedUnit = (adminData || []).find(a => {
+            const aName = (a.name || '').toLowerCase();
+            const target = cleanUnitName.toLowerCase();
+            return aName.includes(target) || target.includes(aName);
+          });
+
+          if (matchedUnit) {
+            badge.style.cursor = 'pointer';
+            badge.style.background = '#DCFCE7';
+            badge.style.borderColor = '#86EFAC';
+            badge.style.color = '#15803D';
+            badge.innerHTML = `${cleanUnitName} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px; margin-left: 4px;"></i>`;
+            badge.onclick = () => {
+              const dView = document.getElementById('detailsView');
+              if (dView) dView.scrollTop = 0; // উপরে স্ক্রল করে নতুন পেজ লোড করবে
+              openDetails(matchedUnit);
+            };
+          } else {
+            badge.innerText = cleanUnitName;
+          }
+
           currentBadgeGrid.appendChild(badge);
         }
       });
@@ -1681,6 +1704,17 @@ function openDetails(item) {
       igBtn.style.display = 'flex';
       hasSocial = true;
     } else { igBtn.style.display = 'none'; }
+  }
+  
+  const emailBtn = document.getElementById('linkEmail');
+  if (emailBtn) {
+    if (item.email && item.email.trim() !== '') {
+      emailBtn.href = `mailto:${item.email.trim()}`;
+      emailBtn.style.display = 'flex';
+      hasSocial = true;
+    } else { 
+      emailBtn.style.display = 'none'; 
+    }
   }
 
   if (socialBox) socialBox.style.display = hasSocial ? 'block' : 'none';
