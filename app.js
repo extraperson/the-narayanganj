@@ -14,6 +14,8 @@ const API_RESULTS = `https://opensheet.elk.sh/${SHEET_ID}/Results`;
 const API_EDUCATION = `https://opensheet.elk.sh/${SHEET_ID}/Education`;
 const API_RESTAURANTS = `https://opensheet.elk.sh/${SHEET_ID}/Restaurants`;
 const API_ADMIN = `https://opensheet.elk.sh/${SHEET_ID}/Administration`;
+const API_PACKAGES = `https://opensheet.elk.sh/${SHEET_ID}/Packages`;
+
 
 let placesData = [];
 let doctorsData = [];
@@ -21,6 +23,7 @@ let resultsData = [];
 let educationData = [];
 let restaurantsData = [];
 let adminData = [];
+let packagesData = [];
 
 let currentCategory = 'সব';
 let currentChamberFilter = null;
@@ -347,6 +350,8 @@ function renderCategoryItems() {
       matchCat = (itemCat.includes('ব্লাড') || itemCat.includes('রক্ত'));
     } else if (currentCategory === '২৪ ঘণ্টা ফার্মেসী' || currentCategory === 'ফার্মেসী') {
       matchCat = (itemCat.includes('ফার্মেসী') || itemCat.includes('ফার্মেসি') || itemCat.includes('ওষুধ') || itemCat.includes('ঔষধ'));
+    } else if (currentCategory === 'চক্ষু হাসপাতাল' || currentCategory === 'চক্ষু সেবা') {
+      matchCat = (itemCat.includes('চক্ষু') || itemCat.includes('চোখ') || itemCat.includes('আই'));
     }
 
     // --- ২. শিক্ষা ও সংবাদ ---
@@ -391,6 +396,8 @@ function renderCategoryItems() {
       matchCat = (itemCat.includes('বিদ্যুৎ') || itemCat.includes('গ্যাস') || itemCat.includes('পানি') || itemCat.includes('ডিপিডিসি') || itemCat.includes('তিতাস') || itemCat.includes('ইউটিলিটি'));
     } else if (currentCategory === 'রেন্ট-এ-কার' || currentCategory === 'রেন্ট-এ-কার ও গাড়ি') {
       matchCat = (itemCat.includes('রেন্ট') || itemCat.includes('কার') || itemCat.includes('গাড়ি ভাড়া') || itemCat.includes('মাইক্রো'));
+    } else if (currentCategory === 'ইন্টারনেট ও আইএসপি' || currentCategory === 'আইএসপি' || currentCategory === 'ব্রডব্যান্ড') {
+      matchCat = (itemCat.includes('আইএসপি') || itemCat.includes('ইন্টারনেট') || itemCat.includes('ব্রডব্যান্ড') || itemCat.toLowerCase().includes('isp'));
     } else if (currentCategory === 'আইনজীবী ও আইনি সেবা') {
       matchCat = (itemCat.includes('আইনজীবী') || itemCat.includes('উকিল') || itemCat.includes('কোর্ট') || itemCat.includes('আইন'));
     } else if (currentCategory === 'পার্লার ও সেলুন') {
@@ -404,7 +411,7 @@ function renderCategoryItems() {
     } else {
       matchCat = itemCat.toLowerCase().includes(currentCategory.toLowerCase());
     }
-
+    
     let matchArea = (selectedCatArea === 'সব এলাকা');
     if (!matchArea) {
       const targetArea = selectedCatArea.toLowerCase();
@@ -502,7 +509,9 @@ function openDetails(item) {
   const isEdu = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা');
   const isNews = (cat === 'সংবাদপত্র');
   const isCinema = (cat === 'সিনেমা হল' || cat.includes('সিনেমা') || cat.includes('সিনেপ্লেক্স'));
-  const isAdmin = Boolean(item.code || item.territory || item.voters || item.leader_name || ['জেলা প্রশাসন', 'সংসদীয় আসন', 'সিটি কর্পোরেশন', 'উপজেলা প্রশাসন', 'ইউনিয়ন পরিষদ', 'পৌরসভা'].includes(cat));
+  // শুধুমাত্র নির্দিষ্ট প্রশাসনিক ক্যাটাগরি অথবা জনপ্রতিনিধিদের জন্য সত্য হবে
+  const adminCategories = ['জেলা প্রশাসন', 'জেলা প্রশাসন ও পুলিশ', 'সংসদীয় আসন', 'সিটি কর্পোরেশন', 'উপজেলা প্রশাসন', 'ইউনিয়ন পরিষদ', 'পৌরসভা', 'প্রশাসন'];
+  const isAdmin = Boolean(adminCategories.includes(cat) || item.voters || item.leader_name || item.territory);
 
   const imgEl = document.getElementById('detailsImg');
   if (imgEl) {
@@ -727,6 +736,12 @@ function openDetails(item) {
   }
 
   renderTriviaSlider(item.trivia);
+  
+  const isIsp = (cat === 'আইএসপি' || cat.includes('ইন্টারনেট') || cat.includes('ব্রডব্যান্ড') || cat.toLowerCase().includes('isp'));
+  const ispBtnBox = document.getElementById('ispPackagesBtnBox');
+  if (ispBtnBox) {
+    ispBtnBox.style.display = isIsp ? 'block' : 'none';
+  }
 
   // --- শিক্ষা প্রতিষ্ঠান ব্লক ---
   const eduBox = document.getElementById('eduSectionBox');
@@ -1236,7 +1251,8 @@ function renderDoctorItems() {
     'গ্যাস্ট্রো': ['গ্যাস্ট্রো', 'গ্যাস্ট্রোএন্টারোলজি', 'লিভার', 'পরিপাকতন্ত্র', 'হেপাটোলজি', 'gastro', 'liver'],
     'চর্ম ও যৌন': ['চর্ম', 'যৌন', 'ডার্মাটোলজি', 'ত্বক', 'skin', 'derma'],
     'ইএনটি': ['নাক', 'কান', 'গলা', 'ইএনটি', 'ent'],
-    'ডেন্টাল': ['ডেন্টাল', 'দাঁত', 'মুখের রোগ', 'dental', 'দাঁতের']
+    'ডেন্টাল': ['ডেন্টাল', 'দাঁত', 'মুখের রোগ', 'dental', 'দাঁতের'],
+	'চক্ষু': ['চক্ষু', 'চোখ', 'eye', 'আই', 'ophthalmology', 'রেটিনা', 'দৃষ্টি', 'phaco', 'ছানি'],
   };
 
   const filtered = (doctorsData || []).filter(doc => {
@@ -1697,6 +1713,112 @@ function viewInstitutionResults() {
   }
 }
 
+function viewIspPackages() {
+  if (!activeItem) return;
+  const tEl = document.getElementById('ispPackagesTitle');
+  const sEl = document.getElementById('ispPackagesSub');
+  if (tEl) tEl.innerText = activeItem.name || 'প্যাকেজ তালিকা';
+  if (sEl) sEl.innerText = 'গতি, মাসিক চার্জ ও বিশেষ সুবিধাসমূহ';
+
+  const container = document.getElementById('ispPackagesListings');
+  if (!container) return;
+  container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 40px 0;"><i class="fa-solid fa-spinner fa-spin"></i> প্যাকেজ খোঁজা হচ্ছে...</div>';
+
+  const currentCode = toEnDigits(activeItem.code || activeItem.id || '').toUpperCase();
+  const currentCoreName = (activeItem.name || activeItem.name_bn || '').toLowerCase().replace(/ইন্টারনেট|ব্রডব্যান্ড|আইএসপি|নেটওয়ার্ক|লিমিটেড|প্রাঃ|isp|net|internet|broadband/gi, '').trim();
+
+  const matchedPackages = (packagesData || []).filter(pkg => {
+    if (!pkg) return false;
+    const pCode = toEnDigits(pkg.code || pkg.isp_code || pkg.isp_id || '').toUpperCase();
+    if (currentCode && pCode && currentCode === pCode) return true;
+
+    const pProvider = (pkg.provider || pkg.isp || pkg.institution || pkg.name || '').toLowerCase().replace(/ইন্টারনেট|ব্রডব্যান্ড|আইএসপি|নেটওয়ার্ক|লিমিটেড|প্রাঃ|isp|net|internet|broadband/gi, '').trim();
+    if (currentCoreName && pProvider) {
+      return pProvider.includes(currentCoreName) || currentCoreName.includes(pProvider);
+    }
+    return false;
+  });
+
+  if (matchedPackages.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; color: var(--text-muted); padding: 50px 20px;">
+        <i class="fa-solid fa-wifi" style="font-size: 38px; color: #CBD5E1; margin-bottom: 12px;"></i>
+        <p style="font-weight: 600; color: #334155;">এই আইএসপি'র কোনো প্যাকেজ এখনো যুক্ত করা হয়নি।</p>
+        <p style="font-size: 11px; color: #94A3B8; margin-top: 4px;">কোড: ${currentCode || 'নেই'} | মোট প্যাকেজ লোড হয়েছে: ${packagesData.length}টি</p>
+      </div>
+    `;
+  } else {
+    container.innerHTML = '';
+    matchedPackages.forEach(pkg => {
+      const pCard = document.createElement('div');
+      pCard.style.cssText = "background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); margin-bottom: 12px;";
+      
+      const features = (pkg.features || pkg.facilities || '').split(/[|,]/).map(f => f.trim()).filter(Boolean);
+
+      pCard.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+          <div>
+            <div style="font-weight: 700; font-size: 16px; color: #1E40AF;">${pkg.package_name || pkg.title || 'ইন্টারনেট প্যাকেজ'}</div>
+            <div style="font-size: 11px; color: var(--text-muted);">${pkg.type || 'হোম ব্রডব্যান্ড'}</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 17px; font-weight: 800; color: #16A34A;">৳ ${pkg.price || '-'}</div>
+            <div style="font-size: 10px; color: var(--text-muted);">/ প্রতি মাস</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; margin-top: 4px;">
+          <div style="background: #EFF6FF; padding: 8px 4px; border-radius: 8px; border: 1px solid #BFDBFE;">
+            <div style="font-size: 10px; color: #1E40AF;">মূল গতি (Bandwidth)</div>
+            <div style="font-weight: 800; font-size: 15px; color: #1D4ED8; margin-top: 2px;">${pkg.speed || '-'}</div>
+          </div>
+          <div style="background: #F0FDF4; padding: 8px 4px; border-radius: 8px; border: 1px solid #BBF7D0;">
+            <div style="font-size: 10px; color: #166534;">BDIX গতি</div>
+            <div style="font-weight: 700; font-size: 14px; color: #166534; margin-top: 2px;">${pkg.bdix || '১০০ Mbps'}</div>
+          </div>
+          <div style="background: #FFFBEB; padding: 8px 4px; border-radius: 8px; border: 1px solid #FDE68A;">
+            <div style="font-size: 10px; color: #B45309;">ইউটিউব/ক্যাশ</div>
+            <div style="font-weight: 700; font-size: 14px; color: #B45309; margin-top: 2px;">${pkg.cache || 'আনলিমিটেড'}</div>
+          </div>
+        </div>
+
+        ${pkg.free_ott && pkg.free_ott.trim() !== '' ? `
+          <div style="background: #FDF2F8; border: 1px solid #FBCFE8; padding: 6px 10px; border-radius: 6px; font-size: 11.5px; color: #9D174D; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-tv" style="color: #DB2777;"></i>
+            <span><strong>ফ্রি OTT:</strong> ${pkg.free_ott}</span>
+          </div>
+        ` : ''}
+
+        ${pkg.free_talktime && pkg.free_talktime.trim() !== '' ? `
+          <div style="background: #ECFDF5; border: 1px solid #A7F3D0; padding: 6px 10px; border-radius: 6px; font-size: 11.5px; color: #065F46; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-phone-volume" style="color: #059669;"></i>
+            <span><strong>ফ্রি টকটাইম:</strong> ${pkg.free_talktime}</span>
+          </div>
+        ` : ''}
+
+        ${features.length > 0 ? `
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">
+            ${features.map(f => `<span style="font-size: 11px; background: #F8FAFC; border: 1px solid #E2E8F0; color: #475569; padding: 3px 8px; border-radius: 6px;"><i class="fa-solid fa-check" style="color: #16A34A; font-size: 10px; margin-right: 4px;"></i>${f}</span>`).join('')}
+          </div>
+        ` : ''}
+      `;
+      container.appendChild(pCard);
+    });
+  }
+
+  const pPage = document.getElementById('ispPackagesPage');
+  if (pPage) {
+    pPage.classList.add('open');
+    pPage.scrollTop = 0;
+    window.history.pushState({ page: 'ispPackages' }, '');
+  }
+}
+
+function closeIspPackages() {
+  const el = document.getElementById('ispPackagesPage');
+  if (el) el.classList.remove('open');
+}
+
 function closeInstitutionResults() {
   const el = document.getElementById('eduResultsPage');
   if (el) el.classList.remove('open');
@@ -1713,10 +1835,16 @@ function goHome() {
   closeDoctorPage();
   closeBookmarkPage();
   closeCategoryPage();
+  closeIspPackages();
 }
 
+if (document.getElementById('ispPackagesPage')?.classList.contains('open')) {
+    closeIspPackages();
+  }
+
 window.onpopstate = function() {
-  if (document.getElementById('eduResultsPage')?.classList.contains('open')) closeInstitutionResults();
+  if (document.getElementById('ispPackagesPage')?.classList.contains('open')) closeIspPackages();
+  else if (document.getElementById('eduResultsPage')?.classList.contains('open')) closeInstitutionResults();
   else if (document.getElementById('doctorProfileView')?.classList.contains('open')) closeDoctorProfile();
   else if (document.getElementById('doctorPage')?.classList.contains('open')) closeDoctorPage();
   else if (document.getElementById('detailsView')?.classList.contains('open')) closeDetails();
@@ -1910,13 +2038,14 @@ function updateCategoryCounts() {
 
 async function loadData() {
   try {
-    const [pData, dData, rData, eData, restData, aData] = await Promise.all([
+    const [pData, dData, rData, eData, restData, aData, pkgData] = await Promise.all([
       fetch(API_PLACES).then(r => r.json()).catch(() => []),
       fetch(API_DOCTORS).then(r => r.json()).catch(() => []),
       fetch(API_RESULTS).then(r => r.json()).catch(() => []),
       fetch(API_EDUCATION).then(r => r.json()).catch(() => []),
       fetch(API_RESTAURANTS).then(r => r.json()).catch(() => []),
-      fetch(API_ADMIN).then(r => r.json()).catch(() => [])
+      fetch(API_ADMIN).then(r => r.json()).catch(() => []),
+      fetch(API_PACKAGES).then(r => r.json()).catch(() => [])
     ]);
 
     placesData = Array.isArray(pData) ? organizeListings(pData) : [];
@@ -1925,6 +2054,7 @@ async function loadData() {
     educationData = Array.isArray(eData) ? organizeListings(eData.map(normalizeEducationItem)) : [];
     restaurantsData = Array.isArray(restData) ? organizeListings(restData.map(normalizeRestaurantItem)) : [];
     adminData = Array.isArray(aData) ? organizeListings(aData.map(normalizeAdminItem)) : [];
+    packagesData = Array.isArray(pkgData) ? pkgData : [];
 
     updateCategoryCounts();
   } catch (err) {

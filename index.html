@@ -103,6 +103,15 @@
             </div>
           </div>
 
+			<!-- চক্ষু হাসপাতাল ও ডাক্তার -->
+          <div class="home-cat-card" onclick="openCategoryPage('চক্ষু হাসপাতাল', 'চক্ষু বিশেষজ্ঞ, লেন্স ও চোখের হাসপাতাল')">
+            <div class="home-cat-icon" style="background: #ECFDF5; color: #059669;"><i class="fa-solid fa-eye"></i></div>
+            <div class="home-cat-info">
+              <h4>চক্ষু হাসপাতাল</h4>
+              <p>চোখের চিকিৎসা ও লেন্স</p>
+            </div>
+          </div>
+
           <!-- নতুন: ব্লাড ব্যাংক -->
           <div class="home-cat-card" onclick="openCategoryPage('ব্লাড ব্যাংক', 'রক্তদান ও জরুরি রক্তদাতা সংগঠন')">
             <div class="home-cat-icon" style="background: #FEE2E2; color: #DC2626;"><i class="fa-solid fa-droplet"></i></div>
@@ -276,6 +285,15 @@
               <p>অভিযোগ ও হেল্পলাইন</p>
             </div>
           </div>
+		  
+		  <!-- ইন্টারনেট ও আইএসপি -->
+          <div class="home-cat-card" onclick="openCategoryPage('ইন্টারনেট ও আইএসপি', 'ব্রডব্যান্ড ইন্টারনেট ও ওয়াইফাই সংযোগ')">
+            <div class="home-cat-icon" style="background: #EFF6FF; color: #2563EB;"><i class="fa-solid fa-wifi"></i></div>
+            <div class="home-cat-info">
+              <h4>ইন্টারনেট ও আইএসপি</h4>
+              <p>ব্রডব্যান্ড ও লাইন সংযোগ</p>
+            </div>
+          </div>
 
           <!-- নতুন: রেন্ট-এ-কার -->
           <div class="home-cat-card" onclick="openCategoryPage('রেন্ট-এ-কার', 'গাড়ি ভাড়া, মাইক্রোবাস ও ড্রাইভার')">
@@ -414,6 +432,7 @@
       <div class="area-chip" onclick="setDoctorDeptFilter('চর্ম ও যৌন', this)">চর্ম ও যৌন</div>
       <div class="area-chip" onclick="setDoctorDeptFilter('ইএনটি', this)">নাক, কান ও গলা</div>
       <div class="area-chip" onclick="setDoctorDeptFilter('ডেন্টাল', this)">দাঁতের চিকিৎসা</div>
+	  <div class="area-chip" onclick="setDoctorDeptFilter('চক্ষু', this)">চক্ষু (চোখের রোগ)</div>
     </div>
 
     <div class="area-filter-scroll" id="docAreaFilterBar" style="padding-top: 4px;">
@@ -618,6 +637,20 @@
         </div>
 
         <div id="triviaDots" style="display: flex; justify-content: center; gap: 5px; margin-top: 10px;"></div>
+      </div>
+	  
+	    <!-- আইএসপি প্যাকেজ নেভিগেশন কার্ড -->
+      <div id="ispPackagesBtnBox" style="display: none;">
+        <div class="doc-nav-card" style="background: #EFF6FF; border-color: #BFDBFE;" onclick="viewIspPackages()">
+          <div class="doc-nav-left">
+            <div class="doc-nav-icon" style="background: #2563EB;"><i class="fa-solid fa-wifi"></i></div>
+            <div>
+              <div style="font-size: 15px; font-weight: 700; color: #1E40AF;">সকল ইন্টারনেট প্যাকেজসমূহ</div>
+              <div style="font-size: 12px; color: #3B82F6;">গতি (Mbps), মাসিক ফি ও অফার দেখুন</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-chevron-right" style="color: #2563EB; font-size: 14px;"></i>
+        </div>
       </div>
 
       <!-- শিক্ষা প্রতিষ্ঠান সেকশন -->
@@ -885,6 +918,19 @@
     </div>
 
     <div class="page-listings" id="eduResultsListings"></div>
+  </div>
+  
+  <!-- ৮. আইএসপি প্যাকেজ তালিকা পেজ -->
+  <div class="slide-page" id="ispPackagesPage">
+    <div class="top-sub-header">
+      <button class="btn-circle" onclick="closeIspPackages()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div>
+        <h3 id="ispPackagesTitle">ইন্টারনেট প্যাকেজসমূহ</h3>
+        <p id="ispPackagesSub" style="font-size: 12px; color: var(--text-muted);">গতি, মাসিক বিল ও সুবিধাসমূহ</p>
+      </div>
+    </div>
+
+    <div class="page-listings" id="ispPackagesListings"></div>
   </div>
 
   <script src="app.js"></script>
