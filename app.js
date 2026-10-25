@@ -15,15 +15,23 @@ const API_EDUCATION = `https://opensheet.elk.sh/${SHEET_ID}/Education`;
 const API_RESTAURANTS = `https://opensheet.elk.sh/${SHEET_ID}/Restaurants`;
 const API_ADMIN = `https://opensheet.elk.sh/${SHEET_ID}/Administration`;
 const API_PACKAGES = `https://opensheet.elk.sh/${SHEET_ID}/Packages`;
+const API_TRANSPORT = `https://opensheet.elk.sh/${SHEET_ID}/Transport`;
+const API_HEALTH = `https://opensheet.elk.sh/${SHEET_ID}/Health`;
+const API_TELECOM = `https://opensheet.elk.sh/${SHEET_ID}/Telecom`;
+const API_OFFERS = `https://opensheet.elk.sh/${SHEET_ID}/RechargeOffers`;
 
 
 let placesData = [];
+let healthData = [];
 let doctorsData = [];
 let resultsData = [];
 let educationData = [];
 let restaurantsData = [];
 let adminData = [];
 let packagesData = [];
+let transportData = [];
+let telecomData = [];
+let rechargeOffersData = [];
 
 let currentCategory = 'সব';
 let currentChamberFilter = null;
@@ -193,6 +201,26 @@ function normalizeAdminItem(item) {
   };
 }
 
+function normalizeTransportItem(item) {
+  const cleanPhone = cleanPhoneNumber(item.counter_phone || item.phone || item.mobile || '');
+  return {
+    ...item,
+    name: item.operator || item.name || 'পরিবহন সেবা',
+    category: 'পরিবহন',
+    destination: item.destination || '',
+    route_via: item.route_via || '',
+    boarding_point: item.boarding_point || 'নারায়ণগঞ্জ',
+    area: item.boarding_point || 'নারায়ণগঞ্জ',
+    address: `${item.boarding_point || 'নারায়ণগঞ্জ'} (গন্তব্য: ${item.destination || ''})`,
+    phone: cleanPhone,
+    timing: item.timing || 'সারাদিন',
+    ticket_fare: item.ticket_fare || '',
+    service_type: item.type || 'বাস সার্ভিস',
+    notes: item.notes || '',
+    rating: '৪.২'
+  };
+}
+
 function shuffleArray(array) {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -316,15 +344,23 @@ function renderCategoryItems() {
 
   let sourceList = placesData;
   const isAdminCategory = ['জেলা প্রশাসন', 'সংসদীয় আসন', 'সিটি কর্পোরেশন', 'উপজেলা প্রশাসন', 'ইউনিয়ন পরিষদ', 'পৌরসভা'].includes(currentCategory);
+  const isHealthCategory = ['সরকারি হাসপাতাল', 'বেসরকারি হাসপাতাল', 'ডায়াগনস্টিক', 'ডায়াগনস্টিক সেন্টার', 'ডেন্টাল', 'ডেন্টাল ক্লিনিক', 'ব্লাড ব্যাংক', 'ব্লাড ব্যাংক ও রক্তদান', 'রক্তদান', '২৪ ঘণ্টা ফার্মেসী', 'ফার্মেসী', 'চক্ষু হাসপাতাল', 'চক্ষু সেবা'].includes(currentCategory);
+  const isTelecomCategory = ['টেলিকম', 'মোবাইল ব্যাংকিং', 'মোবাইল সার্ভিসিং'].includes(currentCategory);
 
-  if (currentCategory === 'শিক্ষা প্রতিষ্ঠান') {
+  if (isHealthCategory) {
+    sourceList = healthData.length > 0 ? healthData : placesData;
+  } else if (isTelecomCategory) {
+    sourceList = telecomData.length > 0 ? telecomData : placesData;
+  } else if (currentCategory === 'শিক্ষা প্রতিষ্ঠান') {
     sourceList = educationData.length > 0 ? educationData : placesData;
   } else if (currentCategory === 'রেস্টুরেন্ট' || currentCategory === 'রেস্টুরেন্ট ও ক্যাফে' || currentCategory === 'মিষ্টি ও খাবার' || currentCategory === 'খাবার') {
     sourceList = restaurantsData.length > 0 ? restaurantsData : placesData;
   } else if (isAdminCategory) {
     sourceList = adminData.length > 0 ? adminData : placesData;
+  } else if (currentCategory === 'পরিবহন') {
+    sourceList = transportData.length > 0 ? transportData : placesData;
   } else if (currentCategory === 'সব') {
-    sourceList = [...placesData, ...educationData, ...restaurantsData, ...adminData];
+    sourceList = [...placesData, ...healthData, ...educationData, ...restaurantsData, ...adminData, ...transportData];
   }
 
   const filtered = (sourceList || []).filter(item => {
@@ -369,6 +405,15 @@ function renderCategoryItems() {
     } else if (currentCategory === 'কমিউনিটি সেন্টার') {
       matchCat = (itemCat.includes('কমিউনিটি') || itemCat.includes('কনভেনশন') || itemCat.includes('পার্টি সেন্টার'));
     }
+	
+	// --- ডিজিটাল ও প্রযুক্তি সেবা ---
+	else if (currentCategory === 'টেলিকম') {
+    matchCat = (itemCat === 'টেলিকম' || itemCat.includes('টেলিকম') || itemCat.includes('অপারেটর') || itemCat.includes('সিম'));
+  } else if (currentCategory === 'মোবাইল ব্যাংকিং') {
+    matchCat = (itemCat === 'মোবাইল ব্যাংকিং' || itemCat.includes('ব্যাংকিং') || itemCat.includes('mfs') || itemCat.includes('এমএফএস'));
+  } else if (currentCategory === 'মোবাইল সার্ভিসিং') {
+    matchCat = (itemCat.includes('সার্ভিসিং') || itemCat.includes('কেয়ার') || itemCat.includes('মেরামত'));
+  }
 
     // --- ৪. প্রশাসন ও জনপ্রতিনিধি ---
     else if (currentCategory === 'জেলা প্রশাসন' || currentCategory === 'জেলা প্রশাসন ও পুলিশ') {
@@ -488,6 +533,42 @@ function renderCategoryItems() {
   }
 
   filtered.forEach(item => {
+    // ১. পরিবহনের বাস/ট্রেন হলে বিশেষ বাস-কার্ড দেখাবে
+    if (currentCategory === 'পরিবহন' && item.destination) {
+      const card = document.createElement('div');
+      card.className = 'place-card';
+      card.onclick = () => openDetails(item);
+      card.style.cssText = "border-left: 4px solid #0284C7; background: #FFFFFF;";
+
+      card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <div style="font-weight: 700; font-size: 16px; color: #0F172A;">${item.name}</div>
+            <div style="font-size: 12px; color: #0284C7; font-weight: 600; margin-top: 2px;">
+              <i class="fa-solid fa-arrow-right-long"></i> গন্তব্য: ${item.destination}
+            </div>
+          </div>
+          <span style="font-size: 11px; font-weight: 700; color: #16A34A; background: #DCFCE7; padding: 3px 8px; border-radius: 6px;">
+            ${item.ticket_fare ? '৳ ' + item.ticket_fare : (item.service_type || 'বাস')}
+          </span>
+        </div>
+
+        <div style="font-size: 11.5px; color: #475569; margin-top: 6px; display: flex; flex-direction: column; gap: 3px;">
+          <div><i class="fa-solid fa-location-dot" style="color: #64748B; width: 14px;"></i> কাউন্টার/বোর্ডিং: <strong>${item.boarding_point || item.area || 'নারায়ণগঞ্জ'}</strong></div>
+          <div><i class="fa-regular fa-clock" style="color: #64748B; width: 14px;"></i> শিডিউল: <strong>${item.timing || 'সারাদিন'}</strong></div>
+        </div>
+
+        <div class="action-buttons" style="margin-top: 8px; grid-template-columns: 1fr;">
+          <a href="${item.phone ? 'tel:' + item.phone : '#'}" class="btn-action btn-call" style="padding: 8px 0; font-size: 13px;" onclick="event.stopPropagation()">
+            <i class="fa-solid fa-phone"></i> টিকিট কাউন্টারে কল (${item.phone || 'নম্বর নেই'})
+          </a>
+        </div>
+      `;
+      container.appendChild(card);
+      return;
+    }
+
+    // ২. বাকি সকল সাধারণ ক্যাটাগরির জন্য আগের মতোই সাধারণ কার্ড দেখাবে
     renderStandardPlaceCard(item, container);
   });
 }
@@ -509,6 +590,56 @@ function openDetails(item) {
   const isEdu = (cat === 'শিক্ষা প্রতিষ্ঠান' || cat === 'স্কুল' || cat === 'কলেজ' || cat === 'মাদরাসা');
   const isNews = (cat === 'সংবাদপত্র');
   const isCinema = (cat === 'সিনেমা হল' || cat.includes('সিনেমা') || cat.includes('সিনেপ্লেক্স'));
+  const isTelecom = (cat === 'টেলিকম' || cat.includes('টেলিকম') || cat.includes('অপারেটর'));
+  const telBox = document.getElementById('telecomSectionBox');
+
+  if (telBox) {
+    if (isTelecom) {
+      telBox.style.display = 'flex';
+      
+      const typeEl = document.getElementById('telTypeVal');
+      const subsEl = document.getElementById('telSubsVal');
+      if (typeEl) typeEl.innerText = item.type || 'মোবাইল নেটওয়ার্ক';
+      if (subsEl) subsEl.innerText = item.subscribers || 'সারাদেশে বিস্তৃত';
+
+      // অফার টেবিল রেন্ডার করা
+      renderTelecomOffersTable(item.code || item.name);
+    } else {
+      telBox.style.display = 'none';
+    }
+  }
+  
+  // পরিবহন তথ্য ব্লক হ্যান্ডলিং
+  const transBox = document.getElementById('transportSectionBox');
+  if (transBox) {
+    if (cat === 'পরিবহন' && (item.destination || item.boarding_point)) {
+      transBox.style.display = 'block';
+      const destEl = document.getElementById('transDestinationVal');
+      const fareEl = document.getElementById('transFareVal');
+      const boardEl = document.getElementById('transBoardingVal');
+      const viaEl = document.getElementById('transRouteViaVal');
+      const notesBox = document.getElementById('transNotesBox');
+      const notesVal = document.getElementById('transNotesVal');
+
+      if (destEl) destEl.innerText = item.destination || 'তথ্য নেই';
+      if (fareEl) fareEl.innerText = item.ticket_fare ? `৳ ${item.ticket_fare}` : item.service_type || '-';
+      if (boardEl) boardEl.innerText = item.boarding_point || 'চাষাড়া / নারায়ণগঞ্জ';
+      if (viaEl) viaEl.innerText = item.route_via || 'সরাসরি মহাসড়ক';
+
+      if (notesBox && notesVal) {
+        if (item.notes && item.notes.trim() !== '') {
+          notesVal.innerText = item.notes.trim();
+          notesBox.style.display = 'block';
+        } else {
+          notesBox.style.display = 'none';
+        }
+      }
+    } else {
+      transBox.style.display = 'none';
+    }
+  }
+  
+  
   // শুধুমাত্র নির্দিষ্ট প্রশাসনিক ক্যাটাগরি অথবা জনপ্রতিনিধিদের জন্য সত্য হবে
   const adminCategories = ['জেলা প্রশাসন', 'জেলা প্রশাসন ও পুলিশ', 'সংসদীয় আসন', 'সিটি কর্পোরেশন', 'উপজেলা প্রশাসন', 'ইউনিয়ন পরিষদ', 'পৌরসভা', 'প্রশাসন'];
   const isAdmin = Boolean(adminCategories.includes(cat) || item.voters || item.leader_name || item.territory);
@@ -741,6 +872,54 @@ function openDetails(item) {
   const ispBtnBox = document.getElementById('ispPackagesBtnBox');
   if (ispBtnBox) {
     ispBtnBox.style.display = isIsp ? 'block' : 'none';
+  }
+  
+  // --- আইএসপি সংক্ষিপ্ত তুলনামূলক টেবিল রেন্ডারিং ---
+  const compareBox = document.getElementById('ispQuickCompareBox');
+  const compareBody = document.getElementById('ispQuickCompareBody');
+
+  if (compareBox && compareBody) {
+    if (isIsp) {
+      compareBody.innerHTML = '';
+      const currentCode = toEnDigits(item.code || item.id || '').toUpperCase().trim();
+      const currentName = (item.name || item.name_bn || '').toLowerCase().trim();
+      const currentCoreName = currentName.replace(/ইন্টারনেট|ব্রডব্যান্ড|আইএসপি|নেটওয়ার্ক|লিমিটেড|প্রাঃ|isp|net|internet|broadband/gi, '').trim();
+
+      const matchedPkgs = (packagesData || []).filter(pkg => {
+        if (!pkg) return false;
+        const pCode = toEnDigits(pkg.code || pkg.isp_code || pkg.isp_id || '').toUpperCase().trim();
+        if (currentCode && pCode && currentCode === pCode) return true;
+
+        const pProvider = String(pkg.provider || pkg.isp || pkg.institution || pkg.name || '').toLowerCase().trim();
+        const pCore = pProvider.replace(/ইন্টারনেট|ব্রডব্যান্ড|আইএসপি|নেটওয়ার্ক|লিমিটেড|প্রাঃ|isp|net|internet|broadband/gi, '').trim();
+        
+        return (currentCoreName && pCore && (pCore.includes(currentCoreName) || currentCoreName.includes(pCore))) ||
+               (currentName && pProvider && (pProvider.includes(currentName) || currentName.includes(pProvider)));
+      });
+
+      if (matchedPkgs.length > 0) {
+        matchedPkgs.slice(0).forEach((pkg, idx) => {
+          const row = document.createElement('tr');
+          row.style.cssText = `border-bottom: 1px solid #E2E8F0; background: ${idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'};`;
+          
+          const pkgName = pkg.package_name || pkg.package || pkg.title || '-';
+          const speed = pkg.speed || '-';
+          const price = pkg.price ? `৳ ${pkg.price}` : '-';
+
+          row.innerHTML = `
+            <td style="padding: 9px 10px; font-weight: 600; color: #1E293B;">${pkgName}</td>
+            <td style="padding: 9px 10px; color: #0284C7; font-weight: 700;">${speed}</td>
+            <td style="padding: 9px 10px; text-align: right; color: #16A34A; font-weight: 700;">${price}</td>
+          `;
+          compareBody.appendChild(row);
+        });
+        compareBox.style.display = 'block';
+      } else {
+        compareBox.style.display = 'none';
+      }
+    } else {
+      compareBox.style.display = 'none';
+    }
   }
 
   // --- শিক্ষা প্রতিষ্ঠান ব্লক ---
@@ -1127,6 +1306,17 @@ function openDetails(item) {
       hasSocial = true;
     } else { igBtn.style.display = 'none'; }
   }
+  
+  const ttBtn = document.getElementById('linkTiktok');
+  if (ttBtn) {
+    if (item.tiktok && item.tiktok.trim() !== '') {
+      ttBtn.href = item.tiktok.startsWith('http') ? item.tiktok : `https://${item.tiktok}`;
+      ttBtn.style.display = 'flex';
+      hasSocial = true;
+    } else { ttBtn.style.display = 'none'; }
+  }
+
+
 
   if (emailBtn) {
     if (item.email && item.email.trim() !== '') {
@@ -1136,6 +1326,20 @@ function openDetails(item) {
     } else { emailBtn.style.display = 'none'; }
   }
 
+  // টেলিকমের ক্ষেত্রে সোশ্যাল কার্ড স্বয়ংক্রিয়ভাবে প্যাকেজ বক্সের উপরে চলে যাবে
+  if (socialBox) {
+    socialBox.style.display = hasSocial ? 'block' : 'none';
+    const telOffersBox = document.getElementById('telOffersBox');
+    if (isTelecom && telOffersBox && telOffersBox.parentNode) {
+      telOffersBox.parentNode.insertBefore(socialBox, telOffersBox);
+    } else {
+      const detailsContent = document.querySelector('.details-content');
+      if (detailsContent && socialBox.parentNode !== detailsContent) {
+        detailsContent.appendChild(socialBox);
+      }
+    }
+  }
+  
   if (socialBox) socialBox.style.display = hasSocial ? 'block' : 'none';
 
   const callBtn = document.getElementById('detailsCallBtn');
@@ -2016,18 +2220,20 @@ function updateCategoryCounts() {
   const docSub = document.getElementById('countSubDoctors');
   if (docSub && docCount > 0) docSub.innerText = `${toBanglaNumber(docCount)}+ বিশেষজ্ঞ চিকিৎসক`;
 
-  const pvtHospCount = placesData.filter(p => {
+  const healthSource = healthData.length > 0 ? healthData : placesData;
+
+  const pvtHospCount = healthSource.filter(p => {
     const c = (p.category || '').trim();
     return c === 'বেসরকারি হাসপাতাল' || c === 'হাসপাতাল';
   }).length;
   const pvtSub = document.getElementById('countSubPvtHosp');
   if (pvtSub && pvtHospCount > 0) pvtSub.innerText = `${toBanglaNumber(pvtHospCount)}+ ক্লিনিক ও সেবা`;
 
-  const diagCount = placesData.filter(p => (p.category || '').includes('ডায়াগনস্টিক')).length;
+  const diagCount = healthSource.filter(p => (p.category || '').includes('ডায়াগনস্টিক')).length;
   const diagSub = document.getElementById('countSubDiag');
   if (diagSub && diagCount > 0) diagSub.innerText = `${toBanglaNumber(diagCount)}+ টেস্ট ল্যাব`;
 
-  const dentalCount = placesData.filter(p => (p.category || '').includes('ডেন্টাল')).length;
+  const dentalCount = healthSource.filter(p => (p.category || '').includes('ডেন্টাল')).length;
   const dentalSub = document.getElementById('countSubDental');
   if (dentalSub && dentalCount > 0) dentalSub.innerText = `${toBanglaNumber(dentalCount)}+ ডেন্টাল কেয়ার`;
 
@@ -2036,25 +2242,130 @@ function updateCategoryCounts() {
   if (restSub && restCount > 0) restSub.innerText = `${toBanglaNumber(restCount)}+ রেস্তোরাঁ ও ক্যাফে`;
 }
 
+let currentOfferTypeFilter = 'সব';
+let currentActiveOperatorCode = '';
+
+function renderTelecomOffersTable(opCode) {
+  currentActiveOperatorCode = (opCode || '').toString().toUpperCase().trim();
+  const tbody = document.getElementById('telOffersTableBody');
+  const noOffers = document.getElementById('telNoOffersMsg');
+  const countBadge = document.getElementById('telOffersCountBadge');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  // সংশ্লিষ্ট অপারেটরের অফারগুলো ফিল্টার
+  const opOffers = (rechargeOffersData || []).filter(o => {
+    if (!o) return false;
+    const target = (o.operator_code || o.operator || '').toString().toUpperCase().trim();
+    return target.includes(currentActiveOperatorCode) || currentActiveOperatorCode.includes(target);
+  });
+
+  const filtered = opOffers.filter(o => {
+    if (currentOfferTypeFilter === 'সব') return true;
+
+    // শিট থেকে যেকোনো ফরমেটে মিনিট ও এমবি রিড করা
+    const minVal = (o.minute || o.Minute || o.min || '').toString().trim();
+    const dataVal = (o.data_mb || o.mb || o.MB || o.data || o.internet || '').toString().trim();
+    const explicitType = (o.offer_type || o.type || o.Type || '').toString().trim();
+
+    const hasMin = minVal !== '' && minVal !== '-';
+    const hasData = dataVal !== '' && dataVal !== '-';
+
+    if (currentOfferTypeFilter === 'মিনিট') {
+      return explicitType === 'মিনিট' || (hasMin && !hasData);
+    } else if (currentOfferTypeFilter === 'ইন্টারনেট') {
+      return explicitType === 'ইন্টারনেট' || (!hasMin && hasData);
+    } else if (currentOfferTypeFilter === 'বান্ডেল') {
+      return explicitType === 'বান্ডেল' || (hasMin && hasData);
+    }
+    return true;
+  });
+
+  if (countBadge) countBadge.innerText = `${toBanglaNumber(filtered.length)}টি অফার`;
+
+  if (filtered.length === 0) {
+    if (noOffers) noOffers.style.display = 'block';
+    return;
+  }
+  if (noOffers) noOffers.style.display = 'none';
+
+  filtered.forEach((offer, idx) => {
+    const row = document.createElement('tr');
+    row.style.cssText = `border-bottom: 1px solid #E2E8F0; background: ${idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'};`;
+    
+    // মিনিট (যেকোনো ফরম্যাট সাপোর্ট)
+    const rawMin = (offer.minute || offer.Minute || offer.min || '').toString().trim();
+    let minText = '-';
+    if (rawMin !== '' && rawMin !== '-') {
+      minText = `${toBanglaNumber(rawMin)} মি.`;
+    }
+
+    // ইন্টারনেট (যেকোনো ফরম্যাট সাপোর্ট)
+    const rawData = (offer.data_mb || offer.mb || offer.MB || offer.data || offer.internet || '').toString().trim();
+    let dataText = '-';
+    if (rawData !== '' && rawData !== '-') {
+      dataText = rawData;
+    }
+
+    // মেয়াদ
+    const daysVal = offer.days || offer.Day || offer.day || offer.validity_day || '১';
+    const daysText = `${toBanglaNumber(daysVal)} দিন`;
+
+    const rechargeVal = offer.recharge || offer.amount || offer.price || '0';
+
+    row.innerHTML = `
+      <td style="padding: 9px 6px; font-weight: 700; color: #16A34A; font-size: 13px; white-space: nowrap;">৳ ${toBanglaNumber(rechargeVal)}</td>
+      <td style="padding: 9px 6px; font-weight: 600; color: #1E293B;">${minText}</td>
+      <td style="padding: 9px 6px; font-weight: 600; color: #0284C7;">${dataText}</td>
+      <td style="padding: 9px 6px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function filterTelecomOffers(filterType, chipEl) {
+  currentOfferTypeFilter = filterType;
+  const bar = document.getElementById('telOfferTypeFilters');
+  if (bar) {
+    bar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+    if (chipEl) chipEl.classList.add('active');
+  }
+  renderTelecomOffersTable(currentActiveOperatorCode);
+}
+
+function viewTelecomCare() {
+  if (!activeItem) return;
+  // ক্যাটাগরি পেজে নিয়ে গিয়ে সরাসরি চাষাড়ার কাস্টমার সেন্টারের তালিকা ফিল্টার করবে
+  openCategoryPage('টেলিকম', `${activeItem.name}-এর কেয়ার সেন্টার`);
+}
+
 async function loadData() {
   try {
-    const [pData, dData, rData, eData, restData, aData, pkgData] = await Promise.all([
+    const [pData, hData, dData, rData, eData, restData, aData, pkgData, tData, telData, offData] = await Promise.all([
       fetch(API_PLACES).then(r => r.json()).catch(() => []),
+      fetch(API_HEALTH).then(r => r.json()).catch(() => []),
       fetch(API_DOCTORS).then(r => r.json()).catch(() => []),
       fetch(API_RESULTS).then(r => r.json()).catch(() => []),
       fetch(API_EDUCATION).then(r => r.json()).catch(() => []),
       fetch(API_RESTAURANTS).then(r => r.json()).catch(() => []),
       fetch(API_ADMIN).then(r => r.json()).catch(() => []),
-      fetch(API_PACKAGES).then(r => r.json()).catch(() => [])
+      fetch(API_PACKAGES).then(r => r.json()).catch(() => []),
+      fetch(API_TRANSPORT).then(r => r.json()).catch(() => []),
+      fetch(API_TELECOM).then(r => r.json()).catch(() => []),      // <--- নতুন
+      fetch(API_OFFERS).then(r => r.json()).catch(() => [])       // <--- নতুন
     ]);
 
     placesData = Array.isArray(pData) ? organizeListings(pData) : [];
+    healthData = Array.isArray(hData) ? organizeListings(hData) : [];
     doctorsData = Array.isArray(dData) ? organizeListings(dData) : [];
     resultsData = Array.isArray(rData) ? rData : [];
     educationData = Array.isArray(eData) ? organizeListings(eData.map(normalizeEducationItem)) : [];
     restaurantsData = Array.isArray(restData) ? organizeListings(restData.map(normalizeRestaurantItem)) : [];
     adminData = Array.isArray(aData) ? organizeListings(aData.map(normalizeAdminItem)) : [];
     packagesData = Array.isArray(pkgData) ? pkgData : [];
+    transportData = Array.isArray(tData) ? organizeListings(tData.map(normalizeTransportItem)) : [];
+    telecomData = Array.isArray(telData) ? organizeListings(telData) : [];      // <--- নতুন
+    rechargeOffersData = Array.isArray(offData) ? offData : [];                 // <--- নতুন
 
     updateCategoryCounts();
   } catch (err) {

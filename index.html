@@ -185,6 +185,50 @@
         </div>
       </div>
 	  
+	  <!-- ডিজিটাল ও প্রযুক্তি সেবা মাস্টার সেকশন -->
+      <div id="section-digital">
+        <div class="section-title"><i class="fa-solid fa-tower-broadcast" style="color: #0284C7;"></i> ডিজিটাল ও প্রযুক্তি সেবা</div>
+        <div class="home-categories-grid">
+          
+          <!-- টেলিকম ও সিম -->
+          <div class="home-cat-card" onclick="openCategoryPage('টেলিকম', 'মোবাইল অপারেটর, রিচার্জ অফার ও কেয়ার')">
+            <div class="home-cat-icon" style="background: #E0F2FE; color: #0284C7;"><i class="fa-solid fa-sim-card"></i></div>
+            <div class="home-cat-info">
+              <h4>টেলিকম ও সিম</h4>
+              <p id="countSubTelecom">অপারেটর ও অফার</p>
+            </div>
+          </div>
+
+          <!-- মোবাইল ব্যাংকিং (MFS) -->
+          <div class="home-cat-card" onclick="openCategoryPage('মোবাইল ব্যাংকিং', 'বিকাশ, নগদ, রকেট সার্ভিস ও কেয়ার')">
+            <div class="home-cat-icon" style="background: #FDF2F8; color: #DB2777;"><i class="fa-solid fa-wallet"></i></div>
+            <div class="home-cat-info">
+              <h4>মোবাইল ব্যাংকিং</h4>
+              <p>MFS ও কেয়ার পয়েন্ট</p>
+            </div>
+          </div>
+
+          <!-- ইন্টারনেট ও আইএসপি -->
+          <div class="home-cat-card" onclick="openCategoryPage('ইন্টারনেট ও আইএসপি', 'ব্রডব্যান্ড ইন্টারনেট ও প্যাকেজ')">
+            <div class="home-cat-icon" style="background: #EFF6FF; color: #2563EB;"><i class="fa-solid fa-wifi"></i></div>
+            <div class="home-cat-info">
+              <h4>ইন্টারনেট ও আইএসপি</h4>
+              <p>ব্রডব্যান্ড প্যাকেজ</p>
+            </div>
+          </div>
+
+          <!-- মোবাইল সার্ভিসিং -->
+          <div class="home-cat-card" onclick="openCategoryPage('মোবাইল সার্ভিসিং', 'অফিসিয়াল ব্র্যান্ড কেয়ার সেন্টার')">
+            <div class="home-cat-icon" style="background: #FEF3C7; color: #D97706;"><i class="fa-solid fa-mobile-screen-button"></i></div>
+            <div class="home-cat-info">
+              <h4>মোবাইল কেয়ার</h4>
+              <p>সার্ভিস ও ওয়ারেন্টি</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+	  
 	  <!-- প্রশাসন ও জনপ্রতিনিধি সেকশন -->
       <div id="section-administration">
         <div class="section-title"><i class="fa-solid fa-landmark-dome"></i> প্রশাসন ও জনপ্রতিনিধি</div>
@@ -782,6 +826,103 @@
           <div id="adminAttractionsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
         </div>
 
+<!-- পরিবহন ও বাস সার্ভিস ডেডিকেটেড ব্লক -->
+      <div id="transportSectionBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
+        <div style="font-size: 14px; font-weight: 700; color: #0369A1; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-bus-simple"></i> রুট, কাউন্টার ও টিকিট বিবরণ
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 12px;">
+          <div style="background: #F0F9FF; border: 1px solid #BAE6FD; padding: 8px 10px; border-radius: 8px;">
+            <span style="font-size: 10px; color: #0369A1; display: block;">গন্তব্য শহর</span>
+            <strong id="transDestinationVal" style="color: #0C4A6E; font-size: 13px;">-</strong>
+          </div>
+          <div style="background: #F0FDF4; border: 1px solid #BBF7D0; padding: 8px 10px; border-radius: 8px;">
+            <span style="font-size: 10px; color: #166534; display: block;">ভাড়া (আনুমানিক)</span>
+            <strong id="transFareVal" style="color: #15803D; font-size: 13px;">-</strong>
+          </div>
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 10px; border-radius: 8px; grid-column: span 2;">
+            <span style="font-size: 10px; color: var(--text-muted); display: block;">বোর্ডিং পয়েন্ট / কাউন্টার</span>
+            <strong id="transBoardingVal" style="color: var(--text); font-size: 12px;">-</strong>
+          </div>
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 8px 10px; border-radius: 8px; grid-column: span 2;">
+            <span style="font-size: 10px; color: var(--text-muted); display: block;">রুট ভায়া</span>
+            <strong id="transRouteViaVal" style="color: var(--text); font-size: 12px;">-</strong>
+          </div>
+        </div>
+
+        <div id="transNotesBox" style="margin-top: 10px; padding: 8px 10px; background: #FFFBEB; border: 1px dashed #FCD34D; border-radius: 6px; font-size: 11.5px; color: #92400E; display: none;">
+          <i class="fa-solid fa-circle-info"></i> <span id="transNotesVal"></span>
+        </div>
+      </div>
+
+<!-- টেলিকম ও অপারেটর প্রোফাইল ব্লক (স্কেচ অনুযায়ী) -->
+      <div id="telecomSectionBox" style="display: none; flex-direction: column; gap: 14px;">
+        
+        <!-- ধরন ও গ্রাহক সংখ্যা গ্রিড -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 12px;">
+          <div style="background: #F0F9FF; border: 1px solid #BAE6FD; padding: 10px 12px; border-radius: 8px;">
+            <span style="font-size: 10.5px; color: #0369A1; display: block; font-weight: 600;">সেবার ধরন</span>
+            <strong id="telTypeVal" style="color: #0C4A6E; font-size: 13.5px;">-</strong>
+          </div>
+          <div style="background: #F0FDF4; border: 1px solid #BBF7D0; padding: 10px 12px; border-radius: 8px;">
+            <span style="font-size: 10.5px; color: #166534; display: block; font-weight: 600;">সক্রিয় গ্রাহক সংখ্যা</span>
+            <strong id="telSubsVal" style="color: #15803D; font-size: 13.5px;">-</strong>
+          </div>
+        </div>
+
+        <!-- কাস্টমার সার্ভিস নেভিগেশন কার্ড -->
+        <div id="telCareNavCard" class="doc-nav-card" style="background: #F0FDF4; border-color: #86EFAC; margin: 0; cursor: pointer;" onclick="viewTelecomCare()">
+          <div class="doc-nav-left">
+            <div class="doc-nav-icon" style="background: #16A34A;"><i class="fa-solid fa-headset"></i></div>
+            <div>
+              <div style="font-size: 14.5px; font-weight: 700; color: #14532D;">কাস্টমার সার্ভিস সেন্টারসমূহ</div>
+              <div style="font-size: 11.5px; color: #15803D;">চাষাড়া ও নারায়ণগঞ্জের অফিসিয়াল কেয়ার পয়েন্ট</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-arrow-right" style="color: #16A34A; font-size: 14px;"></i>
+        </div>
+
+        <!-- প্যাকেজ ও রিচার্জ অফার সেকশন -->
+        <div id="telOffersBox" style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="font-size: 14px; font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 7px;">
+              <i class="fa-solid fa-bolt" style="color: #EAB308;"></i>
+              <span>প্যাকেজ ও রিচার্জ অফারসমূহ</span>
+            </div>
+            <span id="telOffersCountBadge" style="font-size: 10.5px; background: #E0F2FE; color: #0284C7; padding: 2px 8px; border-radius: 12px; font-weight: 700;">০টি অফার</span>
+          </div>
+
+          <!-- ফিল্টার বার: ধরন ও মেয়াদ -->
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+            <!-- অফার ধরন ফিল্টার চিপস -->
+            <div class="area-filter-scroll" id="telOfferTypeFilters" style="padding: 2px 0;">
+              <div class="area-chip active" onclick="filterTelecomOffers('সব', this)">সব অফার</div>
+              <div class="area-chip" onclick="filterTelecomOffers('মিনিট', this)">📞 মিনিট</div>
+              <div class="area-chip" onclick="filterTelecomOffers('ইন্টারনেট', this)">🌐 ইন্টারনেট</div>
+              <div class="area-chip" onclick="filterTelecomOffers('বান্ডেল', this)">🎁 বান্ডেল</div>
+            </div>
+          </div>
+
+          <!-- ৩ কলামের রিচার্জ টেবিল -->
+          <div style="overflow-x: auto; border: 1px solid #E2E8F0; border-radius: 8px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+              <thead>
+                <tr style="background: #F8FAFC; color: #475569; border-bottom: 1.5px solid #CBD5E1;">
+                  <th style="padding: 8px 6px; font-weight: 700;">রিচার্জ</th>
+                  <th style="padding: 8px 6px; font-weight: 700;">মিনিট</th>
+                  <th style="padding: 8px 6px; font-weight: 700;">ইন্টারনেট</th>
+                  <th style="padding: 8px 6px; font-weight: 700; text-align: right;">মেয়াদ</th>
+                </tr>
+              </thead>
+              <tbody id="telOffersTableBody"></tbody>
+            </table>
+          </div>
+          <div id="telNoOffersMsg" style="display: none; text-align: center; color: var(--text-muted); font-size: 12px; padding: 20px 0;">কোনো অফার পাওয়া যায়নি।</div>
+        </div>
+
+      </div>
+	  
       <!-- নিয়মিত তথ্য তালিকা -->
       <div class="info-list">
         <div class="info-item">
@@ -867,6 +1008,33 @@
           <a href="#" id="linkYoutube" target="_blank" rel="noopener noreferrer" class="social-btn btn-yt" style="display: none;" title="ইউটিউব"><i class="fa-brands fa-youtube"></i></a>
           <a href="#" id="linkLinkedin" target="_blank" rel="noopener noreferrer" class="social-btn btn-li" style="display: none;" title="লিংকডইন"><i class="fa-brands fa-linkedin-in"></i></a>
           <a href="#" id="linkInstagram" target="_blank" rel="noopener noreferrer" class="social-btn btn-ig" style="display: none;" title="ইনস্টাগ্রাম"><i class="fa-brands fa-instagram"></i></a>
+		  <a href="#" id="linkTiktok" target="_blank" rel="noopener noreferrer" class="social-btn" style="display: none; background: #000000; color: #FFFFFF;" title="টিকটক"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+      </div>
+	  
+	  <!-- আইএসপি সংক্ষিপ্ত প্যাকেজ তুলনা টেবিল -->
+      <div id="ispQuickCompareBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 14px;">
+        <div style="font-size: 14px; font-weight: 700; color: #1E40AF; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-table-list" style="color: #2563EB;"></i> প্যাকেজ সংক্ষিপ্ত তুলনা
+          </div>
+          <span style="font-size: 11px; background: #EFF6FF; color: #1D4ED8; padding: 2px 8px; border-radius: 4px; font-weight: 600; cursor: pointer;" onclick="viewIspPackages()">
+            সব দেখুন <i class="fa-solid fa-arrow-right" style="font-size: 9px;"></i>
+          </span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">জনপ্রিয় প্যাকেজ, গতি ও মাসিক বিল একনজরে</p>
+        
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
+            <thead>
+              <tr style="background: #F1F5F9; color: #334155; border-bottom: 1.5px solid #CBD5E1;">
+                <th style="padding: 8px 10px; font-weight: 700; border-radius: 6px 0 0 6px;">Package</th>
+                <th style="padding: 8px 10px; font-weight: 700;">Speed</th>
+                <th style="padding: 8px 10px; font-weight: 700; text-align: right; border-radius: 0 6px 6px 0;">Price</th>
+              </tr>
+            </thead>
+            <tbody id="ispQuickCompareBody"></tbody>
+          </table>
         </div>
       </div>
 
