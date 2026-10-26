@@ -207,6 +207,17 @@
               <p>MFS ও কেয়ার পয়েন্ট</p>
             </div>
           </div>
+		  
+		  <!-- হোম পেজ কুইক টুল: ক্যাশ আউট চার্জ ক্যালকুলেটর -->
+          <div class="home-cat-card" onclick="openMfsCalculator()">
+            <div class="home-cat-icon" style="background: #FDF2F8; color: #DB2777;">
+              <i class="fa-solid fa-calculator"></i>
+            </div>
+            <div class="home-cat-info">
+              <h4>চার্জ ক্যালকুলেটর</h4>
+              <p>ক্যাশ আউট হিসাব</p>
+            </div>
+          </div>
 
           <!-- ইন্টারনেট ও আইএসপি -->
           <div class="home-cat-card" onclick="openCategoryPage('ইন্টারনেট ও আইএসপি', 'ব্রডব্যান্ড ইন্টারনেট ও প্যাকেজ')">
@@ -923,6 +934,18 @@
 
       </div>
 	  
+	  <!-- এমএফএস ক্যাশ আউট ক্যালকুলেটর নেভিগেশন কার্ড (টেলিকম বক্সের বাইরে থাকবে) -->
+      <div id="mfsCalcNavCard" class="doc-nav-card" style="display: none; background: #FDF2F8; border-color: #FBCFE8; margin-top: 10px; cursor: pointer;" onclick="openMfsCalculatorFromProfile()">
+        <div class="doc-nav-left">
+          <div class="doc-nav-icon" style="background: #DB2777;"><i class="fa-solid fa-calculator"></i></div>
+          <div>
+            <div style="font-size: 14.5px; font-weight: 700; color: #9D174D;">ক্যাশ আউট চার্জ ক্যালকুলেটর</div>
+            <div style="font-size: 11.5px; color: #BE185D;">বিকাশ, নগদ ও রকেটের খরচের হিসাব দেখুন</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right" style="color: #DB2777; font-size: 14px;"></i>
+      </div>
+	  
       <!-- নিয়মিত তথ্য তালিকা -->
       <div class="info-list">
         <div class="info-item">
@@ -1037,7 +1060,7 @@
           </table>
         </div>
       </div>
-
+	  
     </div>
   </div>
 
@@ -1101,6 +1124,39 @@
     <div class="page-listings" id="ispPackagesListings"></div>
   </div>
 
+<!-- ৯. এমএফএস ক্যাশ আউট ক্যালকুলেটর পেজ -->
+  <div class="slide-page" id="mfsCalculatorPage">
+    <div class="top-sub-header">
+      <button class="btn-circle" onclick="closeMfsCalculator()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div>
+        <h3 id="mfsCalcTitle">ক্যাশ আউট চার্জ ক্যালকুলেটর</h3>
+        <p style="font-size: 12px; color: var(--text-muted);">বিকাশ, নগদ, রকেট ও উপায়ের সঠিক চার্জ</p>
+      </div>
+    </div>
+
+    <!-- টাকার ইনপুট বক্স -->
+    <div style="padding: 16px 20px 8px; flex-shrink: 0; background: #FFFFFF; border-bottom: 1px solid var(--border);">
+      <div style="font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">ক্যাশ আউটের পরিমাণ লিখুন (টাকা):</div>
+      <div style="display: flex; align-items: center; background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 0 12px;">
+        <span style="font-size: 18px; font-weight: 800; color: #16A34A; margin-right: 8px;">৳</span>
+        <input type="number" id="mfsAmountInput" value="1000" placeholder="টাকার পরিমাণ লিখুন..." style="width: 100%; border: none; background: transparent; padding: 12px 0; font-size: 18px; font-weight: 700; outline: none;" oninput="calculateMfsCharges()">
+      </div>
+    </div>
+
+    <!-- ব্র্যান্ড ফিল্টার চিপস -->
+    <div class="area-filter-scroll" id="mfsBrandChips" style="padding: 10px 20px 4px;">
+      <div class="area-chip active" data-brand="সব" onclick="setMfsFilter('সব', this)">সব অপারেটর</div>
+      <div class="area-chip" data-brand="bkash" onclick="setMfsFilter('bkash', this)">বিকাশ</div>
+      <div class="area-chip" data-brand="nagad" onclick="setMfsFilter('nagad', this)">নগদ</div>
+      <div class="area-chip" data-brand="rocket" onclick="setMfsFilter('rocket', this)">রকেট</div>
+      <div class="area-chip" data-brand="upay" onclick="setMfsFilter('upay', this)">উপায়</div>
+    </div>
+
+    <!-- গণনার ফলাফল তালিকা -->
+    <div class="page-listings" id="mfsResultsList"></div>
+  </div>
+  
+  <script src="tools.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

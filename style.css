@@ -284,6 +284,7 @@ body {
     #doctorPage { z-index: 1500; }
     #eduResultsPage { z-index: 1600; background: #F8F9FA; }
 	#ispPackagesPage {z-index: 1600;}
+	#mfsCalculatorPage { z-index: 1600; background: #F8F9FA; }
     #doctorProfileView { z-index: 2000; background: #FFFFFF; }
 	
 .top-sub-header {

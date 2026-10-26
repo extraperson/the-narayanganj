@@ -592,6 +592,12 @@ function openDetails(item) {
   const isCinema = (cat === 'সিনেমা হল' || cat.includes('সিনেমা') || cat.includes('সিনেপ্লেক্স'));
   const isTelecom = (cat === 'টেলিকম' || cat.includes('টেলিকম') || cat.includes('অপারেটর'));
   const telBox = document.getElementById('telecomSectionBox');
+  // এমএফএস (বিকাশ, নগদ) হলে ক্যালকুলেটর কার্ড দেখাবে
+  const isMFS = (cat === 'এমএফএস' || cat === 'মোবাইল ব্যাংকিং' || cat.includes('ব্যাংকিং') || cat.toLowerCase().includes('mfs'));
+  const mfsNav = document.getElementById('mfsCalcNavCard');
+  if (mfsNav) {
+    mfsNav.style.display = isMFS ? 'flex' : 'none';
+  }
 
   if (telBox) {
     if (isTelecom) {
@@ -2047,7 +2053,8 @@ if (document.getElementById('ispPackagesPage')?.classList.contains('open')) {
   }
 
 window.onpopstate = function() {
-  if (document.getElementById('ispPackagesPage')?.classList.contains('open')) closeIspPackages();
+  if (document.getElementById('mfsCalculatorPage')?.classList.contains('open')) closeMfsCalculator();
+  else if (document.getElementById('ispPackagesPage')?.classList.contains('open')) closeIspPackages();
   else if (document.getElementById('eduResultsPage')?.classList.contains('open')) closeInstitutionResults();
   else if (document.getElementById('doctorProfileView')?.classList.contains('open')) closeDoctorProfile();
   else if (document.getElementById('doctorPage')?.classList.contains('open')) closeDoctorPage();
@@ -2337,6 +2344,23 @@ function viewTelecomCare() {
   if (!activeItem) return;
   // ক্যাটাগরি পেজে নিয়ে গিয়ে সরাসরি চাষাড়ার কাস্টমার সেন্টারের তালিকা ফিল্টার করবে
   openCategoryPage('টেলিকম', `${activeItem.name}-এর কেয়ার সেন্টার`);
+}
+
+function openMfsCalculatorFromProfile() {
+  if (!activeItem) {
+    if (typeof openMfsCalculator === 'function') openMfsCalculator();
+    return;
+  }
+  const name = (activeItem.name || '').toLowerCase();
+  let brand = 'সব';
+  if (name.includes('বিকাশ') || name.includes('bkash')) brand = 'bkash';
+  else if (name.includes('নগদ') || name.includes('nagad')) brand = 'nagad';
+  else if (name.includes('রকেট') || name.includes('rocket')) brand = 'rocket';
+  else if (name.includes('উপায়') || name.includes('upay')) brand = 'upay';
+
+  if (typeof openMfsCalculator === 'function') {
+    openMfsCalculator(brand);
+  }
 }
 
 async function loadData() {
