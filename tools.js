@@ -12,7 +12,7 @@ const MFS_RATES = {
     icon: 'fa-solid fa-wallet',
     rates: {
       app: 18.50,         // প্রতি হাজারে ১৮.৫০ টাকা
-      priyo_app: 14.90,   // প্রিয় এজেন্টে ১৪.৯০ টাকা
+      priyo_app: 13.95,   // প্রিয় এজেন্টে ১৩.৯৫ টাকা
       ussd: 18.50,        // ডায়াল কোডে ১৮.৫০ টাকা
       atm: 14.90          // ব্র্যাক ব্যাংক এটিএম
     }
@@ -208,4 +208,110 @@ function calculateMfsCharges() {
 
     container.appendChild(card);
   });
+}
+
+/* ==========================================================================
+   MFS TRANSACTION LIMIT LOGIC (BANGLADESH BANK APPROVED)
+   ========================================================================== */
+
+const MFS_LIMITS = [
+  {
+    service: 'ক্যাশ আউট',
+    icon: 'fa-solid fa-money-bill-transfer',
+    dailyCount: '১৫ বার',
+    dailyAmount: '৳ ৩০,০০০',
+    monthlyCount: '১২০ বার',
+    monthlyAmount: '৳ ২,০০,০০০'
+  },
+  {
+    service: 'সেন্ড মানি',
+    icon: 'fa-solid fa-paper-plane',
+    dailyCount: '৫০ বার',
+    dailyAmount: '৳ ৫০,০০০',
+    monthlyCount: '১০০ বার',
+    monthlyAmount: '৳ ৩,০০,০০০'
+  },
+  {
+    service: 'ক্যাশ ইন',
+    icon: 'fa-solid fa-wallet',
+    dailyCount: '১৫ বার',
+    dailyAmount: '৳ ৩০,০০০',
+    monthlyCount: '১০০ বার',
+    monthlyAmount: '৳ ২,০০,০০০'
+  },
+  {
+    service: 'অ্যাড মানি (ব্যাংক/কার্ড)',
+    icon: 'fa-solid fa-building-columns',
+    dailyCount: '২০ বার',
+    dailyAmount: '৳ ৫০,০০০',
+    monthlyCount: '৫০ বার',
+    monthlyAmount: '৳ ৩,০০,০০০'
+  },
+  {
+    service: 'মোবাইল রিচার্জ',
+    icon: 'fa-solid fa-mobile-screen',
+    dailyCount: '৫০ বার',
+    dailyAmount: '৳ ১০,০০০',
+    monthlyCount: '১৫০০ বার',
+    monthlyAmount: '৳ ১,০০,০০০'
+  }
+];
+
+let currentLimitTab = 'daily';
+
+function renderLimitTable() {
+  const tbody = document.getElementById('limitTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  MFS_LIMITS.forEach((item, idx) => {
+    const row = document.createElement('tr');
+    row.style.background = idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC';
+
+    const count = currentLimitTab === 'daily' ? item.dailyCount : item.monthlyCount;
+    const amount = currentLimitTab === 'daily' ? item.dailyAmount : item.monthlyAmount;
+
+    row.innerHTML = `
+      <td>
+        <div class="limit-service-title">
+          <i class="${item.icon}" style="color: #7C3AED; font-size: 12px; width: 14px;"></i>
+          <span>${item.service}</span>
+        </div>
+      </td>
+      <td style="text-align: center; font-weight: 600; color: #475569;">
+        ${count}
+      </td>
+      <td style="text-align: right; font-weight: 800; color: #0F5132; font-size: 13.5px;">
+        ${amount}
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function switchLimitTab(type) {
+  currentLimitTab = type;
+  const dBtn = document.getElementById('limitDailyBtn');
+  const mBtn = document.getElementById('limitMonthlyBtn');
+
+  if (dBtn && mBtn) {
+    dBtn.classList.toggle('active', type === 'daily');
+    mBtn.classList.toggle('active', type === 'monthly');
+  }
+
+  renderLimitTable();
+}
+
+function openMfsLimit() {
+  const page = document.getElementById('mfsLimitPage');
+  if (!page) return;
+  switchLimitTab('daily');
+  page.classList.add('open');
+  page.scrollTop = 0;
+  window.history.pushState({ page: 'mfsLimit' }, '');
+}
+
+function closeMfsLimit() {
+  const page = document.getElementById('mfsLimitPage');
+  if (page) page.classList.remove('open');
 }

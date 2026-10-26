@@ -19,6 +19,7 @@ const API_TRANSPORT = `https://opensheet.elk.sh/${SHEET_ID}/Transport`;
 const API_HEALTH = `https://opensheet.elk.sh/${SHEET_ID}/Health`;
 const API_TELECOM = `https://opensheet.elk.sh/${SHEET_ID}/Telecom`;
 const API_OFFERS = `https://opensheet.elk.sh/${SHEET_ID}/RechargeOffers`;
+const API_SERVICE_CENTERS = `https://opensheet.elk.sh/${SHEET_ID}/ServiceCenters`
 
 
 let placesData = [];
@@ -32,6 +33,7 @@ let packagesData = [];
 let transportData = [];
 let telecomData = [];
 let rechargeOffersData = [];
+let serviceCentersData = [];
 
 let currentCategory = 'সব';
 let currentChamberFilter = null;
@@ -592,12 +594,20 @@ function openDetails(item) {
   const isCinema = (cat === 'সিনেমা হল' || cat.includes('সিনেমা') || cat.includes('সিনেপ্লেক্স'));
   const isTelecom = (cat === 'টেলিকম' || cat.includes('টেলিকম') || cat.includes('অপারেটর'));
   const telBox = document.getElementById('telecomSectionBox');
-  // এমএফএস (বিকাশ, নগদ) হলে ক্যালকুলেটর কার্ড দেখাবে
-  const isMFS = (cat === 'এমএফএস' || cat === 'মোবাইল ব্যাংকিং' || cat.includes('ব্যাংকিং') || cat.toLowerCase().includes('mfs'));
+  
+ const isMFS = (cat === 'এমএফএস' || cat === 'মোবাইল ব্যাংকিং' || cat.includes('ব্যাংকিং') || cat.toLowerCase().includes('mfs'));
+ const limitNav = document.getElementById('mfsLimitNavCard');
+  if (limitNav) limitNav.style.display = isMFS ? 'flex' : 'none';
+  
+  // কাস্টমার কেয়ার ও ক্যালকুলেটর বাটন
   const mfsNav = document.getElementById('mfsCalcNavCard');
-  if (mfsNav) {
-    mfsNav.style.display = isMFS ? 'flex' : 'none';
-  }
+  const careNav = document.getElementById('mfsCareNavCard');
+  if (mfsNav) mfsNav.style.display = isMFS ? 'flex' : 'none';
+  if (careNav) careNav.style.display = (isMFS || isTelecom) ? 'flex' : 'none';
+
+  // অ্যাকর্ডিয়ন রেন্ডার
+  renderMfsAccordion(item.services);
+  
 
   if (telBox) {
     if (isTelecom) {
@@ -819,7 +829,7 @@ function openDetails(item) {
   if (servicesBox && servicesList) {
     servicesList.innerHTML = '';
     const rawServices = (item.services || item.facilities || '').trim();
-    if (rawServices) {
+    if (rawServices && !isMFS && !isTelecom) {
       rawServices.split(',').forEach(srv => {
         const sName = srv.trim();
         if (sName) {
@@ -2039,6 +2049,9 @@ function openSubmitForm() {
 }
 
 function goHome() {
+  closeMfsLimit();
+  closeCareCenters();
+  closeMfsCalculator();
   closeInstitutionResults();
   closeDetails();
   closeDoctorProfile();
@@ -2046,6 +2059,7 @@ function goHome() {
   closeBookmarkPage();
   closeCategoryPage();
   closeIspPackages();
+  closeMobileCareHub();
 }
 
 if (document.getElementById('ispPackagesPage')?.classList.contains('open')) {
@@ -2053,7 +2067,10 @@ if (document.getElementById('ispPackagesPage')?.classList.contains('open')) {
   }
 
 window.onpopstate = function() {
-  if (document.getElementById('mfsCalculatorPage')?.classList.contains('open')) closeMfsCalculator();
+  if (document.getElementById('mobileCareHubPage')?.classList.contains('open')) closeMobileCareHub();
+  else if (document.getElementById('mfsLimitPage')?.classList.contains('open')) closeMfsLimit();
+  else if (document.getElementById('careCenterPage')?.classList.contains('open')) closeCareCenters();
+  else if (document.getElementById('mfsCalculatorPage')?.classList.contains('open')) closeMfsCalculator();
   else if (document.getElementById('ispPackagesPage')?.classList.contains('open')) closeIspPackages();
   else if (document.getElementById('eduResultsPage')?.classList.contains('open')) closeInstitutionResults();
   else if (document.getElementById('doctorProfileView')?.classList.contains('open')) closeDoctorProfile();
@@ -2365,7 +2382,7 @@ function openMfsCalculatorFromProfile() {
 
 async function loadData() {
   try {
-    const [pData, hData, dData, rData, eData, restData, aData, pkgData, tData, telData, offData] = await Promise.all([
+    const [pData, hData, dData, rData, eData, restData, aData, pkgData, tData, telData, offData, scData] = await Promise.all([
       fetch(API_PLACES).then(r => r.json()).catch(() => []),
       fetch(API_HEALTH).then(r => r.json()).catch(() => []),
       fetch(API_DOCTORS).then(r => r.json()).catch(() => []),
@@ -2375,8 +2392,9 @@ async function loadData() {
       fetch(API_ADMIN).then(r => r.json()).catch(() => []),
       fetch(API_PACKAGES).then(r => r.json()).catch(() => []),
       fetch(API_TRANSPORT).then(r => r.json()).catch(() => []),
-      fetch(API_TELECOM).then(r => r.json()).catch(() => []),      // <--- নতুন
-      fetch(API_OFFERS).then(r => r.json()).catch(() => [])       // <--- নতুন
+      fetch(API_TELECOM).then(r => r.json()).catch(() => []),
+      fetch(API_OFFERS).then(r => r.json()).catch(() => []),
+	  fetch(API_SERVICE_CENTERS).then(r => r.json()).catch(() => [])
     ]);
 
     placesData = Array.isArray(pData) ? organizeListings(pData) : [];
@@ -2388,12 +2406,184 @@ async function loadData() {
     adminData = Array.isArray(aData) ? organizeListings(aData.map(normalizeAdminItem)) : [];
     packagesData = Array.isArray(pkgData) ? pkgData : [];
     transportData = Array.isArray(tData) ? organizeListings(tData.map(normalizeTransportItem)) : [];
-    telecomData = Array.isArray(telData) ? organizeListings(telData) : [];      // <--- নতুন
-    rechargeOffersData = Array.isArray(offData) ? offData : [];                 // <--- নতুন
+    telecomData = Array.isArray(telData) ? organizeListings(telData) : [];
+    rechargeOffersData = Array.isArray(offData) ? offData : [];
+	serviceCentersData = Array.isArray(scData) ? scData : [];
 
     updateCategoryCounts();
   } catch (err) {
     console.warn("ডাটা লোড হতে সমস্যা হয়েছে:", err);
+  }
+}
+
+// ১. স্মার্ট অ্যাকর্ডিয়ন রেন্ডারার
+function renderMfsAccordion(rawServices) {
+  const box = document.getElementById('mfsServicesBox');
+  const container = document.getElementById('mfsAccordionList');
+  if (!box || !container) return;
+
+  if (!rawServices || rawServices.trim() === '') {
+    box.style.display = 'none';
+    return;
+  }
+
+  container.innerHTML = '';
+  const entries = rawServices.split(/[|\n]/).map(l => l.trim()).filter(Boolean);
+  let currentItem = null;
+  let currentContent = [];
+
+  function flushCurrent() {
+    if (currentItem) {
+      currentItem.querySelector('.accordion-content').innerHTML = currentContent.map(c => `
+        <div class="accordion-point-card">
+          <i class="fa-solid fa-circle-check" style="color: #0284C7; font-size: 12px; margin-top: 3px; flex-shrink: 0;"></i>
+          <span>${c}</span>
+        </div>
+      `).join('');
+      container.appendChild(currentItem);
+    }
+  }
+
+  entries.forEach(line => {
+    if (line.startsWith('##') || line.startsWith('#')) {
+      flushCurrent();
+      currentContent = [];
+
+      let title = line.replace(/^[#\s]+/, '').trim();
+      let badgeText = '';
+      const match = title.match(/\[(.*?)\]/);
+      if (match) {
+        badgeText = match[1].trim();
+        title = title.replace(/\[.*?\]/, '').trim();
+      }
+
+      currentItem = document.createElement('div');
+      currentItem.className = 'accordion-item';
+      currentItem.innerHTML = `
+        <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="accordion-title-box">
+            <span>${title}</span>
+            ${badgeText ? `<span class="accordion-badge">${badgeText}</span>` : ''}
+          </div>
+          <i class="fa-solid fa-chevron-down accordion-arrow"></i>
+        </div>
+        <div class="accordion-content"></div>
+      `;
+    } else if (currentItem) {
+      const cleanLine = line.replace(/^[•\-\*]\s*/, '').trim();
+      if (cleanLine) currentContent.push(cleanLine);
+    }
+  });
+  flushCurrent();
+
+  box.style.display = container.children.length > 0 ? 'block' : 'none';
+}
+
+// ২. কাস্টমার কেয়ার পেজ খোলা (শিট থেকে অটো ফিল্টার)
+function viewCareCenters() {
+  if (!activeItem) return;
+  const code = (activeItem.code || activeItem.name || '').toUpperCase();
+  let brand = 'BKASH';
+  if (code.includes('NAGAD') || activeItem.name.includes('নগদ')) brand = 'NAGAD';
+  else if (code.includes('ROCKET') || activeItem.name.includes('রকেট')) brand = 'ROCKET';
+  else if (code.includes('UPAY') || activeItem.name.includes('উপায়')) brand = 'UPAY';
+  else if (code.includes('GP') || activeItem.name.includes('গ্রামীণফোন')) brand = 'GP';
+  else if (code.includes('BANGLALINK') || activeItem.name.includes('বাংলালিংক')) brand = 'BANGLALINK';
+  else if (code.includes('ROBI') || activeItem.name.includes('রবি')) brand = 'ROBI';
+  else if (code.includes('AIRTEL') || activeItem.name.includes('এয়ারটেল')) brand = 'AIRTEL';
+  else if (code.includes('TELETALK') || activeItem.name.includes('টেলিটক')) brand = 'TELETALK';
+
+  openServiceCenterFiltered(null, null, brand, `${activeItem.name}-এর কেয়ার পয়েন্ট`);
+}
+
+function closeCareCenters() {
+  const p = document.getElementById('careCenterPage');
+  if (p) p.classList.remove('open');
+}
+
+// ১. হাব পেজ খোলা ও বন্ধ
+function openMobileCareHub() {
+  const p = document.getElementById('mobileCareHubPage');
+  if (p) {
+    p.classList.add('open');
+    p.scrollTop = 0;
+    window.history.pushState({ page: 'mobileHub' }, '');
+  }
+}
+
+function closeMobileCareHub() {
+  const p = document.getElementById('mobileCareHubPage');
+  if (p) p.classList.remove('open');
+}
+
+// ২. ফিল্টার অনুযায়ী সার্ভিস সেন্টার রেজাল্ট প্রদর্শন
+function openServiceCenterFiltered(targetCat = null, targetType = null, targetBrand = null, pageTitle = 'সার্ভিস সেন্টার') {
+  const tEl = document.getElementById('carePageTitle');
+  const sEl = document.getElementById('carePageSub');
+  const container = document.getElementById('careCenterListings');
+  if (!container) return;
+
+  if (tEl) tEl.innerText = pageTitle;
+  if (sEl) sEl.innerText = 'নারায়ণগঞ্জ ও চাষাড়ার অনুমোদিত শাখা';
+  container.innerHTML = '';
+
+  // ServiceCenters শিট থেকে ফিল্টার করা
+  const matched = (serviceCentersData || []).filter(item => {
+    if (!item) return false;
+    const cat = (item.category || '').trim();
+    const type = (item.type || '').trim();
+    const brand = (item.brand_code || '').toUpperCase().trim();
+
+    let matchC = targetCat ? cat.includes(targetCat) : true;
+    let matchT = targetType ? type.includes(targetType) : true;
+    let matchB = targetBrand ? brand.includes(targetBrand.toUpperCase()) : true;
+
+    return matchC && matchT && matchB;
+  });
+
+  if (matched.length === 0) {
+    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 50px 20px;">কোনো সার্ভিস সেন্টারের তথ্য পাওয়া যায়নি।</div>`;
+  } else {
+    matched.forEach(sc => {
+      const card = document.createElement('div');
+      card.style.cssText = "background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); margin-bottom: 12px;";
+      
+      const isOfficial = (sc.type || '').includes('অফিসিয়াল');
+      
+      card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+          <div>
+            <div style="font-weight: 700; font-size: 15px; color: #0F172A;">${sc.name}</div>
+            <span style="font-size: 10.5px; background: ${isOfficial ? '#DCFCE7' : '#EFF6FF'}; color: ${isOfficial ? '#166534' : '#1D4ED8'}; padding: 2px 8px; border-radius: 6px; font-weight: 700; display: inline-block; margin-top: 4px;">
+              ${sc.type || 'সার্ভিস সেন্টার'}
+            </span>
+          </div>
+        </div>
+
+        <div style="font-size: 12.5px; color: #475569; margin-top: 8px; display: flex; flex-direction: column; gap: 4px;">
+          <div><i class="fa-solid fa-location-dot" style="color: var(--primary); width: 14px;"></i> <strong>ঠিকানা:</strong> ${sc.address || sc.area || 'নারায়ণগঞ্জ'}</div>
+          <div><i class="fa-solid fa-clock" style="color: var(--primary); width: 14px;"></i> <strong>সময়:</strong> ${sc.timing || 'সকাল ১০টা - রাত ৮টা'}</div>
+          ${sc.services ? `<div><i class="fa-solid fa-wrench" style="color: #D97706; width: 14px;"></i> <strong>সেবা:</strong> ${sc.services}</div>` : ''}
+        </div>
+
+        <div class="action-buttons" style="margin-top: 10px;">
+          <a href="${sc.phone ? 'tel:' + sc.phone : '#'}" class="btn-action btn-call" style="padding: 8px 0; font-size: 13px;">
+            <i class="fa-solid fa-phone"></i> কল করুন
+          </a>
+          <a href="${sc.map_url || `https://maps.google.com/?q=${encodeURIComponent(sc.name + ' ' + (sc.area || 'নারায়ণগঞ্জ'))}`}" target="_blank" rel="noopener noreferrer" class="btn-action btn-map" style="padding: 8px 0; font-size: 13px;">
+            <i class="fa-solid fa-diamond-turn-right"></i> গুগল ম্যাপ
+          </a>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  const p = document.getElementById('careCenterPage');
+  if (p) {
+    p.classList.add('open');
+    p.scrollTop = 0;
+    window.history.pushState({ page: 'careCenters' }, '');
   }
 }
 

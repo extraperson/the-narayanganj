@@ -286,6 +286,9 @@ body {
 	#ispPackagesPage {z-index: 1600;}
 	#mfsCalculatorPage { z-index: 1600; background: #F8F9FA; }
     #doctorProfileView { z-index: 2000; background: #FFFFFF; }
+	#careCenterPage { z-index: 1600; background: #F8F9FA; }
+	#mfsLimitPage { z-index: 1600; background: #F8F9FA; }
+	#mobileCareHubPage { z-index: 1500; background: #F8F9FA; }
 	
 .top-sub-header {
   position: sticky;
@@ -598,6 +601,167 @@ body {
   object-fit: contain;          /* লোগো কাটবে না, পুরোটা দেখা যাবে */
   background: #f1f5f9;          /* পেছনে সফট ধূসর/সাদা ব্যাকগ্রাউন্ড */
   padding: 16px;                /* চারপাশে শ্বাস নেওয়ার মতো খালি জায়গা */
+}
+
+/* এমএফএস স্মার্ট অ্যাকর্ডিয়ন (কালার মিক্সড ডিজাইন) */
+.accordion-item {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-left: 4px solid #0284C7; /* বামে ডিস্টিংকট ব্লু কালার বার */
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  transition: all 0.2s ease;
+}
+
+.accordion-header {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  background: #F8FAFC;
+  user-select: none;
+}
+
+.accordion-item.open {
+  border-color: #93C5FD;
+  border-left-color: #2563EB;
+}
+
+.accordion-item.open .accordion-header {
+  background: #F0F9FF; /* ওপেন হলে সফট ব্লু ব্যাকগ্রাউন্ড */
+}
+
+.accordion-title-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #0F172A;
+}
+
+.accordion-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: #E0F2FE;
+  color: #0369A1;
+  border: 1px solid #BAE6FD;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-left: 6px;
+}
+
+.accordion-arrow {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  transition: transform 0.25s ease;
+}
+
+.accordion-item.open .accordion-arrow {
+  transform: rotate(180deg);
+  background: #0284C7;
+  color: #FFFFFF;
+  border-color: #0284C7;
+}
+
+.accordion-content {
+  display: none;
+  padding: 12px 14px;
+  border-top: 1px solid #E2E8F0;
+  background: #FFFFFF; /* ভেতরে ক্লিয়ার হোয়াইট ব্যাকগ্রাউন্ড */
+  font-size: 13px;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.accordion-item.open .accordion-content {
+  display: block;
+}
+
+.accordion-point-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #F8FAFC;
+  border: 1px solid #F1F5F9;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-top: 6px;
+}
+
+/* লেনদেনের লিমিট পেজের স্টাইল */
+.limit-table-box {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+
+.limit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.limit-table th {
+  background: #F1F5F9;
+  color: #334155;
+  padding: 10px 12px;
+  font-weight: 700;
+  border-bottom: 1.5px solid #CBD5E1;
+}
+
+.limit-table td {
+  padding: 12px;
+  border-bottom: 1px solid #E2E8F0;
+  color: #1E293B;
+}
+
+.limit-service-title {
+  font-weight: 700;
+  color: #0F172A;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.limit-count-badge {
+  font-size: 11px;
+  color: #64748B;
+  display: block;
+  margin-top: 2px;
+}
+
+/* মোবাইল হাব পেজের ব্র্যান্ড বাটন */
+
+.brand-pick-card {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  padding: 12px 6px;
+  text-align: center;
+  font-size: 13px;
+  color: #1E293B;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.brand-pick-card:active {
+  background: #E2E8F0;
+  transform: scale(0.96);
 }
 
 .nav-item.active { color: var(--primary); font-weight: 700; }

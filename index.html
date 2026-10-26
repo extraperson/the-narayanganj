@@ -228,14 +228,14 @@
             </div>
           </div>
 
-          <!-- মোবাইল সার্ভিসিং -->
-          <div class="home-cat-card" onclick="openCategoryPage('মোবাইল সার্ভিসিং', 'অফিসিয়াল ব্র্যান্ড কেয়ার সেন্টার')">
-            <div class="home-cat-icon" style="background: #FEF3C7; color: #D97706;"><i class="fa-solid fa-mobile-screen-button"></i></div>
-            <div class="home-cat-info">
-              <h4>মোবাইল কেয়ার</h4>
-              <p>সার্ভিস ও ওয়ারেন্টি</p>
-            </div>
-          </div>
+          <!-- মোবাইল সার্ভিসিং হাব পেজ ওপেন হবে -->
+			<div class="home-cat-card" onclick="openMobileCareHub()">
+				<div class="home-cat-icon" style="background: #FEF3C7; color: #D97706;"><i class="fa-solid fa-mobile-screen-button"></i></div>
+				<div class="home-cat-info">
+				<h4>মোবাইল কেয়ার</h4>
+				<p>সার্ভিস ও ওয়ারেন্টি</p>
+				</div>
+			</div>
 
         </div>
       </div>
@@ -933,8 +933,21 @@
         </div>
 
       </div>
+	
 	  
-	  <!-- এমএফএস ক্যাশ আউট ক্যালকুলেটর নেভিগেশন কার্ড (টেলিকম বক্সের বাইরে থাকবে) -->
+      <!-- ১. এমএফএস সেবা ও চার্জসমূহ (স্মার্ট অ্যাকর্ডিয়ন - এখন ১ম স্থানে) -->
+      <div id="mfsServicesBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 12px;">
+        <div style="font-size: 14px; font-weight: 700; color: #0F172A; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-list-check" style="color: #0284C7;"></i> সেবা ও নির্ধারিত চার্জসমূহ
+          </div>
+          <span style="font-size: 10.5px; background: #E0F2FE; color: #0284C7; padding: 2px 8px; border-radius: 4px; font-weight: 700;">ট্যাপ করুন</span>
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">বিস্তারিত জানতে নির্দিষ্ট সেবায় ক্লিক করুন</p>
+        <div id="mfsAccordionList"></div>
+      </div>
+
+      <!-- ২. ক্যাশ আউট ক্যালকুলেটর বাটন -->
       <div id="mfsCalcNavCard" class="doc-nav-card" style="display: none; background: #FDF2F8; border-color: #FBCFE8; margin-top: 10px; cursor: pointer;" onclick="openMfsCalculatorFromProfile()">
         <div class="doc-nav-left">
           <div class="doc-nav-icon" style="background: #DB2777;"><i class="fa-solid fa-calculator"></i></div>
@@ -944,6 +957,30 @@
           </div>
         </div>
         <i class="fa-solid fa-chevron-right" style="color: #DB2777; font-size: 14px;"></i>
+      </div>
+	  
+      <!-- ৩. কাস্টমার কেয়ার নেভিগেশন কার্ড -->
+      <div id="mfsCareNavCard" class="doc-nav-card" style="display: none; background: #F0FDF4; border-color: #BBF7D0; margin-top: 10px; cursor: pointer;" onclick="viewCareCenters()">
+        <div class="doc-nav-left">
+          <div class="doc-nav-icon" style="background: #16A34A;"><i class="fa-solid fa-headset"></i></div>
+          <div>
+            <div style="font-size: 14.5px; font-weight: 700; color: #166534;">কাস্টমার সার্ভিস পয়েন্টসমূহ</div>
+            <div style="font-size: 11.5px; color: #15803D;">চাষাড়া ও শহরের অফিসিয়াল গ্রাহক সেবা কেন্দ্র</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right" style="color: #16A34A; font-size: 14px;"></i>
+      </div>
+	  
+	  <!-- ৪. বাংলাদেশ ব্যাংক লেনদেনের লিমিট কার্ড -->
+      <div id="mfsLimitNavCard" class="doc-nav-card" style="display: none; background: #FAF5FF; border-color: #E9D5FF; margin-top: 10px; cursor: pointer;" onclick="openMfsLimit()">
+        <div class="doc-nav-left">
+          <div class="doc-nav-icon" style="background: #9333EA;"><i class="fa-solid fa-sliders"></i></div>
+          <div>
+            <div style="font-size: 14.5px; font-weight: 700; color: #6B21A8;">লেনদেনের লিমিট</div>
+            <div style="font-size: 11.5px; color: #7E22CE;">বাংলাদেশ ব্যাংক নির্ধারিত দৈনিক ও মাসিক সীমা</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right" style="color: #9333EA; font-size: 14px;"></i>
       </div>
 	  
       <!-- নিয়মিত তথ্য তালিকা -->
@@ -1154,6 +1191,147 @@
 
     <!-- গণনার ফলাফল তালিকা -->
     <div class="page-listings" id="mfsResultsList"></div>
+  </div>
+  
+  <!-- ১০. কাস্টমার সার্ভিস সেন্টার পেজ -->
+  <div class="slide-page" id="careCenterPage">
+    <div class="top-sub-header">
+      <button class="btn-circle" onclick="closeCareCenters()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div>
+        <h3 id="carePageTitle">কাস্টমার সার্ভিস সেন্টার</h3>
+        <p id="carePageSub" style="font-size: 12px; color: var(--text-muted);">নারায়ণগঞ্জ ও আশেপাশের কেয়ার পয়েন্ট</p>
+      </div>
+    </div>
+
+    <div class="page-listings" id="careCenterListings"></div>
+  </div>
+  
+  <!-- ১১. এমএফএস লেনদেনের লিমিট পেজ -->
+  <div class="slide-page" id="mfsLimitPage">
+    <div class="top-sub-header">
+      <button class="btn-circle" onclick="closeMfsLimit()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div>
+        <h3>লেনদেনের লিমিট</h3>
+        <p style="font-size: 12px; color: var(--text-muted);">বাংলাদেশ ব্যাংক কর্তৃক অনুমোদিত সীমা</p>
+      </div>
+    </div>
+
+    <!-- দৈনিক ও মাসিক টগল বাটন -->
+    <div style="padding: 14px 20px 4px; display: flex; gap: 10px; background: #FFFFFF; border-bottom: 1px solid var(--border);">
+      <button type="button" id="limitDailyBtn" class="area-chip active" style="flex: 1; justify-content: center; padding: 10px 0; font-size: 13px;" onclick="switchLimitTab('daily')">
+        <i class="fa-solid fa-calendar-day"></i> দৈনিক লিমিট
+      </button>
+      <button type="button" id="limitMonthlyBtn" class="area-chip" style="flex: 1; justify-content: center; padding: 10px 0; font-size: 13px;" onclick="switchLimitTab('monthly')">
+        <i class="fa-solid fa-calendar-days"></i> মাসিক লিমিট
+      </button>
+    </div>
+
+    <div class="page-listings" style="padding-top: 14px;">
+      <div class="limit-table-box">
+        <table class="limit-table">
+          <thead>
+            <tr>
+              <th>সেবা</th>
+              <th id="limitCountHead" style="text-align: center;">সর্বোচ্চ সংখ্যা</th>
+              <th id="limitAmountHead" style="text-align: right;">সর্বোচ্চ পরিমাণ</th>
+            </tr>
+          </thead>
+          <tbody id="limitTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- তথ্য ও সহায়িকা কার্ড -->
+      <div style="background: #FFFBEB; border: 1px dashed #FCD34D; border-radius: 10px; padding: 12px 14px; font-size: 12px; color: #92400E; line-height: 1.6;">
+        <div style="font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-circle-info" style="color: #D97706;"></i> <span>জরুরি নির্দেশিকা:</span>
+        </div>
+        <div>• একক লেনদেনে ক্যাশ আউট সর্বনিম্ন ৫০ টাকা এবং সর্বোচ্চ ৩০,০০০ টাকা[cite: 26]।</div>
+        <div>• একক লেনদেনে সেন্ড মানি সর্বনিম্ন ১০ টাকা এবং সর্বোচ্চ ৫০,০০০ টাকা[cite: 26]।</div>
+        <div>• পেমেন্ট ও ইউটিলিটি পে-বিলের ক্ষেত্রে কোনো নির্দিষ্ট সীমা প্রযোজ্য নয় (অ্যাকাউন্ট ব্যালেন্স সাপেক্ষে)।</div>
+        <div style="margin-top: 6px; font-size: 11px; color: #B45309; border-top: 1px dashed #FDE68A; padding-top: 4px;">
+          * বাংলাদেশ ব্যাংকের নির্দেশনা অনুযায়ী বিকাশ, নগদ, রকেট ও উপায়সহ সকল এমএফএস-এ এই একই লিমিট কার্যকর[cite: 26]।
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ১২. মোবাইল সার্ভিসিং প্রোফাইল / হাব পেজ -->
+  <div class="slide-page" id="mobileCareHubPage">
+    <div class="top-sub-header">
+      <button class="btn-circle" onclick="closeMobileCareHub()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div>
+        <h3>মোবাইল সার্ভিসিং হাব</h3>
+        <p style="font-size: 12px; color: var(--text-muted);">নারায়ণগঞ্জের সকল ব্র্যান্ড ও মেরামত পয়েন্ট</p>
+      </div>
+    </div>
+
+    <div class="page-listings" style="padding-top: 14px;">
+      
+      <!-- হেডার ব্যানার -->
+      <div style="background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); border: 1px solid #FDE68A; border-radius: var(--radius); padding: 16px; margin-bottom: 12px;">
+        <div style="font-size: 16px; font-weight: 700; color: #92400E; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-screwdriver-wrench" style="color: #D97706;"></i> মোবাইল কেয়ার গাইড
+        </div>
+        <p style="font-size: 12px; color: #78350F; margin-top: 4px; line-height: 1.5;">
+          ওয়ারেন্টি সেবা পেতে অফিসিয়াল কেয়ারে যোগাযোগ করুন অথবা সাশ্রয়ী মেরামতের জন্য অভিজ্ঞ সার্ভিস পয়েন্ট বেছে নিন।
+        </p>
+      </div>
+
+      <!-- প্রধান দুটি বিকল্প কার্ড -->
+      <!-- ১. অফিসিয়াল কেয়ার কার্ড -->
+      <div class="doc-nav-card" style="background: #F0FDF4; border-color: #86EFAC; margin-bottom: 10px; cursor: pointer;" onclick="openServiceCenterFiltered('মোবাইল', 'অফিসিয়াল', null, 'অফিসিয়াল ব্র্যান্ড কেয়ার')">
+        <div class="doc-nav-left">
+          <div class="doc-nav-icon" style="background: #16A34A;"><i class="fa-solid fa-certificate"></i></div>
+          <div>
+            <div style="font-size: 15px; font-weight: 700; color: #14532D;">অফিসিয়াল সার্ভিস সেন্টারসমূহ</div>
+            <div style="font-size: 11.5px; color: #15803D;">স্যামসাং, শাওমি, রিয়েলমিসহ সকল ব্র্যান্ড কেয়ার</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right" style="color: #16A34A; font-size: 14px;"></i>
+      </div>
+
+      <!-- ২. আনঅফিসিয়াল / মাস্টার মেরামত কার্ড -->
+      <div class="doc-nav-card" style="background: #EFF6FF; border-color: #BAE6FD; margin-bottom: 16px; cursor: pointer;" onclick="openServiceCenterFiltered('মোবাইল', 'আনঅফিসিয়াল', null, 'মাল্টিব্র্যান্ড ও মাস্টার সার্ভিসিং')">
+        <div class="doc-nav-left">
+          <div class="doc-nav-icon" style="background: #0284C7;"><i class="fa-solid fa-screwdriver"></i></div>
+          <div>
+            <div style="font-size: 15px; font-weight: 700; color: #0C4A6E;">মাল্টিব্র্যান্ড ও বিশ্বস্ত মেকানিক</div>
+            <div style="font-size: 11.5px; color: #0284C7;">ডিসপ্লে, ব্যাটারি ও দ্রুত হার্ডওয়্যার মেরামত</div>
+          </div>
+        </div>
+        <i class="fa-solid fa-chevron-right" style="color: #0284C7; font-size: 14px;"></i>
+      </div>
+
+      <!-- ব্র্যান্ড কুইক ফিল্টার সেকশন -->
+      <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
+        <div style="font-size: 13.5px; font-weight: 700; color: #0F172A; margin-bottom: 4px; display: flex; align-items: center; gap: 7px;">
+          <i class="fa-solid fa-tags" style="color: #D97706;"></i> নির্দিষ্ট ব্র্যান্ড বেছে নিন
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">ব্র্যান্ডে ট্যাপ করে সরাসরি তাদের কেয়ার সেন্টার দেখুন</p>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+          <div class="brand-pick-card" onclick="openServiceCenterFiltered('মোবাইল', null, 'SAMSUNG', 'স্যামসাং সার্ভিসিং')">
+            <strong>Samsung</strong>
+          </div>
+          <div class="brand-pick-card" onclick="openServiceCenterFiltered('মোবাইল', null, 'XIAOMI', 'শাওমি সার্ভিসিং')">
+            <strong>Xiaomi</strong>
+          </div>
+          <div class="brand-pick-card" onclick="openServiceCenterFiltered('মোবাইল', null, 'REALME', 'রিয়েলমি কেয়ার')">
+            <strong>Realme</strong>
+          </div>
+          <div class="brand-pick-card" onclick="openServiceCenterFiltered('মোবাইল', null, 'VIVO', 'ভিভো কেয়ার')">
+            <strong>Vivo</strong>
+          </div>
+          <div class="brand-pick-card" onclick="openServiceCenterFiltered('মোবাইল', null, 'OPPO', 'অপ্পো সার্ভিসিং')">
+            <strong>Oppo</strong>
+          </div>
+          <div class="brand-pick-card" onclick="openServiceCenterFiltered('মোবাইল', null, 'APPLE', 'আইফোন কেয়ার')">
+            <strong>iPhone</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
   
   <script src="tools.js"></script>
