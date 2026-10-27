@@ -9,12 +9,31 @@
   <link rel="icon" type="image/png" href="the_narayanganj_clean_rgb_512.png">
   <meta name="theme-color" content="#0F5132">
 
+  <!-- প্লে স্টোর ও সোশ্যাল এসইও মেটা ট্যাগ -->
+  <meta name="description" content="The Narayanganj - ডাক্তার, হাসপাতাল, মোবাইল ব্যাংকিং, টেলিকম ও শহরের সকল প্রয়োজনীয় সেবার পূর্ণাঙ্গ গাইড।">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="The Narayanganj - শহরের সবকিছু এক ঠিকানায়">
+  <meta property="og:description" content="নারায়ণগঞ্জ শহরের জরুরি সেবা, ডাক্তার তালিকা, ক্যাশ আউট চার্জ ও কাস্টমার কেয়ার পয়েন্ট।">
+  <meta property="og:type" content="website">
+
+  <!-- ফন্ট ও স্টাইল লিঙ্ক -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="style.css">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LQ8CLTGMWG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-LQ8CLTGMWG');
+  </script>
 </head>
+
 <body>
 
   <div class="app-container">
@@ -103,7 +122,6 @@
             </div>
           </div>
 
-			<!-- চক্ষু হাসপাতাল ও ডাক্তার -->
           <div class="home-cat-card" onclick="openCategoryPage('চক্ষু হাসপাতাল', 'চক্ষু বিশেষজ্ঞ, লেন্স ও চোখের হাসপাতাল')">
             <div class="home-cat-icon" style="background: #ECFDF5; color: #059669;"><i class="fa-solid fa-eye"></i></div>
             <div class="home-cat-info">
@@ -112,7 +130,6 @@
             </div>
           </div>
 
-          <!-- নতুন: ব্লাড ব্যাংক -->
           <div class="home-cat-card" onclick="openCategoryPage('ব্লাড ব্যাংক', 'রক্তদান ও জরুরি রক্তদাতা সংগঠন')">
             <div class="home-cat-icon" style="background: #FEE2E2; color: #DC2626;"><i class="fa-solid fa-droplet"></i></div>
             <div class="home-cat-info">
@@ -121,7 +138,6 @@
             </div>
           </div>
 
-          <!-- নতুন: ২৪ ঘণ্টা ফার্মেসী -->
           <div class="home-cat-card" onclick="openCategoryPage('২৪ ঘণ্টা ফার্মেসী', 'দিবারাত্রি ওষুধের দোকান ও ফার্মেসী')">
             <div class="home-cat-icon" style="background: #ECFDF5; color: #059669;"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
             <div class="home-cat-info">
@@ -174,7 +190,6 @@
             </div>
           </div>
 
-          <!-- নতুন: কমিউনিটি সেন্টার -->
           <div class="home-cat-card" onclick="openCategoryPage('কমিউনিটি সেন্টার', 'কনভেনশন হল ও পার্টি সেন্টার')">
             <div class="home-cat-icon" style="background: #FDF2F8; color: #DB2777;"><i class="fa-solid fa-cake-candles"></i></div>
             <div class="home-cat-info">
@@ -185,12 +200,10 @@
         </div>
       </div>
 	  
-	  <!-- ডিজিটাল ও প্রযুক্তি সেবা মাস্টার সেকশন -->
+      <!-- ডিজিটাল ও প্রযুক্তি সেবা মাস্টার সেকশন -->
       <div id="section-digital">
         <div class="section-title"><i class="fa-solid fa-tower-broadcast" style="color: #0284C7;"></i> ডিজিটাল ও প্রযুক্তি সেবা</div>
         <div class="home-categories-grid">
-          
-          <!-- টেলিকম ও সিম -->
           <div class="home-cat-card" onclick="openCategoryPage('টেলিকম', 'মোবাইল অপারেটর, রিচার্জ অফার ও কেয়ার')">
             <div class="home-cat-icon" style="background: #E0F2FE; color: #0284C7;"><i class="fa-solid fa-sim-card"></i></div>
             <div class="home-cat-info">
@@ -199,7 +212,6 @@
             </div>
           </div>
 
-          <!-- মোবাইল ব্যাংকিং (MFS) -->
           <div class="home-cat-card" onclick="openCategoryPage('মোবাইল ব্যাংকিং', 'বিকাশ, নগদ, রকেট সার্ভিস ও কেয়ার')">
             <div class="home-cat-icon" style="background: #FDF2F8; color: #DB2777;"><i class="fa-solid fa-wallet"></i></div>
             <div class="home-cat-info">
@@ -208,7 +220,6 @@
             </div>
           </div>
 		  
-		  <!-- হোম পেজ কুইক টুল: ক্যাশ আউট চার্জ ক্যালকুলেটর -->
           <div class="home-cat-card" onclick="openMfsCalculator()">
             <div class="home-cat-icon" style="background: #FDF2F8; color: #DB2777;">
               <i class="fa-solid fa-calculator"></i>
@@ -219,7 +230,6 @@
             </div>
           </div>
 
-          <!-- ইন্টারনেট ও আইএসপি -->
           <div class="home-cat-card" onclick="openCategoryPage('ইন্টারনেট ও আইএসপি', 'ব্রডব্যান্ড ইন্টারনেট ও প্যাকেজ')">
             <div class="home-cat-icon" style="background: #EFF6FF; color: #2563EB;"><i class="fa-solid fa-wifi"></i></div>
             <div class="home-cat-info">
@@ -228,24 +238,20 @@
             </div>
           </div>
 
-          <!-- মোবাইল সার্ভিসিং হাব পেজ ওপেন হবে -->
-			<div class="home-cat-card" onclick="openMobileCareHub()">
-				<div class="home-cat-icon" style="background: #FEF3C7; color: #D97706;"><i class="fa-solid fa-mobile-screen-button"></i></div>
-				<div class="home-cat-info">
-				<h4>মোবাইল কেয়ার</h4>
-				<p>সার্ভিস ও ওয়ারেন্টি</p>
-				</div>
-			</div>
-
+          <div class="home-cat-card" onclick="openMobileCareHub()">
+            <div class="home-cat-icon" style="background: #FEF3C7; color: #D97706;"><i class="fa-solid fa-mobile-screen-button"></i></div>
+            <div class="home-cat-info">
+              <h4>মোবাইল কেয়ার</h4>
+              <p>সার্ভিস ও ওয়ারেন্টি</p>
+            </div>
+          </div>
         </div>
       </div>
 	  
-	  <!-- প্রশাসন ও জনপ্রতিনিধি সেকশন -->
+      <!-- প্রশাসন ও জনপ্রতিনিধি সেকশন -->
       <div id="section-administration">
         <div class="section-title"><i class="fa-solid fa-landmark-dome"></i> প্রশাসন ও জনপ্রতিনিধি</div>
         <div class="home-categories-grid">
-          
-          <!-- ১. জেলা প্রশাসন ও পুলিশ -->
           <div class="home-cat-card" onclick="openCategoryPage('জেলা প্রশাসন', 'ডিসি, এসপি, পাসপোর্ট ও সরকারি দপ্তর')">
             <div class="home-cat-icon" style="background: #E0E7FF; color: #4338CA;"><i class="fa-solid fa-building-columns"></i></div>
             <div class="home-cat-info">
@@ -254,7 +260,6 @@
             </div>
           </div>
 
-          <!-- ২. সংসদীয় আসন -->
           <div class="home-cat-card" onclick="openCategoryPage('সংসদীয় আসন', 'নারায়ণগঞ্জের ৫টি জাতীয় সংসদ আসন')">
             <div class="home-cat-icon" style="background: #FEF3C7; color: #B45309;"><i class="fa-solid fa-users-rectangle"></i></div>
             <div class="home-cat-info">
@@ -263,7 +268,6 @@
             </div>
           </div>
 
-          <!-- ৩. সিটি কর্পোরেশন (নাসিক) -->
           <div class="home-cat-card" onclick="openCategoryPage('সিটি কর্পোরেশন', 'মেয়র ও ২৭টি ওয়ার্ডের কাউন্সিলর')">
             <div class="home-cat-icon" style="background: #DCFCE7; color: #15803D;"><i class="fa-solid fa-city"></i></div>
             <div class="home-cat-info">
@@ -272,7 +276,6 @@
             </div>
           </div>
 
-          <!-- ৪. উপজেলা প্রশাসন (আলাদা) -->
           <div class="home-cat-card" onclick="openCategoryPage('উপজেলা প্রশাসন', 'উপজেলা পরিষদ, ইউএনও ও এসিল্যান্ড')">
             <div class="home-cat-icon" style="background: #F1F5F9; color: #334155;"><i class="fa-solid fa-landmark"></i></div>
             <div class="home-cat-info">
@@ -281,7 +284,6 @@
             </div>
           </div>
 
-          <!-- ৫. পৌরসভা (আলাদা) -->
           <div class="home-cat-card" onclick="openCategoryPage('পৌরসভা', 'পৌর মেয়র, কাউন্সিলর ও পৌরসভা')">
             <div class="home-cat-icon" style="background: #E0F2FE; color: #0284C7;"><i class="fa-solid fa-building-user"></i></div>
             <div class="home-cat-info">
@@ -290,7 +292,6 @@
             </div>
           </div>
 
-          <!-- ৫. ইউনিয়ন পরিষদ -->
           <div class="home-cat-card" onclick="openCategoryPage('ইউনিয়ন পরিষদ', 'সকল ইউনিয়ন পরিষদ ও চেয়ারম্যান')">
             <div class="home-cat-icon" style="background: #FFEDD5; color: #C2410C;"><i class="fa-solid fa-people-roof"></i></div>
             <div class="home-cat-info">
@@ -298,7 +299,6 @@
               <p>ইউপি ভবন ও চেয়ারম্যান তালিকা</p>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -306,7 +306,6 @@
       <div id="section-citizen">
         <div class="section-title"><i class="fa-solid fa-city"></i> খাবার ও নাগরিক সেবা</div>
         <div class="home-categories-grid">
-          <!-- রেস্টুরেন্ট -->
           <div class="home-cat-card" onclick="openCategoryPage('রেস্টুরেন্ট', 'রেস্তোরাঁ, ক্যাফে ও ফাস্টফুড')">
             <div class="home-cat-icon theme-food"><i class="fa-solid fa-utensils"></i></div>
             <div class="home-cat-info">
@@ -323,7 +322,6 @@
             </div>
           </div>
 
-          <!-- নতুন: কুরিয়ার সার্ভিস -->
           <div class="home-cat-card" onclick="openCategoryPage('কুরিয়ার সার্ভিস', 'পার্সেল বুকিং ও ডেলিভারি হাব')">
             <div class="home-cat-icon" style="background: #EFF6FF; color: #2563EB;"><i class="fa-solid fa-truck-fast"></i></div>
             <div class="home-cat-info">
@@ -332,7 +330,6 @@
             </div>
           </div>
 
-          <!-- নতুন: ইউটিলিটি ও বিল সেবা -->
           <div class="home-cat-card" onclick="openCategoryPage('ইউটিলিটি সেবা', 'বিদ্যুৎ, গ্যাস, পানি ও অভিযোগ কেন্দ্র')">
             <div class="home-cat-icon" style="background: #FEF3C7; color: #D97706;"><i class="fa-solid fa-bolt-lightning"></i></div>
             <div class="home-cat-info">
@@ -340,17 +337,7 @@
               <p>অভিযোগ ও হেল্পলাইন</p>
             </div>
           </div>
-		  
-		  <!-- ইন্টারনেট ও আইএসপি -->
-          <div class="home-cat-card" onclick="openCategoryPage('ইন্টারনেট ও আইএসপি', 'ব্রডব্যান্ড ইন্টারনেট ও ওয়াইফাই সংযোগ')">
-            <div class="home-cat-icon" style="background: #EFF6FF; color: #2563EB;"><i class="fa-solid fa-wifi"></i></div>
-            <div class="home-cat-info">
-              <h4>ইন্টারনেট ও আইএসপি</h4>
-              <p>ব্রডব্যান্ড ও লাইন সংযোগ</p>
-            </div>
-          </div>
 
-          <!-- নতুন: রেন্ট-এ-কার -->
           <div class="home-cat-card" onclick="openCategoryPage('রেন্ট-এ-কার', 'গাড়ি ভাড়া, মাইক্রোবাস ও ড্রাইভার')">
             <div class="home-cat-icon" style="background: #F0FDF4; color: #16A34A;"><i class="fa-solid fa-car-side"></i></div>
             <div class="home-cat-info">
@@ -359,7 +346,6 @@
             </div>
           </div>
 
-          <!-- নতুন: আইনজীবী ও কোর্ট -->
           <div class="home-cat-card" onclick="openCategoryPage('আইনজীবী ও আইনি সেবা', 'জজ কোর্ট ও আইনজীবী চেম্বার')">
             <div class="home-cat-icon" style="background: #F1F5F9; color: #334155;"><i class="fa-solid fa-scale-balanced"></i></div>
             <div class="home-cat-info">
@@ -368,7 +354,6 @@
             </div>
           </div>
 
-          <!-- নতুন: পার্লার ও সেলুন -->
           <div class="home-cat-card" onclick="openCategoryPage('পার্লার ও সেলুন', 'বিউটি পার্লার ও জেন্টস সেলুন')">
             <div class="home-cat-icon" style="background: #FAF5FF; color: #9333EA;"><i class="fa-solid fa-scissors"></i></div>
             <div class="home-cat-info">
@@ -413,7 +398,6 @@
 	  
     </div>
 
-
     <!-- বটম বার -->
     <nav class="bottom-nav">
       <div class="nav-item active" onclick="goHome()"><i class="fa-solid fa-house"></i>হোম</div>
@@ -422,8 +406,6 @@
       <div class="nav-item" onclick="openCategoryPage('সব', 'সকল তালিকা')"><i class="fa-solid fa-compass"></i>এক্সপ্লোর</div>
     </nav>
   </div>
-  
-  
 
   <!-- ২. ক্যাটাগরি তালিকা স্ক্রিন -->
   <div class="slide-page" id="categoryPage">
@@ -487,7 +469,7 @@
       <div class="area-chip" onclick="setDoctorDeptFilter('চর্ম ও যৌন', this)">চর্ম ও যৌন</div>
       <div class="area-chip" onclick="setDoctorDeptFilter('ইএনটি', this)">নাক, কান ও গলা</div>
       <div class="area-chip" onclick="setDoctorDeptFilter('ডেন্টাল', this)">দাঁতের চিকিৎসা</div>
-	  <div class="area-chip" onclick="setDoctorDeptFilter('চক্ষু', this)">চক্ষু (চোখের রোগ)</div>
+      <div class="area-chip" onclick="setDoctorDeptFilter('চক্ষু', this)">চক্ষু (চোখের রোগ)</div>
     </div>
 
     <div class="area-filter-scroll" id="docAreaFilterBar" style="padding-top: 4px;">
@@ -551,7 +533,6 @@
         </a>
       </div>
 
-      <!-- জরুরি অ্যাম্বুলেন্স কার্ড (হাসপাতাল ভিত্তিক) -->
       <div id="hospitalAmbulanceBox" style="display: none;">
         <div style="background: #FEF2F2; border: 1px dashed #FCA5A5; border-radius: var(--radius); padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 10px;">
@@ -569,7 +550,6 @@
         </div>
       </div>
 
-      <!-- ডাক্তার তালিকা নেভিগেশন কার্ড -->
       <div id="chamberDocsBtnBox" style="display: none;">
         <div class="doc-nav-card" onclick="viewChamberDoctors()">
           <div class="doc-nav-left">
@@ -583,7 +563,6 @@
         </div>
       </div>
 
-      <!-- ক্রিটিক্যাল কেয়ার ও বিশেষ সুবিধা ব্লক -->
       <div id="hospitalCareBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-heart-pulse"></i> ক্রিটিক্যাল কেয়ার ও বিশেষ শয্যা
@@ -619,7 +598,6 @@
         </div>
       </div>
 
-      <!-- ১. বিভাগসমূহ -->
       <div id="hospitalDeptsBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-layer-group" style="color: var(--primary);"></i> বিভাগসমূহ
@@ -628,7 +606,6 @@
         <div class="dept-badge-grid" id="hospitalDeptsList"></div>
       </div>
 
-      <!-- ২. সেবাসমূহ ও সুযোগ-সুবিধা -->
       <div id="hospitalServicesBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-bell-concierge" style="color: #0284C7;"></i> সেবাসমূহ ও অন্যান্য সুবিধা
@@ -637,7 +614,6 @@
         <div class="dept-badge-grid" id="hospitalServicesList"></div>
       </div>
 	  
-      <!-- ৩. ডায়াগনস্টিক সার্ভিস ও টেস্ট -->
       <div id="hospitalDiagBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-microscope" style="color: #D97706;"></i> ডায়াগনস্টিক সার্ভিস ও টেস্ট
@@ -646,7 +622,6 @@
         <div class="dept-badge-grid" id="hospitalDiagList"></div>
       </div>
 
-      <!-- সিনেমা হলের লাইভ মুভি ও শো-টাইম -->
       <div id="cinemaShowtimeBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -658,7 +633,6 @@
         <div id="cinemaMovieList" style="display: flex; flex-direction: column; gap: 10px;"></div>
       </div>
 
-      <!-- লাইভ সংবাদ ও হেডলাইন ব্লক -->
       <div id="newspaperFeedBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -670,7 +644,6 @@
         <div id="newspaperFeedList" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
 	  
-      <!-- ট্রিভিয়া ক্যারোজেল স্লাইডার -->
       <div id="eduTriviaBox" style="display: none; background: #FFFDF7; border: 1px solid #FDE68A; border-radius: 14px; padding: 14px; position: relative; overflow: hidden; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.05);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <div style="font-size: 14px; font-weight: 700; color: #92400E; display: flex; align-items: center; gap: 6px;">
@@ -694,7 +667,6 @@
         <div id="triviaDots" style="display: flex; justify-content: center; gap: 5px; margin-top: 10px;"></div>
       </div>
 	  
-	    <!-- আইএসপি প্যাকেজ নেভিগেশন কার্ড -->
       <div id="ispPackagesBtnBox" style="display: none;">
         <div class="doc-nav-card" style="background: #EFF6FF; border-color: #BFDBFE;" onclick="viewIspPackages()">
           <div class="doc-nav-left">
@@ -708,7 +680,6 @@
         </div>
       </div>
 
-      <!-- শিক্ষা প্রতিষ্ঠান সেকশন -->
       <div id="eduSectionBox" style="display: none; flex-direction: column; gap: 12px;">
         <div id="eduPrincipalCard" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
           <div id="eduPrincipalIcon" style="width: 44px; height: 44px; border-radius: 50%; background: #EDE9FE; color: #7C3AED; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
@@ -762,9 +733,7 @@
         </div>
       </div>
 	  
-	  <!-- প্রশাসন ও জনপ্রতিনিধি ডেডিকেটেড সেকশন -->
       <div id="adminSectionBox" style="display: none; flex-direction: column; gap: 12px;">
-        <!-- প্রধান প্রতিনিধি / কর্মকর্তা কার্ড -->
         <div id="adminLeaderCard" style="background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); border: 1px solid #BBF7D0; border-radius: 12px; padding: 14px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 12px;">
             <div style="width: 44px; height: 44px; border-radius: 50%; background: #16A34A; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
@@ -780,7 +749,6 @@
           </a>
         </div>
 
-        <!-- প্রশাসনিক ও নির্বাচনী তথ্যাবলী গ্রিড -->
         <div id="adminInfoGridBox" style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
           <div style="font-size: 13px; font-weight: 700; color: #0F5132; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
             <i class="fa-solid fa-landmark"></i> প্রশাসনিক ও নির্বাচনী বিবরণ
@@ -809,7 +777,6 @@
             </div>
           </div>
 
-          <!-- সহকারী / সংরক্ষিত প্রতিনিধি / সচিব কার্ড -->
           <div id="adminSubLeaderBox" style="margin-top: 10px; padding: 10px; background: #F0FDF4; border: 1px dashed #86EFAC; border-radius: 8px; font-size: 12px; display: none;">
             <div style="font-weight: 700; color: #166534; margin-bottom: 3px;">
               <i class="fa-solid fa-users"></i> সহকারী ও সংশ্লিষ্ট প্রতিনিধি / সচিব:
@@ -819,25 +786,22 @@
         </div>
       </div>
 	  
-	  <!-- উপজেলার প্রশাসনিক এলাকা (পৌরসভা ও ইউনিয়ন তালিকা) -->
-        <div id="adminUnitsBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 12px;">
-          <div style="font-size: 14px; font-weight: 700; color: #0F5132; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
-            <i class="fa-solid fa-sitemap" style="color: #16A34A;"></i> প্রশাসনিক এলাকা ও আওতাধীন ইউনিট
-          </div>
-          <div id="adminUnitsStats" style="font-size: 11.5px; color: #475569; background: #F8FAFC; border: 1px solid #E2E8F0; padding: 6px 10px; border-radius: 6px; margin: 8px 0 10px; display: none;"></div>
-          <div id="adminUnitsList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+      <div id="adminUnitsBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 12px;">
+        <div style="font-size: 14px; font-weight: 700; color: #0F5132; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-sitemap" style="color: #16A34A;"></i> প্রশাসনিক এলাকা ও আওতাধীন ইউনিট
         </div>
+        <div id="adminUnitsStats" style="font-size: 11.5px; color: #475569; background: #F8FAFC; border: 1px solid #E2E8F0; padding: 6px 10px; border-radius: 6px; margin: 8px 0 10px; display: none;"></div>
+        <div id="adminUnitsList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+      </div>
 
-        <!-- উপজেলার দর্শনীয় স্থানসমূহ -->
-        <div id="adminAttractionsBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 12px;">
-          <div style="font-size: 14px; font-weight: 700; color: #92400E; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
-            <i class="fa-solid fa-monument" style="color: #D97706;"></i> দর্শনীয় স্থানসমূহ
-          </div>
-          <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">ঐতিহাসিক ও পর্যটন আকর্ষণ</p>
-          <div id="adminAttractionsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+      <div id="adminAttractionsBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 12px;">
+        <div style="font-size: 14px; font-weight: 700; color: #92400E; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-monument" style="color: #D97706;"></i> দর্শনীয় স্থানসমূহ
         </div>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">ঐতিহাসিক ও পর্যটন আকর্ষণ</p>
+        <div id="adminAttractionsList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+      </div>
 
-<!-- পরিবহন ও বাস সার্ভিস ডেডিকেটেড ব্লক -->
       <div id="transportSectionBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: #0369A1; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-bus-simple"></i> রুট, কাউন্টার ও টিকিট বিবরণ
@@ -867,10 +831,7 @@
         </div>
       </div>
 
-<!-- টেলিকম ও অপারেটর প্রোফাইল ব্লক (স্কেচ অনুযায়ী) -->
       <div id="telecomSectionBox" style="display: none; flex-direction: column; gap: 14px;">
-        
-        <!-- ধরন ও গ্রাহক সংখ্যা গ্রিড -->
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 12px;">
           <div style="background: #F0F9FF; border: 1px solid #BAE6FD; padding: 10px 12px; border-radius: 8px;">
             <span style="font-size: 10.5px; color: #0369A1; display: block; font-weight: 600;">সেবার ধরন</span>
@@ -882,7 +843,6 @@
           </div>
         </div>
 
-        <!-- কাস্টমার সার্ভিস নেভিগেশন কার্ড -->
         <div id="telCareNavCard" class="doc-nav-card" style="background: #F0FDF4; border-color: #86EFAC; margin: 0; cursor: pointer;" onclick="viewTelecomCare()">
           <div class="doc-nav-left">
             <div class="doc-nav-icon" style="background: #16A34A;"><i class="fa-solid fa-headset"></i></div>
@@ -894,7 +854,6 @@
           <i class="fa-solid fa-arrow-right" style="color: #16A34A; font-size: 14px;"></i>
         </div>
 
-        <!-- প্যাকেজ ও রিচার্জ অফার সেকশন -->
         <div id="telOffersBox" style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <div style="font-size: 14px; font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 7px;">
@@ -904,9 +863,7 @@
             <span id="telOffersCountBadge" style="font-size: 10.5px; background: #E0F2FE; color: #0284C7; padding: 2px 8px; border-radius: 12px; font-weight: 700;">০টি অফার</span>
           </div>
 
-          <!-- ফিল্টার বার: ধরন ও মেয়াদ -->
           <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
-            <!-- অফার ধরন ফিল্টার চিপস -->
             <div class="area-filter-scroll" id="telOfferTypeFilters" style="padding: 2px 0;">
               <div class="area-chip active" onclick="filterTelecomOffers('সব', this)">সব অফার</div>
               <div class="area-chip" onclick="filterTelecomOffers('মিনিট', this)">📞 মিনিট</div>
@@ -915,7 +872,6 @@
             </div>
           </div>
 
-          <!-- ৩ কলামের রিচার্জ টেবিল -->
           <div style="overflow-x: auto; border: 1px solid #E2E8F0; border-radius: 8px;">
             <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
               <thead>
@@ -931,11 +887,8 @@
           </div>
           <div id="telNoOffersMsg" style="display: none; text-align: center; color: var(--text-muted); font-size: 12px; padding: 20px 0;">কোনো অফার পাওয়া যায়নি।</div>
         </div>
-
       </div>
-	
 	  
-      <!-- ১. এমএফএস সেবা ও চার্জসমূহ (স্মার্ট অ্যাকর্ডিয়ন - এখন ১ম স্থানে) -->
       <div id="mfsServicesBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 12px;">
         <div style="font-size: 14px; font-weight: 700; color: #0F172A; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -947,7 +900,6 @@
         <div id="mfsAccordionList"></div>
       </div>
 
-      <!-- ২. ক্যাশ আউট ক্যালকুলেটর বাটন -->
       <div id="mfsCalcNavCard" class="doc-nav-card" style="display: none; background: #FDF2F8; border-color: #FBCFE8; margin-top: 10px; cursor: pointer;" onclick="openMfsCalculatorFromProfile()">
         <div class="doc-nav-left">
           <div class="doc-nav-icon" style="background: #DB2777;"><i class="fa-solid fa-calculator"></i></div>
@@ -959,7 +911,6 @@
         <i class="fa-solid fa-chevron-right" style="color: #DB2777; font-size: 14px;"></i>
       </div>
 	  
-      <!-- ৩. কাস্টমার কেয়ার নেভিগেশন কার্ড -->
       <div id="mfsCareNavCard" class="doc-nav-card" style="display: none; background: #F0FDF4; border-color: #BBF7D0; margin-top: 10px; cursor: pointer;" onclick="viewCareCenters()">
         <div class="doc-nav-left">
           <div class="doc-nav-icon" style="background: #16A34A;"><i class="fa-solid fa-headset"></i></div>
@@ -971,7 +922,6 @@
         <i class="fa-solid fa-chevron-right" style="color: #16A34A; font-size: 14px;"></i>
       </div>
 	  
-	  <!-- ৪. বাংলাদেশ ব্যাংক লেনদেনের লিমিট কার্ড -->
       <div id="mfsLimitNavCard" class="doc-nav-card" style="display: none; background: #FAF5FF; border-color: #E9D5FF; margin-top: 10px; cursor: pointer;" onclick="openMfsLimit()">
         <div class="doc-nav-left">
           <div class="doc-nav-icon" style="background: #9333EA;"><i class="fa-solid fa-sliders"></i></div>
@@ -983,7 +933,6 @@
         <i class="fa-solid fa-chevron-right" style="color: #9333EA; font-size: 14px;"></i>
       </div>
 	  
-      <!-- নিয়মিত তথ্য তালিকা -->
       <div class="info-list">
         <div class="info-item">
           <i class="fa-solid fa-location-dot"></i>
@@ -1018,7 +967,6 @@
         </div>
       </div>
 	  
-	  <!-- বিগত সংসদ সদস্য ও নির্বাচনী ইতিহাস টাইমলাইন -->
       <div id="adminHistoryBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: #0F5132; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -1030,7 +978,6 @@
         <div id="adminHistoryList" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
 
-      <!-- স্পেশাল অফার ও ক্যাম্পেইন ব্যানার -->
       <div id="restaurantOfferBox" style="display: none; background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); border: 1.5px dashed #F59E0B; border-radius: var(--radius); padding: 14px; margin-top: 14px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
           <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; color: #92400E;">
@@ -1044,7 +991,6 @@
         <div id="restaurantOfferContent" style="display: flex; flex-direction: column; gap: 12px;"></div>
       </div>
 
-      <!-- রেস্টুরেন্ট মেনু ও মূল্যতালিকা ব্লক -->
       <div id="restaurantMenuBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: #B45309; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -1056,23 +1002,21 @@
         <div id="restaurantMenuList" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
 
-      <!-- সোশ্যাল মিডিয়া ও অনলাইন প্রোফাইল বার -->
       <div id="socialLinksBox" style="display: none; background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-top: 14px;">
         <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">
           অফিসিয়াল ওয়েবসাইট ও সামাজিক মাধ্যম
         </div>
         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-		  <a href="#" id="linkEmail" target="_blank" rel="noopener noreferrer" class="social-btn" style="display: none; background: #FEE2E2; color: #DC2626;" title="ইমেইল পাঠান"><i class="fa-solid fa-envelope"></i></a>
+          <a href="#" id="linkEmail" target="_blank" rel="noopener noreferrer" class="social-btn" style="display: none; background: #FEE2E2; color: #DC2626;" title="ইমেইল পাঠান"><i class="fa-solid fa-envelope"></i></a>
           <a href="#" id="linkWebsite" target="_blank" rel="noopener noreferrer" class="social-btn btn-web" style="display: none;" title="ওয়েবসাইট"><i class="fa-solid fa-globe"></i></a>
           <a href="#" id="linkFacebook" target="_blank" rel="noopener noreferrer" class="social-btn btn-fb" style="display: none;" title="ফেসবুক"><i class="fa-brands fa-facebook-f"></i></a>
           <a href="#" id="linkYoutube" target="_blank" rel="noopener noreferrer" class="social-btn btn-yt" style="display: none;" title="ইউটিউব"><i class="fa-brands fa-youtube"></i></a>
           <a href="#" id="linkLinkedin" target="_blank" rel="noopener noreferrer" class="social-btn btn-li" style="display: none;" title="লিংকডইন"><i class="fa-brands fa-linkedin-in"></i></a>
           <a href="#" id="linkInstagram" target="_blank" rel="noopener noreferrer" class="social-btn btn-ig" style="display: none;" title="ইনস্টাগ্রাম"><i class="fa-brands fa-instagram"></i></a>
-		  <a href="#" id="linkTiktok" target="_blank" rel="noopener noreferrer" class="social-btn" style="display: none; background: #000000; color: #FFFFFF;" title="টিকটক"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" id="linkTiktok" target="_blank" rel="noopener noreferrer" class="social-btn" style="display: none; background: #000000; color: #FFFFFF;" title="টিকটক"><i class="fa-brands fa-tiktok"></i></a>
         </div>
       </div>
 	  
-	  <!-- আইএসপি সংক্ষিপ্ত প্যাকেজ তুলনা টেবিল -->
       <div id="ispQuickCompareBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: #1E40AF; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -1097,7 +1041,6 @@
           </table>
         </div>
       </div>
-	  
     </div>
   </div>
 
@@ -1161,7 +1104,7 @@
     <div class="page-listings" id="ispPackagesListings"></div>
   </div>
 
-<!-- ৯. এমএফএস ক্যাশ আউট ক্যালকুলেটর পেজ -->
+  <!-- ৯. এমএফএস ক্যাশ আউট ক্যালকুলেটর পেজ -->
   <div class="slide-page" id="mfsCalculatorPage">
     <div class="top-sub-header">
       <button class="btn-circle" onclick="closeMfsCalculator()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -1171,7 +1114,6 @@
       </div>
     </div>
 
-    <!-- টাকার ইনপুট বক্স -->
     <div style="padding: 16px 20px 8px; flex-shrink: 0; background: #FFFFFF; border-bottom: 1px solid var(--border);">
       <div style="font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 6px;">ক্যাশ আউটের পরিমাণ লিখুন (টাকা):</div>
       <div style="display: flex; align-items: center; background: #F8FAFC; border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 0 12px;">
@@ -1180,7 +1122,6 @@
       </div>
     </div>
 
-    <!-- ব্র্যান্ড ফিল্টার চিপস -->
     <div class="area-filter-scroll" id="mfsBrandChips" style="padding: 10px 20px 4px;">
       <div class="area-chip active" data-brand="সব" onclick="setMfsFilter('সব', this)">সব অপারেটর</div>
       <div class="area-chip" data-brand="bkash" onclick="setMfsFilter('bkash', this)">বিকাশ</div>
@@ -1189,7 +1130,6 @@
       <div class="area-chip" data-brand="upay" onclick="setMfsFilter('upay', this)">উপায়</div>
     </div>
 
-    <!-- গণনার ফলাফল তালিকা -->
     <div class="page-listings" id="mfsResultsList"></div>
   </div>
   
@@ -1201,6 +1141,22 @@
         <h3 id="carePageTitle">কাস্টমার সার্ভিস সেন্টার</h3>
         <p id="carePageSub" style="font-size: 12px; color: var(--text-muted);">নারায়ণগঞ্জ ও আশেপাশের কেয়ার পয়েন্ট</p>
       </div>
+    </div>
+
+    <div style="padding: 14px 20px 4px; flex-shrink: 0; background: #FFFFFF;">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+        <input type="text" id="careSearchInput" placeholder="দোকানের নাম, মার্কেট বা সেবা খুঁজুন..." oninput="renderServiceCenterCards()">
+      </div>
+    </div>
+
+    <div class="area-filter-scroll" id="careAreaFilterBar" style="background: #FFFFFF; border-bottom: 1px solid var(--border); padding-top: 4px;">
+      <div class="area-chip active" onclick="setCareAreaFilter('সব এলাকা', this)"><i class="fa-solid fa-location-dot"></i> সব এলাকা</div>
+      <div class="area-chip" onclick="setCareAreaFilter('চাষাড়া', this)">চাষাড়া</div>
+      <div class="area-chip" onclick="setCareAreaFilter('সদর', this)">সদর / নিতাইগঞ্জ</div>
+      <div class="area-chip" onclick="setCareAreaFilter('সিদ্ধিরগঞ্জ', this)">সিদ্ধিরগঞ্জ</div>
+      <div class="area-chip" onclick="setCareAreaFilter('ফতুল্লা', this)">ফতুল্লা</div>
+      <div class="area-chip" onclick="setCareAreaFilter('বন্দর', this)">বন্দর</div>
     </div>
 
     <div class="page-listings" id="careCenterListings"></div>
@@ -1216,7 +1172,6 @@
       </div>
     </div>
 
-    <!-- দৈনিক ও মাসিক টগল বাটন -->
     <div style="padding: 14px 20px 4px; display: flex; gap: 10px; background: #FFFFFF; border-bottom: 1px solid var(--border);">
       <button type="button" id="limitDailyBtn" class="area-chip active" style="flex: 1; justify-content: center; padding: 10px 0; font-size: 13px;" onclick="switchLimitTab('daily')">
         <i class="fa-solid fa-calendar-day"></i> দৈনিক লিমিট
@@ -1240,22 +1195,21 @@
         </table>
       </div>
 
-      <!-- তথ্য ও সহায়িকা কার্ড -->
       <div style="background: #FFFBEB; border: 1px dashed #FCD34D; border-radius: 10px; padding: 12px 14px; font-size: 12px; color: #92400E; line-height: 1.6;">
         <div style="font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
           <i class="fa-solid fa-circle-info" style="color: #D97706;"></i> <span>জরুরি নির্দেশিকা:</span>
         </div>
-        <div>• একক লেনদেনে ক্যাশ আউট সর্বনিম্ন ৫০ টাকা এবং সর্বোচ্চ ৩০,০০০ টাকা[cite: 26]।</div>
-        <div>• একক লেনদেনে সেন্ড মানি সর্বনিম্ন ১০ টাকা এবং সর্বোচ্চ ৫০,০০০ টাকা[cite: 26]।</div>
+        <div>• একক লেনদেনে ক্যাশ আউট সর্বনিম্ন ৫০ টাকা এবং সর্বোচ্চ ৩০,০০০ টাকা।</div>
+        <div>• একক লেনদেনে সেন্ড মানি সর্বনিম্ন ১০ টাকা এবং সর্বোচ্চ ৫০,০০০ টাকা।</div>
         <div>• পেমেন্ট ও ইউটিলিটি পে-বিলের ক্ষেত্রে কোনো নির্দিষ্ট সীমা প্রযোজ্য নয় (অ্যাকাউন্ট ব্যালেন্স সাপেক্ষে)।</div>
         <div style="margin-top: 6px; font-size: 11px; color: #B45309; border-top: 1px dashed #FDE68A; padding-top: 4px;">
-          * বাংলাদেশ ব্যাংকের নির্দেশনা অনুযায়ী বিকাশ, নগদ, রকেট ও উপায়সহ সকল এমএফএস-এ এই একই লিমিট কার্যকর[cite: 26]।
+          * বাংলাদেশ ব্যাংকের নির্দেশনা অনুযায়ী বিকাশ, নগদ, রকেট ও উপায়সহ সকল এমএফএস-এ এই একই লিমিট কার্যকর।
         </div>
       </div>
     </div>
   </div>
   
-  <!-- ১২. মোবাইল সার্ভিসিং প্রোফাইল / হাব পেজ -->
+  <!-- ১২. মোবাইল সার্ভিসিং হাব পেজ -->
   <div class="slide-page" id="mobileCareHubPage">
     <div class="top-sub-header">
       <button class="btn-circle" onclick="closeMobileCareHub()"><i class="fa-solid fa-arrow-left"></i></button>
@@ -1266,8 +1220,6 @@
     </div>
 
     <div class="page-listings" style="padding-top: 14px;">
-      
-      <!-- হেডার ব্যানার -->
       <div style="background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); border: 1px solid #FDE68A; border-radius: var(--radius); padding: 16px; margin-bottom: 12px;">
         <div style="font-size: 16px; font-weight: 700; color: #92400E; display: flex; align-items: center; gap: 8px;">
           <i class="fa-solid fa-screwdriver-wrench" style="color: #D97706;"></i> মোবাইল কেয়ার গাইড
@@ -1277,8 +1229,6 @@
         </p>
       </div>
 
-      <!-- প্রধান দুটি বিকল্প কার্ড -->
-      <!-- ১. অফিসিয়াল কেয়ার কার্ড -->
       <div class="doc-nav-card" style="background: #F0FDF4; border-color: #86EFAC; margin-bottom: 10px; cursor: pointer;" onclick="openServiceCenterFiltered('মোবাইল', 'অফিসিয়াল', null, 'অফিসিয়াল ব্র্যান্ড কেয়ার')">
         <div class="doc-nav-left">
           <div class="doc-nav-icon" style="background: #16A34A;"><i class="fa-solid fa-certificate"></i></div>
@@ -1290,7 +1240,6 @@
         <i class="fa-solid fa-chevron-right" style="color: #16A34A; font-size: 14px;"></i>
       </div>
 
-      <!-- ২. আনঅফিসিয়াল / মাস্টার মেরামত কার্ড -->
       <div class="doc-nav-card" style="background: #EFF6FF; border-color: #BAE6FD; margin-bottom: 16px; cursor: pointer;" onclick="openServiceCenterFiltered('মোবাইল', 'আনঅফিসিয়াল', null, 'মাল্টিব্র্যান্ড ও মাস্টার সার্ভিসিং')">
         <div class="doc-nav-left">
           <div class="doc-nav-icon" style="background: #0284C7;"><i class="fa-solid fa-screwdriver"></i></div>
@@ -1302,7 +1251,6 @@
         <i class="fa-solid fa-chevron-right" style="color: #0284C7; font-size: 14px;"></i>
       </div>
 
-      <!-- ব্র্যান্ড কুইক ফিল্টার সেকশন -->
       <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
         <div style="font-size: 13.5px; font-weight: 700; color: #0F172A; margin-bottom: 4px; display: flex; align-items: center; gap: 7px;">
           <i class="fa-solid fa-tags" style="color: #D97706;"></i> নির্দিষ্ট ব্র্যান্ড বেছে নিন
@@ -1330,7 +1278,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
   

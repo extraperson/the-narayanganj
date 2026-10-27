@@ -37,6 +37,7 @@ body {
   overflow-x: hidden;
 }
 
+/* হেডার ও ব্র্যান্ড */
 .header {
   background: #fff;
   padding: 16px 20px 12px;
@@ -79,6 +80,7 @@ body {
   font-weight: 500;
 }
 
+/* সার্চ বক্স */
 .search-box {
   display: flex;
   align-items: center;
@@ -98,6 +100,7 @@ body {
   color: var(--text);
 }
 
+/* এলাকা ও ফিল্টার চিপস */
 .area-filter-scroll {
   display: flex;
   gap: 8px;
@@ -108,6 +111,7 @@ body {
   scrollbar-width: none;
   flex-shrink: 0;
 }
+
 .area-filter-scroll::-webkit-scrollbar {
   display: none;
 }
@@ -135,6 +139,7 @@ body {
   box-shadow: 0 2px 6px rgba(15, 81, 50, 0.25);
 }
 
+/* ব্যানার ও কুইক বার */
 .banner {
   margin: 15px 20px 5px;
   background: linear-gradient(135deg, #0F5132 0%, #198754 100%);
@@ -194,6 +199,7 @@ body {
 
 .section-title i { color: var(--primary); }
 
+/* হোম ক্যাটাগরি গ্রিড */
 .home-categories-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -244,6 +250,7 @@ body {
   margin-top: 2px;
 }
 
+/* ক্যাটাগরি কালার থিম */
 .theme-doctor { background: #E0F2FE; color: #0284C7; }
 .theme-gov-hospital { background: #DCFCE7; color: #16A34A; }
 .theme-pvt-hospital { background: #E0E7FF; color: #4338CA; }
@@ -259,6 +266,7 @@ body {
 .theme-food { background: #FFEDD5; color: #EA580C; }
 .theme-all { background: #F1F5F9; color: #475569; }
 
+/* স্লাইড পেজ ও লেয়ারিং */
 .slide-page, .details-view {
   position: fixed;
   top: 0;
@@ -278,18 +286,13 @@ body {
   transform: translateX(-50%) translateX(0);
 }
 
-	#categoryPage { z-index: 500; }
-    #bookmarkPage { z-index: 600; }
-    #detailsView { z-index: 1000; background: #FFFFFF; }
-    #doctorPage { z-index: 1500; }
-    #eduResultsPage { z-index: 1600; background: #F8F9FA; }
-	#ispPackagesPage {z-index: 1600;}
-	#mfsCalculatorPage { z-index: 1600; background: #F8F9FA; }
-    #doctorProfileView { z-index: 2000; background: #FFFFFF; }
-	#careCenterPage { z-index: 1600; background: #F8F9FA; }
-	#mfsLimitPage { z-index: 1600; background: #F8F9FA; }
-	#mobileCareHubPage { z-index: 1500; background: #F8F9FA; }
-	
+#categoryPage { z-index: 500; }
+#bookmarkPage { z-index: 600; }
+#detailsView { z-index: 1000; background: #FFFFFF; }
+#doctorPage, #mobileCareHubPage { z-index: 1500; }
+#eduResultsPage, #ispPackagesPage, #mfsCalculatorPage, #careCenterPage, #mfsLimitPage { z-index: 1600; }
+#doctorProfileView { z-index: 2000; background: #FFFFFF; }
+
 .top-sub-header {
   position: sticky;
   top: 0;
@@ -315,11 +318,12 @@ body {
   font-size: 16px;
   color: var(--text);
   flex-shrink: 0;
-  transition: color 0.15s;
+  transition: color 0.15s, background 0.15s;
 }
 
 .btn-circle.active-heart { color: #E11D48; background: #FFE4E6; }
 
+/* তালিকা ও কার্ড */
 .page-listings {
   padding: 6px 20px 95px;
   display: flex;
@@ -381,6 +385,7 @@ body {
   width: fit-content;
 }
 
+/* বাটনসমূহ */
 .action-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -404,7 +409,14 @@ body {
 .btn-call { background: var(--primary); color: #fff; box-shadow: 0 3px 8px rgba(15, 81, 50, 0.2); }
 .btn-map { background: #F8FAFC; color: var(--text); border: 1px solid var(--border); }
 
-.details-hero-img { width: 100%; height: 180px; object-fit: cover; background: #E2E8F0; }
+/* বিস্তারিত পেজ */
+.details-hero-img {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  background: #F1F5F9;
+  padding: 16px;
+}
 
 .details-content {
   padding: 20px 20px 95px;
@@ -414,38 +426,32 @@ body {
 }
 
 .details-title { font-size: 21px; font-weight: 700; color: var(--text); line-height: 1.25; }
-.details-tag {
+
+.details-tag, .eiin-badge, .beds-badge {
   display: inline-block;
-  background: var(--primary-light);
-  color: var(--primary);
   padding: 3px 10px;
   border-radius: 6px;
   font-size: 12px;
-  font-weight: 600;
   margin-top: 6px;
 }
 
+.details-tag {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+}
+
 .eiin-badge {
-  display: inline-block;
   background: #EDE9FE;
   color: #7C3AED;
-  padding: 3px 10px;
-  border-radius: 6px;
-  font-size: 12px;
   font-weight: 700;
-  margin-top: 6px;
   margin-left: 6px;
 }
 
 .beds-badge {
-  display: inline-block;
   background: #E0F2FE;
   color: #0284C7;
-  padding: 3px 10px;
-  border-radius: 6px;
-  font-size: 12px;
   font-weight: 700;
-  margin-top: 6px;
   margin-left: 6px;
 }
 
@@ -534,6 +540,7 @@ body {
   text-decoration: none;
   transition: transform 0.15s;
 }
+
 .social-btn:active { transform: scale(0.92); }
 .btn-web { background: #0F5132; }
 .btn-fb { background: #1877F2; }
@@ -541,6 +548,7 @@ body {
 .btn-li { background: #0A66C2; }
 .btn-ig { background: linear-gradient(45deg, #F58529, #DD2A7B, #8134AF); }
 
+/* বটম নেভিগেশন */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -566,6 +574,9 @@ body {
   cursor: pointer;
 }
 
+.nav-item.active { color: var(--primary); font-weight: 700; }
+.nav-item i { font-size: 18px; }
+
 /* লাইভ সংবাদ স্টাইল */
 .news-feed-item {
   display: flex;
@@ -578,15 +589,15 @@ body {
   text-decoration: none;
   transition: background 0.15s;
 }
-.news-feed-item:active {
-  background: #F1F5F9;
-}
+
+.news-feed-item:active { background: #F1F5F9; }
 .news-feed-item i {
   color: #DC2626;
   font-size: 12px;
   margin-top: 4px;
   flex-shrink: 0;
 }
+
 .news-feed-title {
   font-size: 13px;
   font-weight: 600;
@@ -594,20 +605,11 @@ body {
   line-height: 1.35;
 }
 
-/* ব্যানার কন্টেইনার */
-.details-hero-img {
-  width: 100%;
-  height: 180px;
-  object-fit: contain;          /* লোগো কাটবে না, পুরোটা দেখা যাবে */
-  background: #f1f5f9;          /* পেছনে সফট ধূসর/সাদা ব্যাকগ্রাউন্ড */
-  padding: 16px;                /* চারপাশে শ্বাস নেওয়ার মতো খালি জায়গা */
-}
-
-/* এমএফএস স্মার্ট অ্যাকর্ডিয়ন (কালার মিক্সড ডিজাইন) */
+/* এমএফএস স্মার্ট অ্যাকর্ডিয়ন */
 .accordion-item {
   background: #F8FAFC;
   border: 1px solid #CBD5E1;
-  border-left: 4px solid #0284C7; /* বামে ডিস্টিংকট ব্লু কালার বার */
+  border-left: 4px solid #0284C7;
   border-radius: 10px;
   overflow: hidden;
   margin-bottom: 10px;
@@ -631,7 +633,7 @@ body {
 }
 
 .accordion-item.open .accordion-header {
-  background: #F0F9FF; /* ওপেন হলে সফট ব্লু ব্যাকগ্রাউন্ড */
+  background: #F0F9FF;
 }
 
 .accordion-title-box {
@@ -679,7 +681,7 @@ body {
   display: none;
   padding: 12px 14px;
   border-top: 1px solid #E2E8F0;
-  background: #FFFFFF; /* ভেতরে ক্লিয়ার হোয়াইট ব্যাকগ্রাউন্ড */
+  background: #FFFFFF;
   font-size: 13px;
   color: #334155;
   line-height: 1.6;
@@ -700,7 +702,7 @@ body {
   margin-top: 6px;
 }
 
-/* লেনদেনের লিমিট পেজের স্টাইল */
+/* লেনদেনের লিমিট পেজের টেবিল */
 .limit-table-box {
   background: #FFFFFF;
   border: 1px solid var(--border);
@@ -738,15 +740,7 @@ body {
   gap: 6px;
 }
 
-.limit-count-badge {
-  font-size: 11px;
-  color: #64748B;
-  display: block;
-  margin-top: 2px;
-}
-
-/* মোবাইল হাব পেজের ব্র্যান্ড বাটন */
-
+/* মোবাইল হাব ব্র্যান্ড বাটন */
 .brand-pick-card {
   background: #F8FAFC;
   border: 1px solid #CBD5E1;
@@ -763,6 +757,3 @@ body {
   background: #E2E8F0;
   transform: scale(0.96);
 }
-
-.nav-item.active { color: var(--primary); font-weight: 700; }
-.nav-item i { font-size: 18px; }

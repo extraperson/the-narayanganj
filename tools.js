@@ -1,6 +1,20 @@
 /* ==========================================================================
-   THE NARAYANGANJ - TOOLS SCRIPT (MFS CALCULATOR)
+   THE NARAYANGANJ - TOOLS SCRIPT (MFS CALCULATOR & LIMITS)
    ========================================================================== */
+
+// নিরাপদ ডিজিট কনভার্টার গার্ড (যাতে app.js এর ওপর শতভাগ নির্ভর না করে ক্র্যাশ এড়ানো যায়)
+const safeEnDigits = (val) => {
+  if (val === null || val === undefined) return '';
+  const bnToEn = {'০':'0', '১':'1', '২':'2', '৩':'3', '৪':'4', '৫':'5', '৬':'6', '৭':'7', '৮':'8', '৯':'9'};
+  return val.toString().trim().replace(/[০-৯]/g, d => bnToEn[d]);
+};
+
+const safeBnDigits = (val) => {
+  if (val === null || val === undefined) return '';
+  if (typeof toBanglaNumber === 'function') return toBanglaNumber(val);
+  const enToBn = {'0':'০', '1':'১', '2':'২', '3':'৩', '4':'৪', '5':'৫', '6':'৬', '7':'৭', '8':'৮', '9':'৯'};
+  return val.toString().replace(/\d/g, d => enToBn[d]);
+};
 
 // এমএফএস চার্জের বিস্তারিত ডেটাবেজ (ভ্যাটসহ কার্যকর রেট)
 const MFS_RATES = {
@@ -55,7 +69,7 @@ const MFS_RATES = {
   }
 };
 
-let selectedMfsFilter = 'সব'; // 'সব', 'bkash', 'nagad', 'rocket', 'upay'
+let selectedMfsFilter = 'সব';
 
 // ১. ক্যালকুলেটর পেজ ওপেন ও ক্লোজ ফাংশন
 function openMfsCalculator(defaultBrand = null) {
@@ -63,8 +77,8 @@ function openMfsCalculator(defaultBrand = null) {
   if (!page) return;
 
   const input = document.getElementById('mfsAmountInput');
-  if (input && (!input.value || input.value === '')) {
-    input.value = '১০০০'; // ডিফল্ট ১০০০ টাকা
+  if (input && (!input.value || input.value.trim() === '')) {
+    input.value = '1000'; // type="number" এর জন্য নিরাপদ মান
   }
 
   // ফিল্টার চিপস সেট করা
@@ -109,11 +123,7 @@ function calculateMfsCharges() {
   container.innerHTML = '';
 
   const input = document.getElementById('mfsAmountInput');
-  // ইউনিভার্সাল বাংলা-টু-ইংরেজি কনভার্ট
-  let rawAmount = input ? input.value : '0';
-  if (typeof toEnDigits === 'function') {
-    rawAmount = toEnDigits(rawAmount);
-  }
+  let rawAmount = input ? safeEnDigits(input.value).replace(/[^\d.]/g, '') : '0';
   const amount = parseFloat(rawAmount) || 0;
 
   if (amount <= 0) {
@@ -121,7 +131,6 @@ function calculateMfsCharges() {
     return;
   }
 
-  // ব্র্যান্ড অনুযায়ী কার্ড তৈরি
   const brandsToDisplay = selectedMfsFilter === 'সব' 
     ? Object.keys(MFS_RATES) 
     : [selectedMfsFilter];
@@ -130,7 +139,7 @@ function calculateMfsCharges() {
     const data = MFS_RATES[key];
     if (!data) return;
 
-    // চার্জ নির্ণয়
+    // চার্জ হিসেব
     const appCharge = (amount * data.rates.app) / 1000;
     const ussdCharge = (amount * data.rates.ussd) / 1000;
     const atmCharge = data.rates.atm !== null ? (amount * data.rates.atm) / 1000 : null;
@@ -145,7 +154,7 @@ function calculateMfsCharges() {
           <i class="${data.icon}"></i> ${data.name}
         </div>
         <span style="font-size: 11px; font-weight: 600; color: #475569; background: ${data.bg}; padding: 2px 8px; border-radius: 6px;">
-          মূল টাকা: ৳ ${toBanglaNumber(Math.round(amount))}
+          মূল টাকা: ৳ ${safeBnDigits(Math.round(amount))}
         </span>
       </div>
 
@@ -155,13 +164,13 @@ function calculateMfsCharges() {
         <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 8px 10px;">
           <div style="font-size: 11px; color: #64748B; display: flex; justify-content: space-between;">
             <span><i class="fa-solid fa-mobile"></i> অ্যাপ ক্যাশ আউট</span>
-            <strong>${toBanglaNumber(data.rates.app)}৳/হাজার</strong>
+            <strong>${safeBnDigits(data.rates.app)}৳/হাজার</strong>
           </div>
           <div style="font-size: 15px; font-weight: 800; color: #0F172A; margin-top: 3px;">
-            ৳ ${toBanglaNumber(appCharge.toFixed(2))}
+            ৳ ${safeBnDigits(appCharge.toFixed(2))}
           </div>
           <div style="font-size: 10px; color: #16A34A; margin-top: 2px;">
-            মোট কাটবে: ৳ ${toBanglaNumber((amount + appCharge).toFixed(2))}
+            মোট কাটবে: ৳ ${safeBnDigits((amount + appCharge).toFixed(2))}
           </div>
         </div>
 
@@ -169,13 +178,13 @@ function calculateMfsCharges() {
         <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 8px 10px;">
           <div style="font-size: 11px; color: #64748B; display: flex; justify-content: space-between;">
             <span><i class="fa-solid fa-hashtag"></i> ডায়াল (USSD)</span>
-            <strong>${toBanglaNumber(data.rates.ussd)}৳/হাজার</strong>
+            <strong>${safeBnDigits(data.rates.ussd)}৳/হাজার</strong>
           </div>
           <div style="font-size: 15px; font-weight: 800; color: #0F172A; margin-top: 3px;">
-            ৳ ${toBanglaNumber(ussdCharge.toFixed(2))}
+            ৳ ${safeBnDigits(ussdCharge.toFixed(2))}
           </div>
           <div style="font-size: 10px; color: #16A34A; margin-top: 2px;">
-            মোট কাটবে: ৳ ${toBanglaNumber((amount + ussdCharge).toFixed(2))}
+            মোট কাটবে: ৳ ${safeBnDigits((amount + ussdCharge).toFixed(2))}
           </div>
         </div>
 
@@ -184,10 +193,10 @@ function calculateMfsCharges() {
           <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 8px 10px;">
             <div style="font-size: 11px; color: #166534; display: flex; justify-content: space-between;">
               <span><i class="fa-solid fa-star"></i> প্রিয় এজেন্ট</span>
-              <strong>${toBanglaNumber(data.rates.priyo_app)}৳/হাজার</strong>
+              <strong>${safeBnDigits(data.rates.priyo_app)}৳/হাজার</strong>
             </div>
             <div style="font-size: 15px; font-weight: 800; color: #15803D; margin-top: 3px;">
-              ৳ ${toBanglaNumber(priyoCharge.toFixed(2))}
+              ৳ ${safeBnDigits(priyoCharge.toFixed(2))}
             </div>
           </div>
         ` : ''}
@@ -196,10 +205,10 @@ function calculateMfsCharges() {
         <div style="background: ${atmCharge !== null ? '#EFF6FF' : '#F1F5F9'}; border: 1px solid ${atmCharge !== null ? '#BFDBFE' : '#E2E8F0'}; border-radius: 8px; padding: 8px 10px; ${priyoCharge === null ? 'grid-column: span 2;' : ''}">
           <div style="font-size: 11px; color: ${atmCharge !== null ? '#1E40AF' : '#94A3B8'}; display: flex; justify-content: space-between;">
             <span><i class="fa-solid fa-money-bill-transfer"></i> এটিএম বুথ</span>
-            <strong>${atmCharge !== null ? toBanglaNumber(data.rates.atm) + '৳/হাজার' : 'সুবিধা নেই'}</strong>
+            <strong>${atmCharge !== null ? safeBnDigits(data.rates.atm) + '৳/হাজার' : 'সুবিধা নেই'}</strong>
           </div>
           <div style="font-size: 15px; font-weight: 800; color: ${atmCharge !== null ? '#1D4ED8' : '#94A3B8'}; margin-top: 3px;">
-            ${atmCharge !== null ? '৳ ' + toBanglaNumber(atmCharge.toFixed(2)) : 'প্রযোজ্য নয়'}
+            ${atmCharge !== null ? '৳ ' + safeBnDigits(atmCharge.toFixed(2)) : 'প্রযোজ্য নয়'}
           </div>
         </div>
 

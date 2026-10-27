@@ -1,11 +1,3 @@
-/* ==========================================================================
-   THE NARAYANGANJ - CORE SCRIPT (PART 1)
-   --------------------------------------------------------------------------
-   ১. কনফিগারেশন ও স্টেট ভ্যারিয়েবল
-   ২. ডেটা নরমালাইজেশন ও ফেচিং হেল্পার
-   ৩. ক্যাটাগরি পেজ ও সুবিন্যস্ত ফিল্টারিং ইঞ্জিন (হোম স্ক্রিন সিকোয়েন্স)
-   ========================================================================== */
-
 // --- ১. কনফিগারেশন ও স্টেট ভ্যারিয়েবল ---
 const SHEET_ID = "1ctXswktft11lTCw_TiTbwoF2jgmLsHaf4Zno23QImjQ";
 const API_PLACES = `https://opensheet.elk.sh/${SHEET_ID}/Sheet1`;
@@ -19,8 +11,7 @@ const API_TRANSPORT = `https://opensheet.elk.sh/${SHEET_ID}/Transport`;
 const API_HEALTH = `https://opensheet.elk.sh/${SHEET_ID}/Health`;
 const API_TELECOM = `https://opensheet.elk.sh/${SHEET_ID}/Telecom`;
 const API_OFFERS = `https://opensheet.elk.sh/${SHEET_ID}/RechargeOffers`;
-const API_SERVICE_CENTERS = `https://opensheet.elk.sh/${SHEET_ID}/ServiceCenters`
-
+const API_SERVICE_CENTERS = `https://opensheet.elk.sh/${SHEET_ID}/ServiceCenters`;
 
 let placesData = [];
 let healthData = [];
@@ -54,35 +45,33 @@ try {
   bookmarks = { places: [], doctors: [] };
 }
 
-// ১. সার্বজনীন বাংলা থেকে ইংরেজি ডিজিট কনভার্টার (EIIN, সাল, ফোন, আইডি সবকিছুর জন্য)
+// সার্বজনীন রূপান্তর ম্যাপিং
+const BN_TO_EN_MAP = {'০':'0', '১':'1', '২':'2', '৩':'3', '৪':'4', '৫':'5', '৬':'6', '৭':'7', '৮':'8', '৯':'9'};
+const EN_TO_BN_MAP = {'0':'০', '1':'১', '2':'২', '3':'৩', '4':'৪', '5':'৫', '6':'৬', '7':'৭', '8':'৮', '9':'৯'};
+
 function toEnDigits(val) {
   if (val === null || val === undefined) return '';
-  const bnToEn = {'০':'0', '১':'1', '২':'2', '৩':'3', '৪':'4', '৫':'5', '৬':'6', '৭':'7', '৮':'8', '৯':'9'};
-  return val.toString().trim().replace(/[০-৯]/g, d => bnToEn[d]);
+  return val.toString().trim().replace(/[০-৯]/g, d => BN_TO_EN_MAP[d]);
 }
 
-// ২. সার্বজনীন ফোন নম্বর ক্লিনার (উপরে তৈরি toEnDigits ব্যবহার করে)
+function toBanglaNumber(num) {
+  if (num === null || num === undefined) return '';
+  return num.toString().replace(/\d/g, d => EN_TO_BN_MAP[d] || d);
+}
+
 function cleanPhoneNumber(phone) {
   if (!phone) return '';
   let str = toEnDigits(phone).replace(/[^\d+]/g, '');
-  if (str.length === 10 && str.startsWith('1')) {
-    str = '0' + str;
-  }
+  if (str.length === 10 && str.startsWith('1')) str = '0' + str;
   return str;
 }
 
 function isOfferExpired(dateStr) {
   if (!dateStr) return false;
-  const bnToEn = {'০':'0','১':'1','২':'2','৩':'3','৪':'4','৫':'5','৬':'6','৭':'7','৮':'8','৯':'9'};
-  const cleanStr = dateStr.toString().replace(/[০-৯]/g, d => bnToEn[d]).trim();
+  const cleanStr = toEnDigits(dateStr);
   const match = cleanStr.match(/(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);
   if (!match) return false;
-  
-  const year = parseInt(match[1], 10);
-  const month = parseInt(match[2], 10) - 1;
-  const day = parseInt(match[3], 10);
-  
-  return new Date() > new Date(year, month, day, 23, 59, 59, 999);
+  return new Date() > new Date(parseInt(match[1], 10), parseInt(match[2], 10) - 1, parseInt(match[3], 10), 23, 59, 59, 999);
 }
 
 function parseOffers(rawOffer) {
@@ -119,6 +108,7 @@ function parseOffers(rawOffer) {
   return blocks.filter(b => !isOfferExpired(b.expDate) && (b.title || b.points.length > 0));
 }
 
+// ডেটা নরমালাইজার ফাংশনসমূহ
 function normalizeEducationItem(item) {
   const cleanPhone = cleanPhoneNumber(item.mobile || item.phone || item.telephone || '');
   const addr = [item.address, item.mouza, item.post_office ? `${item.post_office} (${item.post_code || ''})` : ''].filter(Boolean).join(', ');
@@ -238,8 +228,23 @@ function organizeListings(dataList) {
   return [...featured, ...shuffleArray(normal)];
 }
 
-// --- ৩. ক্যাটাগরি পেজ ও ফিল্টারিং ইঞ্জিন ---
+// --- স্লাইড পেজ হ্যান্ডলার ---
+function closeSlide(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
 
+function closeCategoryPage() { closeSlide('categoryPage'); }
+function closeDoctorPage() { closeSlide('doctorPage'); }
+function closeDoctorProfile() { closeSlide('doctorProfileView'); }
+function closeBookmarkPage() { closeSlide('bookmarkPage'); }
+function closeDetails() { closeSlide('detailsView'); }
+function closeInstitutionResults() { closeSlide('eduResultsPage'); }
+function closeIspPackages() { closeSlide('ispPackagesPage'); }
+function closeCareCenters() { closeSlide('careCenterPage'); }
+function closeMobileCareHub() { closeSlide('mobileCareHubPage'); }
+
+// --- ৩. ক্যাটাগরি পেজ ও ফিল্টারিং ইঞ্জিন ---
 function openCategoryPage(category, subtitle = '') {
   currentCategory = category;
   const tEl = document.getElementById('catPageTitle');
@@ -263,11 +268,6 @@ function openCategoryPage(category, subtitle = '') {
     el.classList.add('open');
     window.history.pushState({ page: 'category' }, '');
   }
-}
-
-function closeCategoryPage() {
-  const el = document.getElementById('categoryPage');
-  if (el) el.classList.remove('open');
 }
 
 function setCategoryAreaFilter(areaName, chipElement) {
@@ -373,91 +373,40 @@ function renderCategoryItems() {
     
     let matchCat = false;
 
-    // --- ১. স্বাস্থ্য সেবা ---
-    if (currentCategory === 'সব') {
-      matchCat = true;
-    } else if (currentCategory === 'সরকারি হাসপাতাল') {
-      matchCat = (itemCat === 'সরকারি হাসপাতাল');
-    } else if (currentCategory === 'বেসরকারি হাসপাতাল') {
-      matchCat = (itemCat === 'বেসরকারি হাসপাতাল' || itemCat === 'হাসপাতাল');
-    } else if (currentCategory === 'ডায়াগনস্টিক' || currentCategory === 'ডায়াগনস্টিক সেন্টার') {
-      matchCat = (itemCat.includes('ডায়াগনস্টিক') || itemCat.includes('ল্যাব') || itemCat.includes('প্যাথলজি'));
-    } else if (currentCategory === 'ডেন্টাল' || currentCategory === 'ডেন্টাল ক্লিনিক') {
-      matchCat = (itemCat.includes('ডেন্টাল') || itemCat.includes('দাঁত'));
-    } else if (currentCategory === 'ব্লাড ব্যাংক' || currentCategory === 'ব্লাড ব্যাংক ও রক্তদান' || currentCategory === 'রক্তদান') {
-      matchCat = (itemCat.includes('ব্লাড') || itemCat.includes('রক্ত'));
-    } else if (currentCategory === '২৪ ঘণ্টা ফার্মেসী' || currentCategory === 'ফার্মেসী') {
-      matchCat = (itemCat.includes('ফার্মেসী') || itemCat.includes('ফার্মেসি') || itemCat.includes('ওষুধ') || itemCat.includes('ঔষধ'));
-    } else if (currentCategory === 'চক্ষু হাসপাতাল' || currentCategory === 'চক্ষু সেবা') {
-      matchCat = (itemCat.includes('চক্ষু') || itemCat.includes('চোখ') || itemCat.includes('আই'));
-    }
-
-    // --- ২. শিক্ষা ও সংবাদ ---
-    else if (currentCategory === 'শিক্ষা প্রতিষ্ঠান') {
-      matchCat = (itemCat === 'শিক্ষা প্রতিষ্ঠান' || itemCat === 'স্কুল' || itemCat === 'কলেজ' || itemCat === 'মাদরাসা');
-    } else if (currentCategory === 'সংবাদপত্র') {
-      matchCat = (itemCat.includes('সংবাদ') || itemCat.includes('পত্রিকা') || itemCat.includes('নিউজ'));
-    }
-
-    // --- ৩. বিনোদন ও অনুষ্ঠান ---
-    else if (currentCategory === 'সিনেমা হল') {
-      matchCat = (itemCat.includes('সিনেমা') || itemCat.includes('সিনেপ্লেক্স') || itemCat.includes('থিয়েটার'));
-    } else if (currentCategory === 'পর্যটন ও বিনোদন' || currentCategory === 'দর্শনীয় স্থান' || currentCategory === 'বিনোদন') {
-      matchCat = (itemCat.includes('দর্শনীয়') || itemCat.includes('পর্যটন') || itemCat.includes('বিনোদন') || itemCat.includes('পার্ক') || itemCat.includes('ঐতিহাসিক'));
-    } else if (currentCategory === 'কমিউনিটি সেন্টার') {
-      matchCat = (itemCat.includes('কমিউনিটি') || itemCat.includes('কনভেনশন') || itemCat.includes('পার্টি সেন্টার'));
-    }
-	
-	// --- ডিজিটাল ও প্রযুক্তি সেবা ---
-	else if (currentCategory === 'টেলিকম') {
-    matchCat = (itemCat === 'টেলিকম' || itemCat.includes('টেলিকম') || itemCat.includes('অপারেটর') || itemCat.includes('সিম'));
-  } else if (currentCategory === 'মোবাইল ব্যাংকিং') {
-    matchCat = (itemCat === 'মোবাইল ব্যাংকিং' || itemCat.includes('ব্যাংকিং') || itemCat.includes('mfs') || itemCat.includes('এমএফএস'));
-  } else if (currentCategory === 'মোবাইল সার্ভিসিং') {
-    matchCat = (itemCat.includes('সার্ভিসিং') || itemCat.includes('কেয়ার') || itemCat.includes('মেরামত'));
-  }
-
-    // --- ৪. প্রশাসন ও জনপ্রতিনিধি ---
-    else if (currentCategory === 'জেলা প্রশাসন' || currentCategory === 'জেলা প্রশাসন ও পুলিশ') {
-      matchCat = (itemCat === 'জেলা প্রশাসন' || (!itemCat.includes('উপজেলা') && !itemCat.includes('থানা') && (itemCat.includes('জেলা') || itemCat.includes('পুলিশ') || itemCat.includes('ডিসি') || itemCat.includes('এসপি') || itemCat.includes('প্রশাসন'))));
-    } else if (currentCategory === 'সংসদীয় আসন') {
-      matchCat = (itemCat.includes('সংসদ') || itemCat.includes('আসন') || itemCat.includes('এমপি'));
-    } else if (currentCategory === 'সিটি কর্পোরেশন') {
-      matchCat = (itemCat.includes('সিটি কর্পোরেশন') || itemCat.includes('নাসিক') || itemCat.includes('কাউন্সিলর') || itemCat.includes('ওয়ার্ড'));
-    } else if (currentCategory === 'উপজেলা প্রশাসন') {
-      matchCat = (itemCat === 'উপজেলা প্রশাসন' || (itemCat.includes('উপজেলা') && !itemCat.includes('পৌরসভা')));
-    } else if (currentCategory === 'পৌরসভা') {
-      matchCat = (itemCat === 'পৌরসভা' || itemCat.includes('পৌরসভা'));
-    } else if (currentCategory === 'ইউনিয়ন পরিষদ') {
-      matchCat = (itemCat.includes('ইউনিয়ন') || itemCat.includes('ইউপি') || itemCat.includes('চেয়ারম্যান'));
-    }
-
-    // --- ৫. খাবার ও নাগরিক সেবা ---
-    else if (currentCategory === 'রেস্টুরেন্ট' || currentCategory === 'রেস্টুরেন্ট ও ক্যাফে' || currentCategory === 'খাবার') {
-      matchCat = (itemCat === 'রেস্টুরেন্ট' || itemCat.includes('রেস্টুরেন্ট') || itemCat.includes('রেস্তোরাঁ') || itemCat.includes('ক্যাফে') || itemCat.includes('খাবার') || itemCat.includes('মিষ্টি'));
-    } else if (currentCategory === 'জরুরি সেবা') {
-      matchCat = (itemCat.includes('জরুরি') || itemCat.includes('থানা') || itemCat.includes('পুলিশ ফাঁড়ি') || itemCat.includes('ফায়ার') || itemCat.includes('ফায়ার') || itemCat.includes('অ্যাম্বুলেন্স'));
-    } else if (currentCategory === 'কুরিয়ার সার্ভিস' || currentCategory === 'কুরিয়ার ও পার্সেল') {
-      matchCat = (itemCat.includes('কুরিয়ার') || itemCat.includes('পার্সেল'));
-    } else if (currentCategory === 'ইউটিলিটি সেবা' || currentCategory === 'বিদ্যুৎ, গ্যাস ও পানি' || currentCategory === 'বিদ্যুৎ ও গ্যাস') {
-      matchCat = (itemCat.includes('বিদ্যুৎ') || itemCat.includes('গ্যাস') || itemCat.includes('পানি') || itemCat.includes('ডিপিডিসি') || itemCat.includes('তিতাস') || itemCat.includes('ইউটিলিটি'));
-    } else if (currentCategory === 'রেন্ট-এ-কার' || currentCategory === 'রেন্ট-এ-কার ও গাড়ি') {
-      matchCat = (itemCat.includes('রেন্ট') || itemCat.includes('কার') || itemCat.includes('গাড়ি ভাড়া') || itemCat.includes('মাইক্রো'));
-    } else if (currentCategory === 'ইন্টারনেট ও আইএসপি' || currentCategory === 'আইএসপি' || currentCategory === 'ব্রডব্যান্ড') {
-      matchCat = (itemCat.includes('আইএসপি') || itemCat.includes('ইন্টারনেট') || itemCat.includes('ব্রডব্যান্ড') || itemCat.toLowerCase().includes('isp'));
-    } else if (currentCategory === 'আইনজীবী ও আইনি সেবা') {
-      matchCat = (itemCat.includes('আইনজীবী') || itemCat.includes('উকিল') || itemCat.includes('কোর্ট') || itemCat.includes('আইন'));
-    } else if (currentCategory === 'পার্লার ও সেলুন') {
-      matchCat = (itemCat.includes('পার্লার') || itemCat.includes('সেলুন') || itemCat.includes('বিউটি'));
-    } else if (currentCategory === 'জেনারেল স্টোর') {
-      matchCat = (itemCat.includes('জেনারেল স্টোর') || itemCat.includes('স্টোর') || itemCat.includes('মুদি'));
-    } else if (currentCategory === 'পরিবহন') {
-      matchCat = (itemCat.includes('পরিবহন') || itemCat.includes('বাস') || itemCat.includes('ট্রেন') || itemCat.includes('রেল') || itemCat.includes('লঞ্চ') || itemCat.includes('ঘাট'));
-    } else if (currentCategory === 'শপিং ও ব্যবসা') {
-      matchCat = (itemCat.includes('শপিং') || itemCat.includes('মার্কেট') || itemCat.includes('ব্যবসা') || itemCat.includes('আড়ত') || itemCat.includes('দোকান'));
-    } else {
-      matchCat = itemCat.toLowerCase().includes(currentCategory.toLowerCase());
-    }
+    if (currentCategory === 'সব') matchCat = true;
+    else if (currentCategory === 'সরকারি হাসপাতাল') matchCat = (itemCat === 'সরকারি হাসপাতাল');
+    else if (currentCategory === 'বেসরকারি হাসপাতাল') matchCat = (itemCat === 'বেসরকারি হাসপাতাল' || itemCat === 'হাসপাতাল');
+    else if (currentCategory === 'ডায়াগনস্টিক' || currentCategory === 'ডায়াগনস্টিক সেন্টার') matchCat = (itemCat.includes('ডায়াগনস্টিক') || itemCat.includes('ল্যাব') || itemCat.includes('প্যাথলজি'));
+    else if (currentCategory === 'ডেন্টাল' || currentCategory === 'ডেন্টাল ক্লিনিক') matchCat = (itemCat.includes('ডেন্টাল') || itemCat.includes('দাঁত'));
+    else if (currentCategory === 'ব্লাড ব্যাংক' || currentCategory === 'ব্লাড ব্যাংক ও রক্তদান' || currentCategory === 'রক্তদান') matchCat = (itemCat.includes('ব্লাড') || itemCat.includes('রক্ত'));
+    else if (currentCategory === '২৪ ঘণ্টা ফার্মেসী' || currentCategory === 'ফার্মেসী') matchCat = (itemCat.includes('ফার্মেসী') || itemCat.includes('ফার্মেসি') || itemCat.includes('ওষুধ') || itemCat.includes('ঔষধ'));
+    else if (currentCategory === 'চক্ষু হাসপাতাল' || currentCategory === 'চক্ষু সেবা') matchCat = (itemCat.includes('চক্ষু') || itemCat.includes('চোখ') || itemCat.includes('আই'));
+    else if (currentCategory === 'শিক্ষা প্রতিষ্ঠান') matchCat = (itemCat === 'শিক্ষা প্রতিষ্ঠান' || itemCat === 'স্কুল' || itemCat === 'কলেজ' || itemCat === 'মাদরাসা');
+    else if (currentCategory === 'সংবাদপত্র') matchCat = (itemCat.includes('সংবাদ') || itemCat.includes('পত্রিকা') || itemCat.includes('নিউজ'));
+    else if (currentCategory === 'সিনেমা হল') matchCat = (itemCat.includes('সিনেমা') || itemCat.includes('সিনেপ্লেক্স') || itemCat.includes('থিয়েটার'));
+    else if (currentCategory === 'পর্যটন ও বিনোদন' || currentCategory === 'দর্শনীয় স্থান' || currentCategory === 'বিনোদন') matchCat = (itemCat.includes('দর্শনীয়') || itemCat.includes('পর্যটন') || itemCat.includes('বিনোদন') || itemCat.includes('পার্ক') || itemCat.includes('ঐতিহাসিক'));
+    else if (currentCategory === 'কমিউনিটি সেন্টার') matchCat = (itemCat.includes('কমিউনিটি') || itemCat.includes('কনভেনশন') || itemCat.includes('পার্টি সেন্টার'));
+    else if (currentCategory === 'টেলিকম') matchCat = (itemCat === 'টেলিকম' || itemCat.includes('টেলিকম') || itemCat.includes('অপারেটর') || itemCat.includes('সিম'));
+    else if (currentCategory === 'মোবাইল ব্যাংকিং') matchCat = (itemCat === 'মোবাইল ব্যাংকিং' || itemCat.includes('ব্যাংকিং') || itemCat.includes('mfs') || itemCat.includes('এমএফএস'));
+    else if (currentCategory === 'মোবাইল সার্ভিসিং') matchCat = (itemCat.includes('সার্ভিসিং') || itemCat.includes('কেয়ার') || itemCat.includes('মেরামত'));
+    else if (currentCategory === 'জেলা প্রশাসন' || currentCategory === 'জেলা প্রশাসন ও পুলিশ') matchCat = (itemCat === 'জেলা প্রশাসন' || (!itemCat.includes('উপজেলা') && !itemCat.includes('থানা') && (itemCat.includes('জেলা') || itemCat.includes('পুলিশ') || itemCat.includes('ডিসি') || itemCat.includes('এসপি') || itemCat.includes('প্রশাসন'))));
+    else if (currentCategory === 'সংসদীয় আসন') matchCat = (itemCat.includes('সংসদ') || itemCat.includes('আসন') || itemCat.includes('এমপি'));
+    else if (currentCategory === 'সিটি কর্পোরেশন') matchCat = (itemCat.includes('সিটি কর্পোরেশন') || itemCat.includes('নাসিক') || itemCat.includes('কাউন্সিলর') || itemCat.includes('ওয়ার্ড'));
+    else if (currentCategory === 'উপজেলা প্রশাসন') matchCat = (itemCat === 'উপজেলা প্রশাসন' || (itemCat.includes('উপজেলা') && !itemCat.includes('পৌরসভা')));
+    else if (currentCategory === 'পৌরসভা') matchCat = (itemCat === 'পৌরসভা' || itemCat.includes('পৌরসভা'));
+    else if (currentCategory === 'ইউনিয়ন পরিষদ') matchCat = (itemCat.includes('ইউনিয়ন') || itemCat.includes('ইউপি') || itemCat.includes('চেয়ারম্যান'));
+    else if (currentCategory === 'রেস্টুরেন্ট' || currentCategory === 'রেস্টুরেন্ট ও ক্যাফে' || currentCategory === 'খাবার') matchCat = (itemCat === 'রেস্টুরেন্ট' || itemCat.includes('রেস্টুরেন্ট') || itemCat.includes('রেস্তোরাঁ') || itemCat.includes('ক্যাফে') || itemCat.includes('খাবার') || itemCat.includes('মিষ্টি'));
+    else if (currentCategory === 'জরুরি সেবা') matchCat = (itemCat.includes('জরুরি') || itemCat.includes('থানা') || itemCat.includes('পুলিশ ফাঁড়ি') || itemCat.includes('ফায়ার') || itemCat.includes('ফায়ার') || itemCat.includes('অ্যাম্বুলেন্স'));
+    else if (currentCategory === 'কুরিয়ার সার্ভিস' || currentCategory === 'কুরিয়ার ও পার্সেল') matchCat = (itemCat.includes('কুরিয়ার') || itemCat.includes('পার্সেল'));
+    else if (currentCategory === 'ইউটিলিটি সেবা' || currentCategory === 'বিদ্যুৎ, গ্যাস ও পানি' || currentCategory === 'বিদ্যুৎ ও গ্যাস') matchCat = (itemCat.includes('বিদ্যুৎ') || itemCat.includes('গ্যাস') || itemCat.includes('পানি') || itemCat.includes('ডিপিডিসি') || itemCat.includes('তিতাস') || itemCat.includes('ইউটিলিটি'));
+    else if (currentCategory === 'রেন্ট-এ-কার' || currentCategory === 'রেন্ট-এ-কার ও গাড়ি') matchCat = (itemCat.includes('রেন্ট') || itemCat.includes('কার') || itemCat.includes('গাড়ি ভাড়া') || itemCat.includes('মাইক্রো'));
+    else if (currentCategory === 'ইন্টারনেট ও আইএসপি' || currentCategory === 'আইএসপি' || currentCategory === 'ব্রডব্যান্ড') matchCat = (itemCat.includes('আইএসপি') || itemCat.includes('ইন্টারনেট') || itemCat.includes('ব্রডব্যান্ড') || itemCat.toLowerCase().includes('isp'));
+    else if (currentCategory === 'আইনজীবী ও আইনি সেবা') matchCat = (itemCat.includes('আইনজীবী') || itemCat.includes('উকিল') || itemCat.includes('কোর্ট') || itemCat.includes('আইন'));
+    else if (currentCategory === 'পার্লার ও সেলুন') matchCat = (itemCat.includes('পার্লার') || itemCat.includes('সেলুন') || itemCat.includes('বিউটি'));
+    else if (currentCategory === 'জেনারেল স্টোর') matchCat = (itemCat.includes('জেনারেল স্টোর') || itemCat.includes('স্টোর') || itemCat.includes('মুদি'));
+    else if (currentCategory === 'পরিবহন') matchCat = (itemCat.includes('পরিবহন') || itemCat.includes('বাস') || itemCat.includes('ট্রেন') || itemCat.includes('রেল') || itemCat.includes('লঞ্চ') || itemCat.includes('ঘাট'));
+    else if (currentCategory === 'শপিং ও ব্যবসা') matchCat = (itemCat.includes('শপিং') || itemCat.includes('মার্কেট') || itemCat.includes('ব্যবসা') || itemCat.includes('আড়ত') || itemCat.includes('দোকান'));
+    else matchCat = itemCat.toLowerCase().includes(currentCategory.toLowerCase());
     
     let matchArea = (selectedCatArea === 'সব এলাকা');
     if (!matchArea) {
@@ -486,7 +435,6 @@ function renderCategoryItems() {
     return;
   }
 
-  // সিটি কর্পোরেশনের মেয়র কার্ড আলাদাভাবে শীর্ষে রাখা
   if (currentCategory === 'সিটি কর্পোরেশন') {
     const mayorItem = filtered.find(it => (it.leader_title || '').includes('মেয়র') || (it.leader_title || '').includes('প্রশাসক') || (it.name || '').includes('মেয়র'));
     const counselors = filtered.filter(it => it !== mayorItem);
@@ -528,14 +476,11 @@ function renderCategoryItems() {
       container.appendChild(cHeader);
     }
 
-    counselors.forEach(item => {
-      renderStandardPlaceCard(item, container);
-    });
+    counselors.forEach(item => renderStandardPlaceCard(item, container));
     return;
   }
 
   filtered.forEach(item => {
-    // ১. পরিবহনের বাস/ট্রেন হলে বিশেষ বাস-কার্ড দেখাবে
     if (currentCategory === 'পরিবহন' && item.destination) {
       const card = document.createElement('div');
       card.className = 'place-card';
@@ -569,22 +514,11 @@ function renderCategoryItems() {
       container.appendChild(card);
       return;
     }
-
-    // ২. বাকি সকল সাধারণ ক্যাটাগরির জন্য আগের মতোই সাধারণ কার্ড দেখাবে
     renderStandardPlaceCard(item, container);
   });
 }
 
-/* ==========================================================================
-   THE NARAYANGANJ - CORE SCRIPT (PART 2)
-   --------------------------------------------------------------------------
-   ৪. একক বিস্তারিত স্ক্রিন ইঞ্জিন (openDetails - প্রশাসন, হাসপাতাল, খাবার ইত্যাদি)
-   ৫. বিশেষজ্ঞ ডাক্তার মডিউল
-   ৬. বুকমার্ক, সাধারণ হেল্পার ও স্টার্টআপ
-   ========================================================================== */
-
 // --- ৪. একক বিস্তারিত স্ক্রিন ইঞ্জিন ---
-
 function openDetails(item) {
   if (!item) return;
   activeItem = item;
@@ -593,39 +527,32 @@ function openDetails(item) {
   const isNews = (cat === 'সংবাদপত্র');
   const isCinema = (cat === 'সিনেমা হল' || cat.includes('সিনেমা') || cat.includes('সিনেপ্লেক্স'));
   const isTelecom = (cat === 'টেলিকম' || cat.includes('টেলিকম') || cat.includes('অপারেটর'));
+  const isMFS = (cat === 'এমএফএস' || cat === 'মোবাইল ব্যাংকিং' || cat.includes('ব্যাংকিং') || cat.toLowerCase().includes('mfs'));
+
   const telBox = document.getElementById('telecomSectionBox');
-  
- const isMFS = (cat === 'এমএফএস' || cat === 'মোবাইল ব্যাংকিং' || cat.includes('ব্যাংকিং') || cat.toLowerCase().includes('mfs'));
- const limitNav = document.getElementById('mfsLimitNavCard');
+  const limitNav = document.getElementById('mfsLimitNavCard');
   if (limitNav) limitNav.style.display = isMFS ? 'flex' : 'none';
   
-  // কাস্টমার কেয়ার ও ক্যালকুলেটর বাটন
   const mfsNav = document.getElementById('mfsCalcNavCard');
   const careNav = document.getElementById('mfsCareNavCard');
   if (mfsNav) mfsNav.style.display = isMFS ? 'flex' : 'none';
   if (careNav) careNav.style.display = (isMFS || isTelecom) ? 'flex' : 'none';
 
-  // অ্যাকর্ডিয়ন রেন্ডার
   renderMfsAccordion(item.services);
-  
 
   if (telBox) {
     if (isTelecom) {
       telBox.style.display = 'flex';
-      
       const typeEl = document.getElementById('telTypeVal');
       const subsEl = document.getElementById('telSubsVal');
       if (typeEl) typeEl.innerText = item.type || 'মোবাইল নেটওয়ার্ক';
       if (subsEl) subsEl.innerText = item.subscribers || 'সারাদেশে বিস্তৃত';
-
-      // অফার টেবিল রেন্ডার করা
       renderTelecomOffersTable(item.code || item.name);
     } else {
       telBox.style.display = 'none';
     }
   }
   
-  // পরিবহন তথ্য ব্লক হ্যান্ডলিং
   const transBox = document.getElementById('transportSectionBox');
   if (transBox) {
     if (cat === 'পরিবহন' && (item.destination || item.boarding_point)) {
@@ -655,8 +582,6 @@ function openDetails(item) {
     }
   }
   
-  
-  // শুধুমাত্র নির্দিষ্ট প্রশাসনিক ক্যাটাগরি অথবা জনপ্রতিনিধিদের জন্য সত্য হবে
   const adminCategories = ['জেলা প্রশাসন', 'জেলা প্রশাসন ও পুলিশ', 'সংসদীয় আসন', 'সিটি কর্পোরেশন', 'উপজেলা প্রশাসন', 'ইউনিয়ন পরিষদ', 'পৌরসভা', 'প্রশাসন'];
   const isAdmin = Boolean(adminCategories.includes(cat) || item.voters || item.leader_name || item.territory);
 
@@ -890,7 +815,6 @@ function openDetails(item) {
     ispBtnBox.style.display = isIsp ? 'block' : 'none';
   }
   
-  // --- আইএসপি সংক্ষিপ্ত তুলনামূলক টেবিল রেন্ডারিং ---
   const compareBox = document.getElementById('ispQuickCompareBox');
   const compareBody = document.getElementById('ispQuickCompareBody');
 
@@ -914,7 +838,7 @@ function openDetails(item) {
       });
 
       if (matchedPkgs.length > 0) {
-        matchedPkgs.slice(0).forEach((pkg, idx) => {
+        matchedPkgs.forEach((pkg, idx) => {
           const row = document.createElement('tr');
           row.style.cssText = `border-bottom: 1px solid #E2E8F0; background: ${idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'};`;
           
@@ -938,7 +862,6 @@ function openDetails(item) {
     }
   }
 
-  // --- শিক্ষা প্রতিষ্ঠান ব্লক ---
   const eduBox = document.getElementById('eduSectionBox');
   if (eduBox) {
     if (isEdu || isNews) {
@@ -1000,7 +923,6 @@ function openDetails(item) {
     }
   }
 
-  // --- প্রশাসন ও জনপ্রতিনিধি ব্লক ---
   const adminBox = document.getElementById('adminSectionBox');
   if (adminBox) {
     if (isAdmin) {
@@ -1067,7 +989,6 @@ function openDetails(item) {
     }
   }
 
-  // উপজেলা প্রশাসনিক ইউনিট (স্মার্ট লিংকসহ)
   const unitsBox = document.getElementById('adminUnitsBox');
   const unitsList = document.getElementById('adminUnitsList');
   const unitsStats = document.getElementById('adminUnitsStats');
@@ -1135,7 +1056,6 @@ function openDetails(item) {
     }
   }
 
-  // দর্শনীয় স্থানসমূহ
   const attractionsBox = document.getElementById('adminAttractionsBox');
   const attractionsList = document.getElementById('adminAttractionsList');
   if (attractionsBox && attractionsList) {
@@ -1158,7 +1078,6 @@ function openDetails(item) {
     }
   }
 
-  // বিগত সংসদ ও প্রতিনিধি ইতিহাস
   const historyBox = document.getElementById('adminHistoryBox');
   const historyList = document.getElementById('adminHistoryList');
   if (historyBox && historyList) {
@@ -1192,7 +1111,6 @@ function openDetails(item) {
     }
   }
 
-  // রেস্টুরেন্ট অফার ব্যানার
   const offerBox = document.getElementById('restaurantOfferBox');
   const offerContent = document.getElementById('restaurantOfferContent');
   if (offerBox && offerContent) {
@@ -1229,7 +1147,6 @@ function openDetails(item) {
     }
   }
 
-  // রেস্টুরেন্ট মেনু
   const menuBox = document.getElementById('restaurantMenuBox');
   const menuList = document.getElementById('restaurantMenuList');
   if (menuBox && menuList) {
@@ -1242,7 +1159,7 @@ function openDetails(item) {
         if (isHeader) {
           const titleText = entry.replace(/^[#\[\]\s]+|[#\[\]\s]+$/g, '').trim();
           const headerEl = document.createElement('div');
-          headerEl.style.cssText = `font-size: 14px; font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 8px; margin-top: ${idx === 0 ? '4px' : '14px'}; margin-bottom: 2px; padding-bottom: 4px; border-bottom: 2px solid #F1F5F9;`;
+          headerEl.style.cssText = `font-size: 14px; font-weight: 700; color: #0F5132; display: flex; align-items: center; gap: 8px; margin-top: ${idx === 0 ? '4px' : '14px'}; margin-bottom: 2px; padding-bottom: 4px; border-bottom: 2px solid #F1F5F9;`;
           headerEl.innerHTML = `<i class="fa-solid fa-layer-group" style="font-size: 12px; color: #F59E0B;"></i><span>${titleText}</span>`;
           menuList.appendChild(headerEl);
           return;
@@ -1273,13 +1190,14 @@ function openDetails(item) {
     }
   }
 
-  // সোশ্যাল মিডিয়া ও ইমেইল
+  // সোশ্যাল লিঙ্ক ও প্রোফাইল
   const socialBox = document.getElementById('socialLinksBox');
   const webBtn = document.getElementById('linkWebsite');
   const fbBtn = document.getElementById('linkFacebook');
   const ytBtn = document.getElementById('linkYoutube');
   const liBtn = document.getElementById('linkLinkedin');
   const igBtn = document.getElementById('linkInstagram');
+  const ttBtn = document.getElementById('linkTiktok');
   const emailBtn = document.getElementById('linkEmail');
 
   let hasSocial = false;
@@ -1322,8 +1240,7 @@ function openDetails(item) {
       hasSocial = true;
     } else { igBtn.style.display = 'none'; }
   }
-  
-  const ttBtn = document.getElementById('linkTiktok');
+
   if (ttBtn) {
     if (item.tiktok && item.tiktok.trim() !== '') {
       ttBtn.href = item.tiktok.startsWith('http') ? item.tiktok : `https://${item.tiktok}`;
@@ -1331,8 +1248,6 @@ function openDetails(item) {
       hasSocial = true;
     } else { ttBtn.style.display = 'none'; }
   }
-
-
 
   if (emailBtn) {
     if (item.email && item.email.trim() !== '') {
@@ -1342,7 +1257,6 @@ function openDetails(item) {
     } else { emailBtn.style.display = 'none'; }
   }
 
-  // টেলিকমের ক্ষেত্রে সোশ্যাল কার্ড স্বয়ংক্রিয়ভাবে প্যাকেজ বক্সের উপরে চলে যাবে
   if (socialBox) {
     socialBox.style.display = hasSocial ? 'block' : 'none';
     const telOffersBox = document.getElementById('telOffersBox');
@@ -1355,8 +1269,6 @@ function openDetails(item) {
       }
     }
   }
-  
-  if (socialBox) socialBox.style.display = hasSocial ? 'block' : 'none';
 
   const callBtn = document.getElementById('detailsCallBtn');
   if (callBtn) {
@@ -1380,11 +1292,6 @@ function openDetails(item) {
     dView.classList.add('open');
     window.history.pushState({ page: 'details' }, '');
   }
-}
-
-function closeDetails() {
-  const el = document.getElementById('detailsView');
-  if (el) el.classList.remove('open');
 }
 
 // --- ৫. বিশেষজ্ঞ ডাক্তার মডিউল ---
@@ -1424,11 +1331,6 @@ function openDoctorList(chamberName = null, title = 'বিশেষজ্ঞ �
     docPage.scrollTop = 0;
     window.history.pushState({ page: 'doctors' }, '');
   }
-}
-
-function closeDoctorPage() {
-  const el = document.getElementById('doctorPage');
-  if (el) el.classList.remove('open');
 }
 
 function setDoctorAreaFilter(areaName, chipElement) {
@@ -1472,7 +1374,7 @@ function renderDoctorItems() {
     'চর্ম ও যৌন': ['চর্ম', 'যৌন', 'ডার্মাটোলজি', 'ত্বক', 'skin', 'derma'],
     'ইএনটি': ['নাক', 'কান', 'গলা', 'ইএনটি', 'ent'],
     'ডেন্টাল': ['ডেন্টাল', 'দাঁত', 'মুখের রোগ', 'dental', 'দাঁতের'],
-	'চক্ষু': ['চক্ষু', 'চোখ', 'eye', 'আই', 'ophthalmology', 'রেটিনা', 'দৃষ্টি', 'phaco', 'ছানি'],
+    'চক্ষু': ['চক্ষু', 'চোখ', 'eye', 'আই', 'ophthalmology', 'রেটিনা', 'দৃষ্টি', 'phaco', 'ছানি']
   };
 
   const filtered = (doctorsData || []).filter(doc => {
@@ -1662,11 +1564,6 @@ function openDoctorProfile(doc) {
   }
 }
 
-function closeDoctorProfile() {
-  const el = document.getElementById('doctorProfileView');
-  if (el) el.classList.remove('open');
-}
-
 function viewChamberDoctors() {
   if (activeItem) openDoctorList(activeItem.name, `${activeItem.name}-এর ডাক্তারগণ`);
 }
@@ -1697,7 +1594,7 @@ function goToChamberDetails(chamberName, chamberArea) {
   openDetails(matchedPlace);
 }
 
-// --- ৬. বুকমার্ক, ইউটিলিটি ও ইনিশিয়ালাইজেশন ---
+// --- ৬. বুকমার্ক, ফলাফল ও প্যাকেজ ইঞ্জিন ---
 
 function saveBookmarks() {
   try { localStorage.setItem('narayanganj_bookmarks', JSON.stringify(bookmarks)); } catch (e) {}
@@ -1815,11 +1712,6 @@ function openBookmarkPage() {
   }
 }
 
-function closeBookmarkPage() {
-  const el = document.getElementById('bookmarkPage');
-  if (el) el.classList.remove('open');
-}
-
 function viewInstitutionResults() {
   if (!activeItem) return;
   const tEl = document.getElementById('eduResultsTitle');
@@ -1831,22 +1723,18 @@ function viewInstitutionResults() {
   if (!container) return;
   container.innerHTML = '';
 
-  // ১. EIIN সংগ্রহ ও ক্লিন
   const currentEiin = toEnDigits(activeItem.eiin || activeItem.code || '');
 
-  // ২. ইউনিকোড ও অক্ষর জটিলতা দূর করার সুপার-ক্লিনার
   const getCoreTitle = (str) => {
     return (str || '')
       .toString()
       .toLowerCase()
-      // বাংলা ও ইংরেজি সাধারণ শব্দ ছাঁটাই
       .replace(/সরকারি|বেসরকারি|কলেজ|স্কুল|মাদরাসা|উচ্চ|বিদ্যালয়|মাধ্যমিক/g, '')
       .replace(/govt|government|college|school|high|madrasah/gi, '')
       .replace(/নারায়নগঞ্জ|নারায়ণগঞ্জ|narayanganj/gi, '')
-      // ণ/ন এবং য়/য ইউনিকোড সমতাকরণ
       .replace(/ণ/g, 'ন')
       .replace(/[য়য]/g, 'য')
-      .replace(/[\u09BC]/g, '') // নুকতা বাদ দেওয়া
+      .replace(/[\u09BC]/g, '')
       .replace(/[\s\-_.,()]/g, '')
       .trim();
   };
@@ -1854,45 +1742,27 @@ function viewInstitutionResults() {
   const currentCoreName = getCoreTitle(activeItem.name || activeItem.name_bn || '');
   const isCommerceTarget = currentCoreName.includes('কমার্') || (activeItem.name_en || '').toLowerCase().includes('commerce');
 
-  // ৩. ফিল্টারিং ইঞ্জিন
   const matchedResults = (resultsData || []).filter(r => {
     if (!r) return false;
-
-    // ক. EIIN দিয়ে নিখুঁত ম্যাচ (উভয় শিটে থাকলে)
     const rowEiin = toEnDigits(r.eiin || r.code || r.eiin_number || '');
-    if (currentEiin && rowEiin && currentEiin === rowEiin) {
-      return true;
-    }
+    if (currentEiin && rowEiin && currentEiin === rowEiin) return true;
 
-    // খ. প্রতিষ্ঠান নামের ফিল্ড রিড (institution, name, college, institute ইত্যাদি)
     const rowRawName = r.institution || r.name || r.college || r.institute || r.institution_name || '';
     const rowCoreName = getCoreTitle(rowRawName);
     const rowLower = rowRawName.toLowerCase();
 
-    // গ. কমার্স কলেজের বিশেষ বাংলা-ইংরেজি ক্রস-চেক
-    if (isCommerceTarget && (rowLower.includes('commerce') || rowCoreName.includes('কমার্'))) {
-      return true;
-    }
-
-    // ঘ. সাধারণ নাম ম্যাচিং
-    if (currentCoreName && rowCoreName) {
-      if (rowCoreName.includes(currentCoreName) || currentCoreName.includes(rowCoreName)) {
-        return true;
-      }
-    }
+    if (isCommerceTarget && (rowLower.includes('commerce') || rowCoreName.includes('কমার্'))) return true;
+    if (currentCoreName && rowCoreName && (rowCoreName.includes(currentCoreName) || currentCoreName.includes(rowCoreName))) return true;
 
     return false;
   });
 
-  // ৪. রেন্ডারিং বা লাইভ ডায়াগনস্টিক রিপোর্ট
   if (matchedResults.length === 0) {
     const sampleResults = (resultsData || []).slice(0, 3).map(r => r.institution || r.name || 'নাম নেই').join(', ');
     container.innerHTML = `
       <div style="text-align: center; color: var(--text-muted); padding: 30px 16px;">
         <i class="fa-solid fa-folder-open" style="font-size: 38px; color: #CBD5E1; margin-bottom: 12px;"></i>
         <p style="font-weight: 600; color: #334155;">এই প্রতিষ্ঠানের কোনো ফলাফল এখনো যুক্ত করা হয়নি।</p>
-        
-        <!-- লাইভ ডায়াগনস্টিক তথ্য (সমস্যা শনাক্ত করার জন্য) -->
         <div style="margin-top: 20px; text-align: left; background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 12px; font-size: 11px; color: #64748B; line-height: 1.6;">
           <div style="font-weight: 700; color: #DC2626; margin-bottom: 4px;"><i class="fa-solid fa-bug"></i> ডেটা ট্রেসার:</div>
           <div>• অ্যাপ যা খুঁজছে: <strong>${activeItem.name || activeItem.name_bn || 'নাম নেই'}</strong></div>
@@ -2034,24 +1904,14 @@ function viewIspPackages() {
   }
 }
 
-function closeIspPackages() {
-  const el = document.getElementById('ispPackagesPage');
-  if (el) el.classList.remove('open');
-}
-
-function closeInstitutionResults() {
-  const el = document.getElementById('eduResultsPage');
-  if (el) el.classList.remove('open');
-}
-
 function openSubmitForm() {
   window.open("https://forms.gle/sample", '_blank');
 }
 
 function goHome() {
-  closeMfsLimit();
+  if (typeof closeMfsLimit === 'function') closeMfsLimit();
+  if (typeof closeMfsCalculator === 'function') closeMfsCalculator();
   closeCareCenters();
-  closeMfsCalculator();
   closeInstitutionResults();
   closeDetails();
   closeDoctorProfile();
@@ -2062,15 +1922,11 @@ function goHome() {
   closeMobileCareHub();
 }
 
-if (document.getElementById('ispPackagesPage')?.classList.contains('open')) {
-    closeIspPackages();
-  }
-
 window.onpopstate = function() {
   if (document.getElementById('mobileCareHubPage')?.classList.contains('open')) closeMobileCareHub();
-  else if (document.getElementById('mfsLimitPage')?.classList.contains('open')) closeMfsLimit();
+  else if (document.getElementById('mfsLimitPage')?.classList.contains('open')) { if (typeof closeMfsLimit === 'function') closeMfsLimit(); }
   else if (document.getElementById('careCenterPage')?.classList.contains('open')) closeCareCenters();
-  else if (document.getElementById('mfsCalculatorPage')?.classList.contains('open')) closeMfsCalculator();
+  else if (document.getElementById('mfsCalculatorPage')?.classList.contains('open')) { if (typeof closeMfsCalculator === 'function') closeMfsCalculator(); }
   else if (document.getElementById('ispPackagesPage')?.classList.contains('open')) closeIspPackages();
   else if (document.getElementById('eduResultsPage')?.classList.contains('open')) closeInstitutionResults();
   else if (document.getElementById('doctorProfileView')?.classList.contains('open')) closeDoctorProfile();
@@ -2102,11 +1958,6 @@ function shareItem() {
   } else {
     alert('লিংক কপি করা হয়েছে!');
   }
-}
-
-function toBanglaNumber(num) {
-  const bn = {'0':'০','1':'১','2':'২','3':'৩','4':'৪','5':'৫','6':'৬','7':'৭','8':'৮','9':'৯'};
-  return num.toString().replace(/\d/g, d => bn[d]);
 }
 
 function renderTriviaSlider(rawTrivia) {
@@ -2277,7 +2128,6 @@ function renderTelecomOffersTable(opCode) {
   if (!tbody) return;
   tbody.innerHTML = '';
 
-  // সংশ্লিষ্ট অপারেটরের অফারগুলো ফিল্টার
   const opOffers = (rechargeOffersData || []).filter(o => {
     if (!o) return false;
     const target = (o.operator_code || o.operator || '').toString().toUpperCase().trim();
@@ -2286,27 +2136,19 @@ function renderTelecomOffersTable(opCode) {
 
   const filtered = opOffers.filter(o => {
     if (currentOfferTypeFilter === 'সব') return true;
-
-    // শিট থেকে যেকোনো ফরমেটে মিনিট ও এমবি রিড করা
     const minVal = (o.minute || o.Minute || o.min || '').toString().trim();
     const dataVal = (o.data_mb || o.mb || o.MB || o.data || o.internet || '').toString().trim();
     const explicitType = (o.offer_type || o.type || o.Type || '').toString().trim();
-
     const hasMin = minVal !== '' && minVal !== '-';
     const hasData = dataVal !== '' && dataVal !== '-';
 
-    if (currentOfferTypeFilter === 'মিনিট') {
-      return explicitType === 'মিনিট' || (hasMin && !hasData);
-    } else if (currentOfferTypeFilter === 'ইন্টারনেট') {
-      return explicitType === 'ইন্টারনেট' || (!hasMin && hasData);
-    } else if (currentOfferTypeFilter === 'বান্ডেল') {
-      return explicitType === 'বান্ডেল' || (hasMin && hasData);
-    }
+    if (currentOfferTypeFilter === 'মিনিট') return explicitType === 'মিনিট' || (hasMin && !hasData);
+    if (currentOfferTypeFilter === 'ইন্টারনেট') return explicitType === 'ইন্টারনেট' || (!hasMin && hasData);
+    if (currentOfferTypeFilter === 'বান্ডেল') return explicitType === 'বান্ডেল' || (hasMin && hasData);
     return true;
   });
 
   if (countBadge) countBadge.innerText = `${toBanglaNumber(filtered.length)}টি অফার`;
-
   if (filtered.length === 0) {
     if (noOffers) noOffers.style.display = 'block';
     return;
@@ -2317,24 +2159,14 @@ function renderTelecomOffersTable(opCode) {
     const row = document.createElement('tr');
     row.style.cssText = `border-bottom: 1px solid #E2E8F0; background: ${idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'};`;
     
-    // মিনিট (যেকোনো ফরম্যাট সাপোর্ট)
     const rawMin = (offer.minute || offer.Minute || offer.min || '').toString().trim();
-    let minText = '-';
-    if (rawMin !== '' && rawMin !== '-') {
-      minText = `${toBanglaNumber(rawMin)} মি.`;
-    }
+    const minText = (rawMin !== '' && rawMin !== '-') ? `${toBanglaNumber(rawMin)} মি.` : '-';
 
-    // ইন্টারনেট (যেকোনো ফরম্যাট সাপোর্ট)
     const rawData = (offer.data_mb || offer.mb || offer.MB || offer.data || offer.internet || '').toString().trim();
-    let dataText = '-';
-    if (rawData !== '' && rawData !== '-') {
-      dataText = rawData;
-    }
+    const dataText = (rawData !== '' && rawData !== '-') ? rawData : '-';
 
-    // মেয়াদ
     const daysVal = offer.days || offer.Day || offer.day || offer.validity_day || '১';
     const daysText = `${toBanglaNumber(daysVal)} দিন`;
-
     const rechargeVal = offer.recharge || offer.amount || offer.price || '0';
 
     row.innerHTML = `
@@ -2359,7 +2191,6 @@ function filterTelecomOffers(filterType, chipEl) {
 
 function viewTelecomCare() {
   if (!activeItem) return;
-  // ক্যাটাগরি পেজে নিয়ে গিয়ে সরাসরি চাষাড়ার কাস্টমার সেন্টারের তালিকা ফিল্টার করবে
   openCategoryPage('টেলিকম', `${activeItem.name}-এর কেয়ার সেন্টার`);
 }
 
@@ -2380,43 +2211,82 @@ function openMfsCalculatorFromProfile() {
   }
 }
 
+// অফলাইন ক্যাশ কি (Key)
+const OFFLINE_CACHE_KEY = 'the_narayanganj_offline_cache';
+
+function setAllAppData(bundle) {
+  if (!bundle) return;
+  placesData = Array.isArray(bundle.places) ? bundle.places : [];
+  healthData = Array.isArray(bundle.health) ? bundle.health : [];
+  doctorsData = Array.isArray(bundle.doctors) ? bundle.doctors : [];
+  resultsData = Array.isArray(bundle.results) ? bundle.results : [];
+  educationData = Array.isArray(bundle.education) ? bundle.education : [];
+  restaurantsData = Array.isArray(bundle.restaurants) ? bundle.restaurants : [];
+  adminData = Array.isArray(bundle.admin) ? bundle.admin : [];
+  packagesData = Array.isArray(bundle.packages) ? bundle.packages : [];
+  transportData = Array.isArray(bundle.transport) ? bundle.transport : [];
+  telecomData = Array.isArray(bundle.telecom) ? bundle.telecom : [];
+  rechargeOffersData = Array.isArray(bundle.offers) ? bundle.offers : [];
+  serviceCentersData = Array.isArray(bundle.serviceCenters) ? bundle.serviceCenters : [];
+
+  updateCategoryCounts();
+}
+
 async function loadData() {
   try {
+    const localCached = localStorage.getItem(OFFLINE_CACHE_KEY);
+    if (localCached) {
+      setAllAppData(JSON.parse(localCached));
+    }
+  } catch (e) {
+    console.warn("ক্যাশ ডেটা পড়তে সমস্যা:", e);
+  }
+
+  if (!navigator.onLine) return;
+
+  try {
     const [pData, hData, dData, rData, eData, restData, aData, pkgData, tData, telData, offData, scData] = await Promise.all([
-      fetch(API_PLACES).then(r => r.json()).catch(() => []),
-      fetch(API_HEALTH).then(r => r.json()).catch(() => []),
-      fetch(API_DOCTORS).then(r => r.json()).catch(() => []),
-      fetch(API_RESULTS).then(r => r.json()).catch(() => []),
-      fetch(API_EDUCATION).then(r => r.json()).catch(() => []),
-      fetch(API_RESTAURANTS).then(r => r.json()).catch(() => []),
-      fetch(API_ADMIN).then(r => r.json()).catch(() => []),
-      fetch(API_PACKAGES).then(r => r.json()).catch(() => []),
-      fetch(API_TRANSPORT).then(r => r.json()).catch(() => []),
-      fetch(API_TELECOM).then(r => r.json()).catch(() => []),
-      fetch(API_OFFERS).then(r => r.json()).catch(() => []),
-	  fetch(API_SERVICE_CENTERS).then(r => r.json()).catch(() => [])
+      fetch(API_PLACES).then(r => r.json()).catch(() => null),
+      fetch(API_HEALTH).then(r => r.json()).catch(() => null),
+      fetch(API_DOCTORS).then(r => r.json()).catch(() => null),
+      fetch(API_RESULTS).then(r => r.json()).catch(() => null),
+      fetch(API_EDUCATION).then(r => r.json()).catch(() => null),
+      fetch(API_RESTAURANTS).then(r => r.json()).catch(() => null),
+      fetch(API_ADMIN).then(r => r.json()).catch(() => null),
+      fetch(API_PACKAGES).then(r => r.json()).catch(() => null),
+      fetch(API_TRANSPORT).then(r => r.json()).catch(() => null),
+      fetch(API_TELECOM).then(r => r.json()).catch(() => null),
+      fetch(API_OFFERS).then(r => r.json()).catch(() => null),
+      fetch(API_SERVICE_CENTERS).then(r => r.json()).catch(() => null)
     ]);
 
-    placesData = Array.isArray(pData) ? organizeListings(pData) : [];
-    healthData = Array.isArray(hData) ? organizeListings(hData) : [];
-    doctorsData = Array.isArray(dData) ? organizeListings(dData) : [];
-    resultsData = Array.isArray(rData) ? rData : [];
-    educationData = Array.isArray(eData) ? organizeListings(eData.map(normalizeEducationItem)) : [];
-    restaurantsData = Array.isArray(restData) ? organizeListings(restData.map(normalizeRestaurantItem)) : [];
-    adminData = Array.isArray(aData) ? organizeListings(aData.map(normalizeAdminItem)) : [];
-    packagesData = Array.isArray(pkgData) ? pkgData : [];
-    transportData = Array.isArray(tData) ? organizeListings(tData.map(normalizeTransportItem)) : [];
-    telecomData = Array.isArray(telData) ? organizeListings(telData) : [];
-    rechargeOffersData = Array.isArray(offData) ? offData : [];
-	serviceCentersData = Array.isArray(scData) ? scData : [];
+    const freshBundle = {
+      places: Array.isArray(pData) ? organizeListings(pData) : placesData,
+      health: Array.isArray(hData) ? organizeListings(hData) : healthData,
+      doctors: Array.isArray(dData) ? organizeListings(dData) : doctorsData,
+      results: Array.isArray(rData) ? rData : resultsData,
+      education: Array.isArray(eData) ? organizeListings(eData.map(normalizeEducationItem)) : educationData,
+      restaurants: Array.isArray(restData) ? organizeListings(restData.map(normalizeRestaurantItem)) : restaurantsData,
+      admin: Array.isArray(aData) ? organizeListings(aData.map(normalizeAdminItem)) : adminData,
+      packages: Array.isArray(pkgData) ? pkgData : packagesData,
+      transport: Array.isArray(tData) ? organizeListings(tData.map(normalizeTransportItem)) : transportData,
+      telecom: Array.isArray(telData) ? organizeListings(telData) : telecomData,
+      offers: Array.isArray(offData) ? offData : rechargeOffersData,
+      serviceCenters: Array.isArray(scData) ? scData : serviceCentersData
+    };
 
-    updateCategoryCounts();
+    setAllAppData(freshBundle);
+
+    try {
+      localStorage.setItem(OFFLINE_CACHE_KEY, JSON.stringify(freshBundle));
+    } catch (e) {
+      console.warn("লোকাল ক্যাশ সংরক্ষণে সমস্যা:", e);
+    }
   } catch (err) {
-    console.warn("ডাটা লোড হতে সমস্যা হয়েছে:", err);
+    console.warn("ব্যাকগ্রাউন্ড ডেটা সিঙ্ক ব্যর্থ (অফলাইন ক্যাশ সক্রিয় আছে):", err);
   }
 }
 
-// ১. স্মার্ট অ্যাকর্ডিয়ন রেন্ডারার
 function renderMfsAccordion(rawServices) {
   const box = document.getElementById('mfsServicesBox');
   const container = document.getElementById('mfsAccordionList');
@@ -2479,7 +2349,6 @@ function renderMfsAccordion(rawServices) {
   box.style.display = container.children.length > 0 ? 'block' : 'none';
 }
 
-// ২. কাস্টমার কেয়ার পেজ খোলা (শিট থেকে অটো ফিল্টার)
 function viewCareCenters() {
   if (!activeItem) return;
   const code = (activeItem.code || activeItem.name || '').toUpperCase();
@@ -2496,12 +2365,6 @@ function viewCareCenters() {
   openServiceCenterFiltered(null, null, brand, `${activeItem.name}-এর কেয়ার পয়েন্ট`);
 }
 
-function closeCareCenters() {
-  const p = document.getElementById('careCenterPage');
-  if (p) p.classList.remove('open');
-}
-
-// ১. হাব পেজ খোলা ও বন্ধ
 function openMobileCareHub() {
   const p = document.getElementById('mobileCareHubPage');
   if (p) {
@@ -2511,73 +2374,34 @@ function openMobileCareHub() {
   }
 }
 
-function closeMobileCareHub() {
-  const p = document.getElementById('mobileCareHubPage');
-  if (p) p.classList.remove('open');
-}
+// সার্ভিস সেন্টার ফিল্টারিং স্টেট ভ্যারিয়েবল
+let currentScTargetCat = null;
+let currentScTargetType = null;
+let currentScTargetBrand = null;
+let selectedScArea = 'সব এলাকা';
 
-// ২. ফিল্টার অনুযায়ী সার্ভিস সেন্টার রেজাল্ট প্রদর্শন
 function openServiceCenterFiltered(targetCat = null, targetType = null, targetBrand = null, pageTitle = 'সার্ভিস সেন্টার') {
+  currentScTargetCat = targetCat;
+  currentScTargetType = targetType;
+  currentScTargetBrand = targetBrand;
+  selectedScArea = 'সব এলাকা';
+
   const tEl = document.getElementById('carePageTitle');
   const sEl = document.getElementById('carePageSub');
-  const container = document.getElementById('careCenterListings');
-  if (!container) return;
-
+  const inputEl = document.getElementById('careSearchInput');
+  
   if (tEl) tEl.innerText = pageTitle;
   if (sEl) sEl.innerText = 'নারায়ণগঞ্জ ও চাষাড়ার অনুমোদিত শাখা';
-  container.innerHTML = '';
+  if (inputEl) inputEl.value = '';
 
-  // ServiceCenters শিট থেকে ফিল্টার করা
-  const matched = (serviceCentersData || []).filter(item => {
-    if (!item) return false;
-    const cat = (item.category || '').trim();
-    const type = (item.type || '').trim();
-    const brand = (item.brand_code || '').toUpperCase().trim();
-
-    let matchC = targetCat ? cat.includes(targetCat) : true;
-    let matchT = targetType ? type.includes(targetType) : true;
-    let matchB = targetBrand ? brand.includes(targetBrand.toUpperCase()) : true;
-
-    return matchC && matchT && matchB;
-  });
-
-  if (matched.length === 0) {
-    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 50px 20px;">কোনো সার্ভিস সেন্টারের তথ্য পাওয়া যায়নি।</div>`;
-  } else {
-    matched.forEach(sc => {
-      const card = document.createElement('div');
-      card.style.cssText = "background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); margin-bottom: 12px;";
-      
-      const isOfficial = (sc.type || '').includes('অফিসিয়াল');
-      
-      card.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
-          <div>
-            <div style="font-weight: 700; font-size: 15px; color: #0F172A;">${sc.name}</div>
-            <span style="font-size: 10.5px; background: ${isOfficial ? '#DCFCE7' : '#EFF6FF'}; color: ${isOfficial ? '#166534' : '#1D4ED8'}; padding: 2px 8px; border-radius: 6px; font-weight: 700; display: inline-block; margin-top: 4px;">
-              ${sc.type || 'সার্ভিস সেন্টার'}
-            </span>
-          </div>
-        </div>
-
-        <div style="font-size: 12.5px; color: #475569; margin-top: 8px; display: flex; flex-direction: column; gap: 4px;">
-          <div><i class="fa-solid fa-location-dot" style="color: var(--primary); width: 14px;"></i> <strong>ঠিকানা:</strong> ${sc.address || sc.area || 'নারায়ণগঞ্জ'}</div>
-          <div><i class="fa-solid fa-clock" style="color: var(--primary); width: 14px;"></i> <strong>সময়:</strong> ${sc.timing || 'সকাল ১০টা - রাত ৮টা'}</div>
-          ${sc.services ? `<div><i class="fa-solid fa-wrench" style="color: #D97706; width: 14px;"></i> <strong>সেবা:</strong> ${sc.services}</div>` : ''}
-        </div>
-
-        <div class="action-buttons" style="margin-top: 10px;">
-          <a href="${sc.phone ? 'tel:' + sc.phone : '#'}" class="btn-action btn-call" style="padding: 8px 0; font-size: 13px;">
-            <i class="fa-solid fa-phone"></i> কল করুন
-          </a>
-          <a href="${sc.map_url || `https://maps.google.com/?q=${encodeURIComponent(sc.name + ' ' + (sc.area || 'নারায়ণগঞ্জ'))}`}" target="_blank" rel="noopener noreferrer" class="btn-action btn-map" style="padding: 8px 0; font-size: 13px;">
-            <i class="fa-solid fa-diamond-turn-right"></i> গুগল ম্যাপ
-          </a>
-        </div>
-      `;
-      container.appendChild(card);
-    });
+  const bar = document.getElementById('careAreaFilterBar');
+  if (bar) {
+    bar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+    const first = bar.querySelector('.area-chip');
+    if (first) first.classList.add('active');
   }
+
+  renderServiceCenterCards();
 
   const p = document.getElementById('careCenterPage');
   if (p) {
@@ -2585,6 +2409,89 @@ function openServiceCenterFiltered(targetCat = null, targetType = null, targetBr
     p.scrollTop = 0;
     window.history.pushState({ page: 'careCenters' }, '');
   }
+}
+
+function setCareAreaFilter(areaName, chipEl) {
+  selectedScArea = areaName;
+  const bar = document.getElementById('careAreaFilterBar');
+  if (bar) {
+    bar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+    if (chipEl) chipEl.classList.add('active');
+  }
+  renderServiceCenterCards();
+}
+
+function renderServiceCenterCards() {
+  const container = document.getElementById('careCenterListings');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const inputEl = document.getElementById('careSearchInput');
+  const query = inputEl ? inputEl.value.toLowerCase().trim() : '';
+
+  const matched = (serviceCentersData || []).filter(item => {
+    if (!item) return false;
+    const cat = (item.category || '').trim();
+    const type = (item.type || '').trim();
+    const brand = (item.brand_code || '').toUpperCase().trim();
+    const area = (item.area || '').toLowerCase();
+    const addr = (item.address || '').toLowerCase();
+    const name = (item.name || '').toLowerCase();
+    const services = (item.services || '').toLowerCase();
+
+    let matchC = currentScTargetCat ? cat.includes(currentScTargetCat) : true;
+    let matchT = currentScTargetType ? type.includes(currentScTargetType) : true;
+    let matchB = currentScTargetBrand ? brand.includes(currentScTargetBrand.toUpperCase()) : true;
+
+    let matchArea = (selectedScArea === 'সব এলাকা');
+    if (!matchArea) {
+      const targetArea = selectedScArea.toLowerCase();
+      matchArea = area.includes(targetArea) || addr.includes(targetArea);
+      if (targetArea === 'চাষাড়া' && (area.includes('সদর') || addr.includes('সদর'))) matchArea = true;
+    }
+
+    const matchSearch = name.includes(query) || addr.includes(query) || services.includes(query) || brand.toLowerCase().includes(query);
+    return matchC && matchT && matchB && matchArea && matchSearch;
+  });
+
+  if (matched.length === 0) {
+    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 50px 20px;">কোনো সার্ভিস সেন্টারের তথ্য পাওয়া যায়নি।</div>`;
+    return;
+  }
+
+  matched.forEach(sc => {
+    const card = document.createElement('div');
+    card.style.cssText = "background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); margin-bottom: 12px;";
+    
+    const isOfficial = (sc.type || '').includes('অফিসিয়াল');
+    
+    card.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #F1F5F9; padding-bottom: 8px;">
+        <div>
+          <div style="font-weight: 700; font-size: 15px; color: #0F172A;">${sc.name}</div>
+          <span style="font-size: 10.5px; background: ${isOfficial ? '#DCFCE7' : '#EFF6FF'}; color: ${isOfficial ? '#166534' : '#1D4ED8'}; padding: 2px 8px; border-radius: 6px; font-weight: 700; display: inline-block; margin-top: 4px;">
+            ${sc.type || 'সার্ভিস সেন্টার'}
+          </span>
+        </div>
+      </div>
+
+      <div style="font-size: 12.5px; color: #475569; margin-top: 8px; display: flex; flex-direction: column; gap: 4px;">
+        <div><i class="fa-solid fa-location-dot" style="color: var(--primary); width: 14px;"></i> <strong>ঠিকানা:</strong> ${sc.address || sc.area || 'নারায়ণগঞ্জ'}</div>
+        <div><i class="fa-solid fa-clock" style="color: var(--primary); width: 14px;"></i> <strong>সময়:</strong> ${sc.timing || 'সকাল ১০টা - রাত ৮টা'}</div>
+        ${sc.services ? `<div><i class="fa-solid fa-wrench" style="color: #D97706; width: 14px;"></i> <strong>সেবা:</strong> ${sc.services}</div>` : ''}
+      </div>
+
+      <div class="action-buttons" style="margin-top: 10px;">
+        <a href="${sc.phone ? 'tel:' + sc.phone : '#'}" class="btn-action btn-call" style="padding: 8px 0; font-size: 13px;">
+          <i class="fa-solid fa-phone"></i> কল করুন
+        </a>
+        <a href="${sc.map_url || `https://maps.google.com/?q=${encodeURIComponent(sc.name + ' ' + (sc.area || 'নারায়ণগঞ্জ'))}`}" target="_blank" rel="noopener noreferrer" class="btn-action btn-map" style="padding: 8px 0; font-size: 13px;">
+          <i class="fa-solid fa-diamond-turn-right"></i> গুগল ম্যাপ
+        </a>
+      </div>
+    `;
+    container.appendChild(card);
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
