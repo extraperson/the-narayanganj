@@ -248,6 +248,48 @@
         </div>
       </div>
 	  
+	  <!-- ৫. ব্যাংক ও আর্থিক সেবা -->
+      <div id="section-banking">
+        <div class="section-title"><i class="fa-solid fa-building-columns" style="color: #0F5132;"></i> ব্যাংক ও আর্থিক সেবা</div>
+        <div class="home-categories-grid">
+          <!-- ১. ব্যাংক শাখা -->
+          <div class="home-cat-card" onclick="openCategoryPage('ব্যাংক শাখা', 'সকল তফসিলি ব্যাংকের প্রধান ও লোকাল শাখা')">
+            <div class="home-cat-icon" style="background: #E0F2FE; color: #0284C7;"><i class="fa-solid fa-building-columns"></i></div>
+            <div class="home-cat-info">
+              <h4>ব্যাংক শাখা</h4>
+              <p>সকল ব্যাংকের শাখা</p>
+            </div>
+          </div>
+
+          <!-- ২. উপশাখা -->
+          <div class="home-cat-card" onclick="openCategoryPage('উপশাখা', 'দ্রুত ব্যাংকিং ও উপশাখা পয়েন্ট')">
+            <div class="home-cat-icon" style="background: #F0FDF4; color: #16A34A;"><i class="fa-solid fa-code-branch"></i></div>
+            <div class="home-cat-info">
+              <h4>উপশাখা</h4>
+              <p>সাব-ব্রাঞ্চ ব্যাংকিং</p>
+            </div>
+          </div>
+
+          <!-- ৩. এজেন্ট ব্যাংকিং -->
+          <div class="home-cat-card" onclick="openCategoryPage('এজেন্ট ব্যাংকিং', 'ইউনিয়ন ও ওয়ার্ড ভিত্তিক এজেন্ট আউটলেট')">
+            <div class="home-cat-icon" style="background: #FEF3C7; color: #D97706;"><i class="fa-solid fa-user-tie"></i></div>
+            <div class="home-cat-info">
+              <h4>এজেন্ট ব্যাংকিং</h4>
+              <p>আউটলেট ও সেবা কেন্দ্র</p>
+            </div>
+          </div>
+
+          <!-- ৪. এটিএম বুথ -->
+          <div class="home-cat-card" onclick="openCategoryPage('এটিএম', '২৪/৭ ক্যাশ উত্তোলন ও সিআরএম বুথ')">
+            <div class="home-cat-icon" style="background: #FDF2F8; color: #DB2777;"><i class="fa-solid fa-money-bill-wave"></i></div>
+            <div class="home-cat-info">
+              <h4>এটিএম বুথ</h4>
+              <p>২৪ ঘণ্টা ক্যাশ ও সিআরএম</p>
+            </div>
+          </div>
+        </div>
+      </div>
+	  
       <!-- প্রশাসন ও জনপ্রতিনিধি সেকশন -->
       <div id="section-administration">
         <div class="section-title"><i class="fa-solid fa-landmark-dome"></i> প্রশাসন ও জনপ্রতিনিধি</div>
@@ -424,16 +466,8 @@
       </div>
     </div>
 
-    <div class="area-filter-scroll" id="catAreaFilterBar">
-      <div class="area-chip active" onclick="setCategoryAreaFilter('সব এলাকা', this)"><i class="fa-solid fa-location-dot"></i> সব এলাকা</div>
-      <div class="area-chip" onclick="setCategoryAreaFilter('চাষাড়া', this)">চাষাড়া / সদর</div>
-      <div class="area-chip" onclick="setCategoryAreaFilter('বন্দর', this)">বন্দর</div>
-      <div class="area-chip" onclick="setCategoryAreaFilter('সিদ্ধিরগঞ্জ', this)">সিদ্ধিরগঞ্জ</div>
-      <div class="area-chip" onclick="setCategoryAreaFilter('ফতুল্লা', this)">ফতুল্লা</div>
-      <div class="area-chip" onclick="setCategoryAreaFilter('সোনারগাঁও', this)">সোনারগাঁও</div>
-      <div class="area-chip" onclick="setCategoryAreaFilter('রূপগঞ্জ', this)">রূপগঞ্জ</div>
-      <div class="area-chip" onclick="setCategoryAreaFilter('আড়াইহাজার', this)">আড়াইহাজার</div>
-    </div>
+    <!-- এলাকা ফিল্টার বার (জাভাস্ক্রিপ্ট স্বয়ংক্রিয়ভাবে চিপগুলো তৈরি করবে) -->
+    <div class="area-filter-scroll" id="catAreaFilterBar"></div>
 
     <div class="page-listings" id="categoryListings"></div>
   </div>
@@ -830,6 +864,46 @@
           <i class="fa-solid fa-circle-info"></i> <span id="transNotesVal"></span>
         </div>
       </div>
+	  
+	  <!-- ব্যাংকিং তথ্য বক্স (রাউটিং নম্বর ও সুইফট কোড) -->
+      <div id="bankingSectionBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px;">
+        <div style="font-size: 14px; font-weight: 700; color: #0F5132; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-building-columns" style="color: #16A34A;"></i>
+            <span id="bankMainName">ব্যাংকিং লেনদেন তথ্য</span>
+          </div>
+          <span style="font-size: 10px; background: #DCFCE7; color: #166534; padding: 2px 7px; border-radius: 4px; font-weight: 600;">অনলাইন ব্যাংকিং</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+          <!-- রাউটিং নম্বর কার্ড -->
+          <div id="bankRoutingCard" style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px 12px; border-radius: 8px;">
+            <span style="font-size: 11px; color: var(--text-muted); display: block; font-weight: 600;">রাউটিং নম্বর (Routing)</span>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+              <strong id="bankRoutingVal" style="color: #0F172A; font-size: 14px; letter-spacing: 0.5px;">-</strong>
+              <button type="button" onclick="copyText('bankRoutingVal')" title="কপি করুন" style="border: none; background: #E2E8F0; color: #475569; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px;">
+                <i class="fa-regular fa-copy"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- সুইফট কোড কার্ড -->
+          <div id="bankSwiftCard" style="background: #F0F9FF; border: 1px solid #BAE6FD; padding: 10px 12px; border-radius: 8px;">
+            <span style="font-size: 11px; color: #0284C7; display: block; font-weight: 600;">সুইফট কোড (SWIFT)</span>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+              <strong id="bankSwiftVal" style="color: #0369A1; font-size: 14px; letter-spacing: 0.5px;">-</strong>
+              <button type="button" onclick="copyText('bankSwiftVal')" title="কপি করুন" style="border: none; background: #BAE6FD; color: #0369A1; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px;">
+                <i class="fa-regular fa-copy"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="bankServicesBox" style="margin-top: 10px; padding: 8px 10px; background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 6px; font-size: 11.5px; color: #475569; display: none;">
+          <i class="fa-solid fa-circle-check" style="color: #16A34A; margin-right: 4px;"></i>
+          <strong>বিশেষ সুবিধাসমূহ:</strong> <span id="bankServicesVal"></span>
+        </div>
+      </div>
 
       <div id="telecomSectionBox" style="display: none; flex-direction: column; gap: 14px;">
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 12px;">
@@ -886,6 +960,21 @@
             </table>
           </div>
           <div id="telNoOffersMsg" style="display: none; text-align: center; color: var(--text-muted); font-size: 12px; padding: 20px 0;">কোনো অফার পাওয়া যায়নি।</div>
+		  
+		  <!-- ওটিটি ও ডিজিটাল ভ্যালু অ্যাডেড সার্ভিস (VAS) সেকশন -->
+        <div id="telVasBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="font-size: 14px; font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 7px;">
+              <i class="fa-solid fa-clapperboard" style="color: #E11D48;"></i>
+              <span>ওটিটি ও এন্টারটেইনমেন্ট প্যাক</span>
+            </div>
+            <span id="telVasCountBadge" style="font-size: 10.5px; background: #FFE4E6; color: #E11D48; padding: 2px 8px; border-radius: 12px; font-weight: 700;">০টি প্যাক</span>
+          </div>
+          <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">হইচই, চরকি, টি-স্পোর্টস, সনি-লিভ ও লাইভ স্ট্রিমিং অফার</p>
+          
+          <div id="telVasList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+		
         </div>
       </div>
 	  
@@ -991,6 +1080,40 @@
         <div id="restaurantOfferContent" style="display: flex; flex-direction: column; gap: 12px;"></div>
       </div>
 
+<!-- ইউনিভার্সাল অনলাইন, সোশ্যাল ও ডেলিভারি লিঙ্ক ব্লক -->
+      <div id="socialLinksBox" style="display: none; background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-top: 14px;">
+        <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">
+          অনলাইন যোগাযোগ, সোশ্যাল ও অর্ডার লিংক
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <!-- ওয়েবসাইট ও ইমেইল -->
+          <a href="#" id="linkWebsite" target="_blank" rel="noopener noreferrer" class="social-btn btn-web" style="display: none;" title="ওয়েবসাইট"><i class="fa-solid fa-globe"></i></a>
+          <a href="#" id="linkEmail" target="_blank" rel="noopener noreferrer" class="social-btn" style="display: none; background: #FEE2E2; color: #DC2626;" title="ইমেইল পাঠান"><i class="fa-solid fa-envelope"></i></a>
+          
+          <!-- ডেলিভারি পার্টনার্স (Food Delivery) -->
+          <a href="#" id="linkFoodpanda" target="_blank" rel="noopener noreferrer" class="social-btn" style="display: none; background: #D70F64; color: #FFFFFF;" title="Foodpanda-তে অর্ডার করুন"><i class="fa-solid fa-paw"></i></a>
+          <!-- Foodi অফিসিয়াল লোগো বাটন -->
+<a href="#" id="linkFoodi" target="_blank" rel="noopener noreferrer" class="social-btn" style="display: none; background: #DF1B24; color: #FFFFFF;" title="Foodi-তে অর্ডার করুন">
+  <svg width="22" height="22" viewBox="0 0 100 100" style="display: block;">
+    <!-- সাদা বৃত্তাকার ব্যাকগ্রাউন্ড -->
+    <circle cx="50" cy="50" r="41" fill="#FFFFFF"/>
+    <!-- ৪৫ ডিগ্রি অ্যাঙ্গেলে নিখুঁত ফুডি কাঁটাচামচ লোগো -->
+    <g transform="rotate(45 50 50)">
+      <path d="M43 91 C44 78 45 66 44 59 C38 56 34 50 34 42 L34 16 A3.5 3.5 0 0 1 41 16 L41 38 A3 3 0 0 0 47 38 L47 13 A3.5 3.5 0 0 1 54 13 L54 38 A3 3 0 0 0 60 38 L60 16 A3.5 3.5 0 0 1 67 16 L67 42 C67 50 63 56 57 59 C56 66 57 78 58 91 Z" fill="#DF1B24"/>
+    </g>
+  </svg>
+</a>
+          <!-- সোশ্যাল মিডিয়া ও মেসেজিং -->
+          <a href="#" id="linkFacebook" target="_blank" rel="noopener noreferrer" class="social-btn btn-fb" style="display: none;" title="ফেসবুক"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" id="linkInstagram" target="_blank" rel="noopener noreferrer" class="social-btn btn-ig" style="display: none;" title="ইনস্টাগ্রাম"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" id="linkWhatsapp" target="_blank" rel="noopener noreferrer" class="social-btn" style="display: none; background: #DCFCE7; color: #16A34A;" title="হোয়াটসঅ্যাপ"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="#" id="linkYoutube" target="_blank" rel="noopener noreferrer" class="social-btn btn-yt" style="display: none;" title="ইউটিউব"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" id="linkTiktok" target="_blank" rel="noopener noreferrer" class="social-btn" style="display: none; background: #000000; color: #FFFFFF;" title="টিকটক"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" id="linkLinkedin" target="_blank" rel="noopener noreferrer" class="social-btn btn-li" style="display: none;" title="লিংকডইন"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+	  
+	  <!-- রেস্টুরেন্ট মেনু -->
       <div id="restaurantMenuBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: #B45309; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -1001,22 +1124,8 @@
         <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">রেস্টুরেন্টের জনপ্রিয় আইটেম ও নির্ধারিত মূল্য</p>
         <div id="restaurantMenuList" style="display: flex; flex-direction: column; gap: 8px;"></div>
       </div>
-
-      <div id="socialLinksBox" style="display: none; background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-top: 14px;">
-        <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">
-          অফিসিয়াল ওয়েবসাইট ও সামাজিক মাধ্যম
-        </div>
-        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-          <a href="#" id="linkEmail" target="_blank" rel="noopener noreferrer" class="social-btn" style="display: none; background: #FEE2E2; color: #DC2626;" title="ইমেইল পাঠান"><i class="fa-solid fa-envelope"></i></a>
-          <a href="#" id="linkWebsite" target="_blank" rel="noopener noreferrer" class="social-btn btn-web" style="display: none;" title="ওয়েবসাইট"><i class="fa-solid fa-globe"></i></a>
-          <a href="#" id="linkFacebook" target="_blank" rel="noopener noreferrer" class="social-btn btn-fb" style="display: none;" title="ফেসবুক"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#" id="linkYoutube" target="_blank" rel="noopener noreferrer" class="social-btn btn-yt" style="display: none;" title="ইউটিউব"><i class="fa-brands fa-youtube"></i></a>
-          <a href="#" id="linkLinkedin" target="_blank" rel="noopener noreferrer" class="social-btn btn-li" style="display: none;" title="লিংকডইন"><i class="fa-brands fa-linkedin-in"></i></a>
-          <a href="#" id="linkInstagram" target="_blank" rel="noopener noreferrer" class="social-btn btn-ig" style="display: none;" title="ইনস্টাগ্রাম"><i class="fa-brands fa-instagram"></i></a>
-          <a href="#" id="linkTiktok" target="_blank" rel="noopener noreferrer" class="social-btn" style="display: none; background: #000000; color: #FFFFFF;" title="টিকটক"><i class="fa-brands fa-tiktok"></i></a>
-        </div>
-      </div>
 	  
+	  <!-- আইএসপি প্যাকেজ সামারি -->
       <div id="ispQuickCompareBox" style="display: none; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-top: 14px;">
         <div style="font-size: 14px; font-weight: 700; color: #1E40AF; margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 8px;">

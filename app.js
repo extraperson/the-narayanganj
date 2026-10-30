@@ -12,6 +12,7 @@ const API_HEALTH = `https://opensheet.elk.sh/${SHEET_ID}/Health`;
 const API_TELECOM = `https://opensheet.elk.sh/${SHEET_ID}/Telecom`;
 const API_OFFERS = `https://opensheet.elk.sh/${SHEET_ID}/RechargeOffers`;
 const API_SERVICE_CENTERS = `https://opensheet.elk.sh/${SHEET_ID}/ServiceCenters`;
+const API_BANKING = `https://opensheet.elk.sh/${SHEET_ID}/Banking`;
 
 let placesData = [];
 let healthData = [];
@@ -25,6 +26,7 @@ let transportData = [];
 let telecomData = [];
 let rechargeOffersData = [];
 let serviceCentersData = [];
+let bankingData = [];
 
 let currentCategory = 'সব';
 let currentChamberFilter = null;
@@ -157,11 +159,19 @@ function normalizeRestaurantItem(item) {
     landmark: item.landmark || '',
     image_url: item.image_url || '',
     map_url: item.map_url || '',
-    facebook: item.facebook || '',
+    // সার্বজনীন অনলাইন ও সোশ্যাল ফিল্ডসমূহ
+    website: item.website || item.web || '',
+    facebook: item.facebook || item.fb || '',
+    instagram: item.instagram || item.ig || '',
+    email: item.email || item.mail || '',
+    whatsapp: item.whatsapp || item.wa || '',
+    foodpanda: item.foodpanda || item.fp || '',
+    foodi: item.foodi || '',
+    youtube: item.youtube || '',
+    tiktok: item.tiktok || '',
     featured: item.featured || ''
   };
 }
-
 function normalizeAdminItem(item) {
   const cleanPhone = cleanPhoneNumber(item.leader_phone || item.phone || item.mobile || '');
   return {
@@ -190,6 +200,26 @@ function normalizeAdminItem(item) {
     admin_units: item.admin_units || item.unions || '',
     attractions: item.attractions || item.spots || '',
     admin_stats: item.admin_stats || item.stats || '',
+  };
+}
+
+function normalizeBankingItem(item) {
+  const cleanPhone = cleanPhoneNumber(item.phone || item.mobile || item.hotline || '');
+  return {
+    ...item,
+    name: item.name || item.branch_name || 'ব্যাংক শাখা',
+    bank_name: item.bank_name || '',
+    category: item.category || 'ব্যাংক শাখা',
+    area: item.area || item.upazila || 'নারায়ণগঞ্জ',
+    address: item.address || item.area || 'নারায়ণগঞ্জ',
+    phone: cleanPhone,
+    routing_no: item.routing_no || item.routing || '',
+    swift_code: item.swift_code || item.swift || '',
+    timing: item.timing || 'রবি-বৃহঃ সকাল ১০টা - বিকাল ৪টা',
+    services: item.services || item.facilities || '',
+    rating: 'ব্যাংক',
+    map_url: item.map_url || '',
+    featured: item.featured || ''
   };
 }
 
@@ -255,19 +285,53 @@ function openCategoryPage(category, subtitle = '') {
   if (iEl) iEl.value = '';
 
   selectedCatArea = 'সব এলাকা';
-  const catBar = document.getElementById('catAreaFilterBar');
-  if (catBar) {
-    catBar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
-    const first = catBar.querySelector('.area-chip');
-    if (first) first.classList.add('active');
-  }
 
+  // ফিল্টার চিপস এবং আইটেম রেন্ডার
   renderCategoryItems();
   const el = document.getElementById('categoryPage');
   if (el) {
     el.classList.add('open');
     window.history.pushState({ page: 'category' }, '');
   }
+}
+
+// ডেটা অনুযায়ী স্বয়ংক্রিয় এলাকা ফিল্টার চিপস তৈরির অপটিমাইজড ইঞ্জিন
+function renderDynamicAreaChips(areas) {
+  const bar = document.getElementById('catAreaFilterBar');
+  if (!bar) return;
+
+  // এলাকাগুলো বাংলা বর্ণানুক্রমিকভাবে সাজানো (চাষাড়া থাকলে সবার প্রথমে রাখা)
+  const areaList = Array.from(areas).sort((a, b) => {
+    if (a.includes('চাষাড়া')) return -1;
+    if (b.includes('চাষাড়া')) return 1;
+    return a.localeCompare(b, 'bn');
+  });
+
+  // কোনো এলাকা না থাকলে বা মাত্র ১টি এলাকা থাকলে ফিল্টার বার অদৃশ্য থাকবে
+  if (areaList.length <= 1) {
+    bar.innerHTML = '';
+    bar.style.display = 'none';
+    return;
+  }
+
+  bar.style.display = 'flex';
+
+  let html = `
+    <div class="area-chip ${selectedCatArea === 'সব এলাকা' ? 'active' : ''}" onclick="setCategoryAreaFilter('সব এলাকা', this)">
+      <i class="fa-solid fa-location-dot"></i> সব এলাকা
+    </div>
+  `;
+
+  areaList.forEach(area => {
+    const isActive = selectedCatArea.toLowerCase() === area.toLowerCase();
+    html += `
+      <div class="area-chip ${isActive ? 'active' : ''}" onclick="setCategoryAreaFilter('${area}', this)">
+        ${area}
+      </div>
+    `;
+  });
+
+  bar.innerHTML = html;
 }
 
 function setCategoryAreaFilter(areaName, chipElement) {
@@ -348,6 +412,7 @@ function renderCategoryItems() {
   const isAdminCategory = ['জেলা প্রশাসন', 'সংসদীয় আসন', 'সিটি কর্পোরেশন', 'উপজেলা প্রশাসন', 'ইউনিয়ন পরিষদ', 'পৌরসভা'].includes(currentCategory);
   const isHealthCategory = ['সরকারি হাসপাতাল', 'বেসরকারি হাসপাতাল', 'ডায়াগনস্টিক', 'ডায়াগনস্টিক সেন্টার', 'ডেন্টাল', 'ডেন্টাল ক্লিনিক', 'ব্লাড ব্যাংক', 'ব্লাড ব্যাংক ও রক্তদান', 'রক্তদান', '২৪ ঘণ্টা ফার্মেসী', 'ফার্মেসী', 'চক্ষু হাসপাতাল', 'চক্ষু সেবা'].includes(currentCategory);
   const isTelecomCategory = ['টেলিকম', 'মোবাইল ব্যাংকিং', 'মোবাইল সার্ভিসিং'].includes(currentCategory);
+  const isBankingCategory = ['ব্যাংক শাখা', 'উপশাখা', 'এজেন্ট ব্যাংকিং', 'এটিএম', 'এটিএম বুথ'].includes(currentCategory);
 
   if (isHealthCategory) {
     sourceList = healthData.length > 0 ? healthData : placesData;
@@ -362,9 +427,12 @@ function renderCategoryItems() {
   } else if (currentCategory === 'পরিবহন') {
     sourceList = transportData.length > 0 ? transportData : placesData;
   } else if (currentCategory === 'সব') {
-    sourceList = [...placesData, ...healthData, ...educationData, ...restaurantsData, ...adminData, ...transportData];
+    sourceList = [...placesData, ...healthData, ...educationData, ...restaurantsData, ...adminData, ...transportData, ...bankingData];
+  } else if (isBankingCategory) {
+    sourceList = bankingData.length > 0 ? bankingData : placesData;
   }
-
+  
+  const availableAreas = new Set();
   const filtered = (sourceList || []).filter(item => {
     if (!item) return false;
     const itemCat = (item.category || '').trim();
@@ -406,6 +474,10 @@ function renderCategoryItems() {
     else if (currentCategory === 'জেনারেল স্টোর') matchCat = (itemCat.includes('জেনারেল স্টোর') || itemCat.includes('স্টোর') || itemCat.includes('মুদি'));
     else if (currentCategory === 'পরিবহন') matchCat = (itemCat.includes('পরিবহন') || itemCat.includes('বাস') || itemCat.includes('ট্রেন') || itemCat.includes('রেল') || itemCat.includes('লঞ্চ') || itemCat.includes('ঘাট'));
     else if (currentCategory === 'শপিং ও ব্যবসা') matchCat = (itemCat.includes('শপিং') || itemCat.includes('মার্কেট') || itemCat.includes('ব্যবসা') || itemCat.includes('আড়ত') || itemCat.includes('দোকান'));
+	else if (currentCategory === 'ব্যাংক শাখা') matchCat = (itemCat === 'ব্যাংক শাখা' || (itemCat.includes('ব্যাংক') && !itemCat.includes('উপশাখা') && !itemCat.includes('এজেন্ট') && !itemCat.includes('এটিএম')));
+    else if (currentCategory === 'উপশাখা') matchCat = (itemCat.includes('উপশাখা') || itemCat.toLowerCase().includes('sub-branch'));
+    else if (currentCategory === 'এজেন্ট ব্যাংকিং') matchCat = (itemCat.includes('এজেন্ট') || itemCat.toLowerCase().includes('agent'));
+    else if (currentCategory === 'এটিএম' || currentCategory === 'এটিএম বুথ') matchCat = (itemCat.includes('এটিএম') || itemCat.toLowerCase().includes('atm') || itemCat.includes('বুথ') || itemCat.toLowerCase().includes('crm'));
     else matchCat = itemCat.toLowerCase().includes(currentCategory.toLowerCase());
     
     let matchArea = (selectedCatArea === 'সব এলাকা');
@@ -427,8 +499,13 @@ function renderCategoryItems() {
       itemAddress.includes(query) ||
       (item.landmark || '').toLowerCase().includes(query);
 
-    return matchCat && matchArea && matchSearch;
+    if (matchCat && item.area) {
+      const a = item.area.trim();
+      if (a && a !== 'নারায়ণগঞ্জ') availableAreas.add(a);
+    }
+	return matchCat && matchArea && matchSearch;
   });
+  renderDynamicAreaChips(availableAreas);
 
   if (filtered.length === 0) {
     container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px 0;">কোনো তথ্য পাওয়া যায়নি।</div>`;
@@ -794,6 +871,56 @@ function openDetails(item) {
       diagBox.style.display = 'block';
     } else {
       diagBox.style.display = 'none';
+    }
+  }
+  
+  // ব্যাংকিং ডিটেইলস হ্যান্ডলার
+  const bankBox = document.getElementById('bankingSectionBox');
+  if (bankBox) {
+    const hasRouting = item.routing_no && item.routing_no.toString().trim() !== '';
+    const hasSwift = item.swift_code && item.swift_code.toString().trim() !== '';
+    const isBank = (cat === 'ব্যাংক শাখা' || cat === 'উপশাখা' || cat === 'এজেন্ট ব্যাংকিং' || cat === 'এটিএম' || cat.includes('ব্যাংক') || hasRouting || hasSwift);
+
+    if (isBank && (hasRouting || hasSwift || item.bank_name || item.name)) {
+      bankBox.style.display = 'block';
+      const mainNameEl = document.getElementById('bankMainName');
+      const rVal = document.getElementById('bankRoutingVal');
+      const sVal = document.getElementById('bankSwiftVal');
+      const rCard = document.getElementById('bankRoutingCard');
+      const sCard = document.getElementById('bankSwiftCard');
+      const srvBox = document.getElementById('bankServicesBox');
+      const srvVal = document.getElementById('bankServicesVal');
+
+      if (mainNameEl) mainNameEl.innerText = item.bank_name || item.name || 'ব্যাংকিং তথ্য';
+      
+      if (rCard && rVal) {
+        if (hasRouting) {
+          rVal.innerText = item.routing_no.toString().trim();
+          rCard.style.display = 'block';
+        } else {
+          rCard.style.display = 'none';
+        }
+      }
+
+      if (sCard && sVal) {
+        if (hasSwift) {
+          sVal.innerText = item.swift_code.toString().trim();
+          sCard.style.display = 'block';
+        } else {
+          sCard.style.display = 'none';
+        }
+      }
+
+      if (srvBox && srvVal) {
+        if (item.services && item.services.trim() !== '') {
+          srvVal.innerText = item.services.trim();
+          srvBox.style.display = 'block';
+        } else {
+          srvBox.style.display = 'none';
+        }
+      }
+    } else {
+      bankBox.style.display = 'none';
     }
   }
 
@@ -1190,7 +1317,7 @@ function openDetails(item) {
     }
   }
 
-  // সোশ্যাল লিঙ্ক ও প্রোফাইল
+  // সার্বজনীন সোশ্যাল, ডেলিভারি ও অনলাইন লিঙ্ক হ্যান্ডলার
   const socialBox = document.getElementById('socialLinksBox');
   const webBtn = document.getElementById('linkWebsite');
   const fbBtn = document.getElementById('linkFacebook');
@@ -1199,63 +1326,42 @@ function openDetails(item) {
   const igBtn = document.getElementById('linkInstagram');
   const ttBtn = document.getElementById('linkTiktok');
   const emailBtn = document.getElementById('linkEmail');
+  const waBtn = document.getElementById('linkWhatsapp');
+  const fpBtn = document.getElementById('linkFoodpanda');
+  const foodiBtn = document.getElementById('linkFoodi');
 
   let hasSocial = false;
-  if (webBtn) {
-    if (item.website && item.website.trim() !== '') {
-      webBtn.href = item.website.startsWith('http') ? item.website : `https://${item.website}`;
-      webBtn.style.display = 'flex';
+
+  function bindUniversalLink(btn, val, isEmail = false, isWa = false) {
+    if (!btn) return;
+    if (val && typeof val === 'string' && val.trim() !== '') {
+      let url = val.trim();
+      if (isEmail) {
+        btn.href = url.startsWith('mailto:') ? url : `mailto:${url}`;
+      } else if (isWa) {
+        const cleanWa = toEnDigits(url).replace(/[^\d]/g, '');
+        btn.href = url.startsWith('http') ? url : `https://wa.me/${cleanWa.startsWith('880') ? cleanWa : (cleanWa.startsWith('0') ? '88' + cleanWa : cleanWa)}`;
+      } else {
+        btn.href = url.startsWith('http') ? url : `https://${url}`;
+      }
+      btn.style.display = 'flex';
       hasSocial = true;
-    } else { webBtn.style.display = 'none'; }
+    } else {
+      btn.style.display = 'none';
+      btn.removeAttribute('href');
+    }
   }
 
-  if (fbBtn) {
-    if (item.facebook && item.facebook.trim() !== '') {
-      fbBtn.href = item.facebook;
-      fbBtn.style.display = 'flex';
-      hasSocial = true;
-    } else { fbBtn.style.display = 'none'; }
-  }
-
-  if (ytBtn) {
-    if (item.youtube && item.youtube.trim() !== '') {
-      ytBtn.href = item.youtube;
-      ytBtn.style.display = 'flex';
-      hasSocial = true;
-    } else { ytBtn.style.display = 'none'; }
-  }
-
-  if (liBtn) {
-    if (item.linkedin && item.linkedin.trim() !== '') {
-      liBtn.href = item.linkedin;
-      liBtn.style.display = 'flex';
-      hasSocial = true;
-    } else { liBtn.style.display = 'none'; }
-  }
-
-  if (igBtn) {
-    if (item.instagram && item.instagram.trim() !== '') {
-      igBtn.href = item.instagram;
-      igBtn.style.display = 'flex';
-      hasSocial = true;
-    } else { igBtn.style.display = 'none'; }
-  }
-
-  if (ttBtn) {
-    if (item.tiktok && item.tiktok.trim() !== '') {
-      ttBtn.href = item.tiktok.startsWith('http') ? item.tiktok : `https://${item.tiktok}`;
-      ttBtn.style.display = 'flex';
-      hasSocial = true;
-    } else { ttBtn.style.display = 'none'; }
-  }
-
-  if (emailBtn) {
-    if (item.email && item.email.trim() !== '') {
-      emailBtn.href = `mailto:${item.email.trim()}`;
-      emailBtn.style.display = 'flex';
-      hasSocial = true;
-    } else { emailBtn.style.display = 'none'; }
-  }
+  bindUniversalLink(webBtn, item.website || item.web || item.source_url);
+  bindUniversalLink(fbBtn, item.facebook || item.fb);
+  bindUniversalLink(igBtn, item.instagram || item.ig);
+  bindUniversalLink(ytBtn, item.youtube || item.yt);
+  bindUniversalLink(liBtn, item.linkedin);
+  bindUniversalLink(ttBtn, item.tiktok);
+  bindUniversalLink(emailBtn, item.email || item.mail, true);
+  bindUniversalLink(waBtn, item.whatsapp || item.wa, false, true);
+  bindUniversalLink(fpBtn, item.foodpanda || item.fp);
+  bindUniversalLink(foodiBtn, item.foodi);
 
   if (socialBox) {
     socialBox.style.display = hasSocial ? 'block' : 'none';
@@ -2125,8 +2231,15 @@ function renderTelecomOffersTable(opCode) {
   const tbody = document.getElementById('telOffersTableBody');
   const noOffers = document.getElementById('telNoOffersMsg');
   const countBadge = document.getElementById('telOffersCountBadge');
+  
+  // VAS এলিমেন্টসমূহ
+  const vasBox = document.getElementById('telVasBox');
+  const vasList = document.getElementById('telVasList');
+  const vasBadge = document.getElementById('telVasCountBadge');
+
   if (!tbody) return;
   tbody.innerHTML = '';
+  if (vasList) vasList.innerHTML = '';
 
   const opOffers = (rechargeOffersData || []).filter(o => {
     if (!o) return false;
@@ -2134,7 +2247,30 @@ function renderTelecomOffersTable(opCode) {
     return target.includes(currentActiveOperatorCode) || currentActiveOperatorCode.includes(target);
   });
 
-  const filtered = opOffers.filter(o => {
+  // ১. VAS/OTT অফার ও রেগুলার অফার আলাদা করা
+  const vasOffers = [];
+  const regularOffers = [];
+
+  opOffers.forEach(o => {
+    const explicitType = (o.offer_type || o.type || o.Type || '').toString().toLowerCase().trim();
+    const isVas = explicitType.includes('vas') || 
+                  explicitType.includes('ওটিটি') || 
+                  explicitType.includes('ott') || 
+                  explicitType.includes('streaming') || 
+                  (o.title || o.name || '').toLowerCase().includes('streaming') ||
+                  (o.data_mb || '').toLowerCase().includes('streaming') ||
+                  (o.title || '').toLowerCase().includes('chorki') ||
+                  (o.title || '').toLowerCase().includes('hoichoi');
+
+    if (isVas) {
+      vasOffers.push(o);
+    } else {
+      regularOffers.push(o);
+    }
+  });
+
+  // ২. রেগুলার অফারের ফিল্টারিং (মিনিট, ইন্টারনেট, বান্ডেল)
+  const filteredRegular = regularOffers.filter(o => {
     if (currentOfferTypeFilter === 'সব') return true;
     const minVal = (o.minute || o.Minute || o.min || '').toString().trim();
     const dataVal = (o.data_mb || o.mb || o.MB || o.data || o.internet || '').toString().trim();
@@ -2148,35 +2284,134 @@ function renderTelecomOffersTable(opCode) {
     return true;
   });
 
-  if (countBadge) countBadge.innerText = `${toBanglaNumber(filtered.length)}টি অফার`;
-  if (filtered.length === 0) {
+  // ৩. উভয় লিস্টেই Price অনুযায়ী Low to High সর্টিং
+  const sortPrice = (a, b) => {
+    const priceA = parseFloat(toEnDigits(a.recharge || a.amount || a.price || '0')) || 0;
+    const priceB = parseFloat(toEnDigits(b.recharge || b.amount || b.price || '0')) || 0;
+    return priceA - priceB;
+  };
+
+  filteredRegular.sort(sortPrice);
+  vasOffers.sort(sortPrice);
+
+  // ৪. সাধারণ অফার টেবিল রেন্ডার
+  if (countBadge) countBadge.innerText = `${toBanglaNumber(filteredRegular.length)}টি অফার`;
+  if (filteredRegular.length === 0) {
     if (noOffers) noOffers.style.display = 'block';
-    return;
+  } else {
+    if (noOffers) noOffers.style.display = 'none';
+    filteredRegular.forEach((offer, idx) => {
+      const row = document.createElement('tr');
+      row.style.cssText = `border-bottom: 1px solid #E2E8F0; background: ${idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'};`;
+      
+      const rawMin = (offer.minute || offer.Minute || offer.min || '').toString().trim();
+      const minText = (rawMin !== '' && rawMin !== '-') ? `${toBanglaNumber(rawMin)} মি.` : '-';
+
+      const rawData = (offer.data_mb || offer.mb || offer.MB || offer.data || offer.internet || '').toString().trim();
+      const dataText = (rawData !== '' && rawData !== '-') ? rawData : '-';
+
+      const daysVal = offer.days || offer.Day || offer.day || offer.validity_day || '১';
+      const daysText = `${toBanglaNumber(daysVal)} দিন`;
+      const rechargeVal = offer.recharge || offer.amount || offer.price || '0';
+
+      row.innerHTML = `
+        <td style="padding: 9px 6px; font-weight: 700; color: #16A34A; font-size: 13px; white-space: nowrap;">৳ ${toBanglaNumber(rechargeVal)}</td>
+        <td style="padding: 9px 6px; font-weight: 600; color: #1E293B;">${minText}</td>
+        <td style="padding: 9px 6px; font-weight: 600; color: #0284C7;">${dataText}</td>
+        <td style="padding: 9px 6px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
+      `;
+      tbody.appendChild(row);
+    });
   }
-  if (noOffers) noOffers.style.display = 'none';
 
-  filtered.forEach((offer, idx) => {
-    const row = document.createElement('tr');
-    row.style.cssText = `border-bottom: 1px solid #E2E8F0; background: ${idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'};`;
-    
-    const rawMin = (offer.minute || offer.Minute || offer.min || '').toString().trim();
-    const minText = (rawMin !== '' && rawMin !== '-') ? `${toBanglaNumber(rawMin)} মি.` : '-';
+  // ৫. ওটিটি ও VAS কার্ড লিস্ট রেন্ডার (স্ক্রিনশটের মতো ক্লিন ভিউ)
+  if (vasBox && vasList) {
+    if (vasOffers.length > 0 && currentOfferTypeFilter === 'সব') {
+      vasOffers.forEach((vas, vIdx) => {
+        const title = vas.title || vas.name || vas.package || `${vas.data_mb || ''} স্ট্রিমিং প্যাক`;
+        const validity = vas.days || vas.day || vas.validity_day || '১';
+        const price = vas.recharge || vas.amount || vas.price || '০';
+        const rawOtt = (vas.ott_platforms || vas.ott || '').trim();
+        const rawBreakdown = (vas.breakdown || vas.features || vas.services || '').trim();
 
-    const rawData = (offer.data_mb || offer.mb || offer.MB || offer.data || offer.internet || '').toString().trim();
-    const dataText = (rawData !== '' && rawData !== '-') ? rawData : '-';
+        // ওটিটি প্ল্যাটফর্ম ব্যাজ জেনারেটর
+        const ottBadges = rawOtt ? rawOtt.split(',').map(p => {
+          const name = p.trim();
+          let bg = '#0284C7';
+          const nLower = name.toLowerCase();
+          if (nLower.includes('chorki') || nLower.includes('চরকি')) bg = '#E11D48';
+          else if (nLower.includes('hoichoi') || nLower.includes('হইচই')) bg = '#EA580C';
+          else if (nLower.includes('tsports') || nLower.includes('টি-স্পোর্টস')) bg = '#BE123C';
+          else if (nLower.includes('sony') || nLower.includes('লিভ')) bg = '#7C3AED';
+          else if (nLower.includes('deepto') || nLower.includes('দীপ্ত')) bg = '#0D9488';
+          else if (nLower.includes('rabbithole')) bg = '#D97706';
 
-    const daysVal = offer.days || offer.Day || offer.day || offer.validity_day || '১';
-    const daysText = `${toBanglaNumber(daysVal)} দিন`;
-    const rechargeVal = offer.recharge || offer.amount || offer.price || '0';
+          return `<span style="background: ${bg}; color: #FFFFFF; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">
+            <i class="fa-solid fa-play" style="font-size: 8px;"></i> ${name}
+          </span>`;
+        }).join(' ') : '';
 
-    row.innerHTML = `
-      <td style="padding: 9px 6px; font-weight: 700; color: #16A34A; font-size: 13px; white-space: nowrap;">৳ ${toBanglaNumber(rechargeVal)}</td>
-      <td style="padding: 9px 6px; font-weight: 600; color: #1E293B;">${minText}</td>
-      <td style="padding: 9px 6px; font-weight: 600; color: #0284C7;">${dataText}</td>
-      <td style="padding: 9px 6px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
-    `;
-    tbody.appendChild(row);
-  });
+        // ব্রেকডাউন পয়েন্ট (রেগুলার ডেটা, স্ট্রিমিং ডেটা, এসএমএস ইত্যাদি)
+        const breakdownItems = rawBreakdown ? rawBreakdown.split(/[|\n]/).map(b => b.trim()).filter(Boolean) : [];
+
+        const card = document.createElement('div');
+        card.style.cssText = "background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; overflow: hidden; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);";
+        
+        card.innerHTML = `
+          <!-- কার্ডের মূল অংশ (ক্লিক করলে ড্রপডাউন খুলবে) -->
+          <div onclick="const b = this.parentElement.querySelector('.vas-details-body'); const a = this.querySelector('.arrow-icon'); if(b.style.display==='block'){ b.style.display='none'; a.style.transform='rotate(0deg)'; } else { b.style.display='block'; a.style.transform='rotate(180deg)'; }" 
+               style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; cursor: pointer; background: #FFFDFD;">
+            <div style="flex: 1; padding-right: 10px;">
+              <div style="font-weight: 700; font-size: 13.5px; color: #1E293B;">${title}</div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap;">
+                <span style="font-size: 11px; color: #64748B;"><i class="fa-regular fa-clock"></i> মেয়াদ: ${toBanglaNumber(validity)} দিন</span>
+                ${ottBadges ? `<div style="display: flex; gap: 4px; flex-wrap: wrap;">${ottBadges}</div>` : ''}
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 14px; font-weight: 800; color: #16A34A; background: #DCFCE7; padding: 4px 10px; border-radius: 8px; white-space: nowrap;">
+                ৳ ${toBanglaNumber(price)}
+              </span>
+              <div style="width: 26px; height: 26px; border-radius: 50%; border: 1px solid #CBD5E1; display: flex; align-items: center; justify-content: center; background: #F8FAFC;">
+                <i class="fa-solid fa-chevron-down arrow-icon" style="font-size: 11px; color: #0284C7; transition: transform 0.25s;"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- ড্রপডাউন বডি (অফারের বিস্তারিত বিবরণ) -->
+          <div class="vas-details-body" style="display: none; padding: 10px 14px 12px; background: #F8FAFC; border-top: 1px dashed #E2E8F0; font-size: 12px; color: #334155;">
+            <div style="font-weight: 700; color: #0F172A; margin-bottom: 6px; font-size: 11.5px; text-transform: uppercase;">
+              <i class="fa-solid fa-gift" style="color: #E11D48; margin-right: 4px;"></i> অফার ও সুবিধার বিবরণ:
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+              ${rawOtt ? `
+                <div style="display: flex; align-items: flex-start; gap: 6px; color: #9F1239; background: #FFE4E6; padding: 6px 8px; border-radius: 6px;">
+                  <i class="fa-solid fa-tv" style="margin-top: 2px;"></i>
+                  <span><strong>ফ্রি ওটিটি সাবস্ক্রিপশন:</strong> ${rawOtt}</span>
+                </div>
+              ` : ''}
+
+              ${breakdownItems.length > 0 ? breakdownItems.map(item => `
+                <div style="display: flex; align-items: center; gap: 6px; color: #475569;">
+                  <i class="fa-solid fa-circle-check" style="color: #16A34A; font-size: 11px;"></i>
+                  <span>${item}</span>
+                </div>
+              `).join('') : `
+                <div style="color: #64748B;">• প্যাকেজ অন্তর্ভুক্ত অ্যাপে আনলিমিটেড স্ট্রিমিং সুবিধা</div>
+              `}
+            </div>
+          </div>
+        `;
+        vasList.appendChild(card);
+      });
+      if (vasBadge) vasBadge.innerText = `${toBanglaNumber(vasOffers.length)}টি প্যাক`;
+      vasBox.style.display = 'block';
+    } else {
+      vasBox.style.display = 'none';
+    }
+  }
 }
 
 function filterTelecomOffers(filterType, chipEl) {
@@ -2228,6 +2463,7 @@ function setAllAppData(bundle) {
   telecomData = Array.isArray(bundle.telecom) ? bundle.telecom : [];
   rechargeOffersData = Array.isArray(bundle.offers) ? bundle.offers : [];
   serviceCentersData = Array.isArray(bundle.serviceCenters) ? bundle.serviceCenters : [];
+  bankingData = Array.isArray(bundle.banking) ? bundle.banking : [];
 
   updateCategoryCounts();
 }
@@ -2245,7 +2481,7 @@ async function loadData() {
   if (!navigator.onLine) return;
 
   try {
-    const [pData, hData, dData, rData, eData, restData, aData, pkgData, tData, telData, offData, scData] = await Promise.all([
+    const [pData, hData, dData, rData, eData, restData, aData, pkgData, tData, telData, offData, scData, bData] = await Promise.all([
       fetch(API_PLACES).then(r => r.json()).catch(() => null),
       fetch(API_HEALTH).then(r => r.json()).catch(() => null),
       fetch(API_DOCTORS).then(r => r.json()).catch(() => null),
@@ -2257,7 +2493,8 @@ async function loadData() {
       fetch(API_TRANSPORT).then(r => r.json()).catch(() => null),
       fetch(API_TELECOM).then(r => r.json()).catch(() => null),
       fetch(API_OFFERS).then(r => r.json()).catch(() => null),
-      fetch(API_SERVICE_CENTERS).then(r => r.json()).catch(() => null)
+      fetch(API_SERVICE_CENTERS).then(r => r.json()).catch(() => null),
+      fetch(API_BANKING).then(r => r.json()).catch(() => null)
     ]);
 
     const freshBundle = {
@@ -2272,7 +2509,8 @@ async function loadData() {
       transport: Array.isArray(tData) ? organizeListings(tData.map(normalizeTransportItem)) : transportData,
       telecom: Array.isArray(telData) ? organizeListings(telData) : telecomData,
       offers: Array.isArray(offData) ? offData : rechargeOffersData,
-      serviceCenters: Array.isArray(scData) ? scData : serviceCentersData
+      serviceCenters: Array.isArray(scData) ? scData : serviceCentersData,
+      banking: Array.isArray(bData) ? organizeListings(bData.map(normalizeBankingItem)) : bankingData
     };
 
     setAllAppData(freshBundle);
@@ -2491,6 +2729,19 @@ function renderServiceCenterCards() {
       </div>
     `;
     container.appendChild(card);
+  });
+}
+
+function copyText(elementId) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  const text = el.innerText.trim();
+  if (!text || text === '-') return;
+  
+  navigator.clipboard.writeText(text).then(() => {
+    alert(`কপি করা হয়েছে: ${text}`);
+  }).catch(() => {
+    prompt('কপি করতে সিলেক্ট করুন:', text);
   });
 }
 
