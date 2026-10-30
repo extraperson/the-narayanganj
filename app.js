@@ -624,7 +624,7 @@ function openDetails(item) {
       const subsEl = document.getElementById('telSubsVal');
       if (typeEl) typeEl.innerText = item.type || 'মোবাইল নেটওয়ার্ক';
       if (subsEl) subsEl.innerText = item.subscribers || 'সারাদেশে বিস্তৃত';
-      renderTelecomOffersTable(item.code || item.name);
+     renderTelecomOffersTable(item.code || item.name);
     } else {
       telBox.style.display = 'none';
     }
@@ -2227,19 +2227,22 @@ let currentOfferTypeFilter = 'সব';
 let currentActiveOperatorCode = '';
 
 function renderTelecomOffersTable(opCode) {
-  currentActiveOperatorCode = (opCode || '').toString().toUpperCase().trim();
+  let rawKey = (opCode || '').toString().trim();
+  const n = rawKey.toLowerCase();
+  
+  // সার্বজনীন অপারেটর কোড সমাধান
+  if (n.includes('গ্রামীণ') || n.includes('gp')) currentActiveOperatorCode = 'GP';
+  else if (n.includes('বাংলালিংক') || n.includes('banglalink') || n.includes('bl')) currentActiveOperatorCode = 'BANGLALINK';
+  else if (n.includes('রবি') || n.includes('robi')) currentActiveOperatorCode = 'ROBI';
+  else if (n.includes('এয়ারটেল') || n.includes('airtel')) currentActiveOperatorCode = 'AIRTEL';
+  else if (n.includes('টেলিটক') || n.includes('teletalk')) currentActiveOperatorCode = 'TELETALK';
+  else currentActiveOperatorCode = rawKey.toUpperCase();
+
   const tbody = document.getElementById('telOffersTableBody');
   const noOffers = document.getElementById('telNoOffersMsg');
   const countBadge = document.getElementById('telOffersCountBadge');
-  
-  // VAS এলিমেন্টসমূহ
-  const vasBox = document.getElementById('telVasBox');
-  const vasList = document.getElementById('telVasList');
-  const vasBadge = document.getElementById('telVasCountBadge');
-
   if (!tbody) return;
   tbody.innerHTML = '';
-  if (vasList) vasList.innerHTML = '';
 
   const opOffers = (rechargeOffersData || []).filter(o => {
     if (!o) return false;
@@ -2247,30 +2250,7 @@ function renderTelecomOffersTable(opCode) {
     return target.includes(currentActiveOperatorCode) || currentActiveOperatorCode.includes(target);
   });
 
-  // ১. VAS/OTT অফার ও রেগুলার অফার আলাদা করা
-  const vasOffers = [];
-  const regularOffers = [];
-
-  opOffers.forEach(o => {
-    const explicitType = (o.offer_type || o.type || o.Type || '').toString().toLowerCase().trim();
-    const isVas = explicitType.includes('vas') || 
-                  explicitType.includes('ওটিটি') || 
-                  explicitType.includes('ott') || 
-                  explicitType.includes('streaming') || 
-                  (o.title || o.name || '').toLowerCase().includes('streaming') ||
-                  (o.data_mb || '').toLowerCase().includes('streaming') ||
-                  (o.title || '').toLowerCase().includes('chorki') ||
-                  (o.title || '').toLowerCase().includes('hoichoi');
-
-    if (isVas) {
-      vasOffers.push(o);
-    } else {
-      regularOffers.push(o);
-    }
-  });
-
-  // ২. রেগুলার অফারের ফিল্টারিং (মিনিট, ইন্টারনেট, বান্ডেল)
-  const filteredRegular = regularOffers.filter(o => {
+  const filtered = opOffers.filter(o => {
     if (currentOfferTypeFilter === 'সব') return true;
     const minVal = (o.minute || o.Minute || o.min || '').toString().trim();
     const dataVal = (o.data_mb || o.mb || o.MB || o.data || o.internet || '').toString().trim();
@@ -2284,134 +2264,47 @@ function renderTelecomOffersTable(opCode) {
     return true;
   });
 
-  // ৩. উভয় লিস্টেই Price অনুযায়ী Low to High সর্টিং
-  const sortPrice = (a, b) => {
+  // রিচার্জের পরিমাণ অনুযায়ী Low to High সর্টিং
+  filtered.sort((a, b) => {
     const priceA = parseFloat(toEnDigits(a.recharge || a.amount || a.price || '0')) || 0;
     const priceB = parseFloat(toEnDigits(b.recharge || b.amount || b.price || '0')) || 0;
     return priceA - priceB;
-  };
+  });
 
-  filteredRegular.sort(sortPrice);
-  vasOffers.sort(sortPrice);
-
-  // ৪. সাধারণ অফার টেবিল রেন্ডার
-  if (countBadge) countBadge.innerText = `${toBanglaNumber(filteredRegular.length)}টি অফার`;
-  if (filteredRegular.length === 0) {
+  if (countBadge) countBadge.innerText = `${toBanglaNumber(filtered.length)}টি অফার`;
+  if (filtered.length === 0) {
     if (noOffers) noOffers.style.display = 'block';
-  } else {
-    if (noOffers) noOffers.style.display = 'none';
-    filteredRegular.forEach((offer, idx) => {
-      const row = document.createElement('tr');
-      row.style.cssText = `border-bottom: 1px solid #E2E8F0; background: ${idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'};`;
-      
-      const rawMin = (offer.minute || offer.Minute || offer.min || '').toString().trim();
-      const minText = (rawMin !== '' && rawMin !== '-') ? `${toBanglaNumber(rawMin)} মি.` : '-';
-
-      const rawData = (offer.data_mb || offer.mb || offer.MB || offer.data || offer.internet || '').toString().trim();
-      const dataText = (rawData !== '' && rawData !== '-') ? rawData : '-';
-
-      const daysVal = offer.days || offer.Day || offer.day || offer.validity_day || '১';
-      const daysText = `${toBanglaNumber(daysVal)} দিন`;
-      const rechargeVal = offer.recharge || offer.amount || offer.price || '0';
-
-      row.innerHTML = `
-        <td style="padding: 9px 6px; font-weight: 700; color: #16A34A; font-size: 13px; white-space: nowrap;">৳ ${toBanglaNumber(rechargeVal)}</td>
-        <td style="padding: 9px 6px; font-weight: 600; color: #1E293B;">${minText}</td>
-        <td style="padding: 9px 6px; font-weight: 600; color: #0284C7;">${dataText}</td>
-        <td style="padding: 9px 6px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
-      `;
-      tbody.appendChild(row);
-    });
+    return;
   }
+  if (noOffers) noOffers.style.display = 'none';
 
-  // ৫. ওটিটি ও VAS কার্ড লিস্ট রেন্ডার (স্ক্রিনশটের মতো ক্লিন ভিউ)
-  if (vasBox && vasList) {
-    if (vasOffers.length > 0 && currentOfferTypeFilter === 'সব') {
-      vasOffers.forEach((vas, vIdx) => {
-        const title = vas.title || vas.name || vas.package || `${vas.data_mb || ''} স্ট্রিমিং প্যাক`;
-        const validity = vas.days || vas.day || vas.validity_day || '১';
-        const price = vas.recharge || vas.amount || vas.price || '০';
-        const rawOtt = (vas.ott_platforms || vas.ott || '').trim();
-        const rawBreakdown = (vas.breakdown || vas.features || vas.services || '').trim();
+  filtered.forEach((offer, idx) => {
+    const row = document.createElement('tr');
+    row.style.cssText = `border-bottom: 1px solid #E2E8F0; background: ${idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'};`;
+    
+    const rawMin = (offer.minute || offer.Minute || offer.min || '').toString().trim();
+    const minText = (rawMin !== '' && rawMin !== '-') ? `${toBanglaNumber(rawMin)} মি.` : '-';
 
-        // ওটিটি প্ল্যাটফর্ম ব্যাজ জেনারেটর
-        const ottBadges = rawOtt ? rawOtt.split(',').map(p => {
-          const name = p.trim();
-          let bg = '#0284C7';
-          const nLower = name.toLowerCase();
-          if (nLower.includes('chorki') || nLower.includes('চরকি')) bg = '#E11D48';
-          else if (nLower.includes('hoichoi') || nLower.includes('হইচই')) bg = '#EA580C';
-          else if (nLower.includes('tsports') || nLower.includes('টি-স্পোর্টস')) bg = '#BE123C';
-          else if (nLower.includes('sony') || nLower.includes('লিভ')) bg = '#7C3AED';
-          else if (nLower.includes('deepto') || nLower.includes('দীপ্ত')) bg = '#0D9488';
-          else if (nLower.includes('rabbithole')) bg = '#D97706';
+    const rawData = (offer.data_mb || offer.mb || offer.MB || offer.data || offer.internet || '').toString().trim();
+    const dataText = (rawData !== '' && rawData !== '-') ? rawData : '-';
 
-          return `<span style="background: ${bg}; color: #FFFFFF; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">
-            <i class="fa-solid fa-play" style="font-size: 8px;"></i> ${name}
-          </span>`;
-        }).join(' ') : '';
+    const daysVal = offer.days || offer.Day || offer.day || offer.validity_day || '১';
+    const daysText = `${toBanglaNumber(daysVal)} দিন`;
+    const rechargeVal = offer.recharge || offer.amount || offer.price || '0';
 
-        // ব্রেকডাউন পয়েন্ট (রেগুলার ডেটা, স্ট্রিমিং ডেটা, এসএমএস ইত্যাদি)
-        const breakdownItems = rawBreakdown ? rawBreakdown.split(/[|\n]/).map(b => b.trim()).filter(Boolean) : [];
+    row.innerHTML = `
+      <td style="padding: 9px 6px; font-weight: 700; color: #16A34A; font-size: 13px; white-space: nowrap;">৳ ${toBanglaNumber(rechargeVal)}</td>
+      <td style="padding: 9px 6px; font-weight: 600; color: #1E293B;">${minText}</td>
+      <td style="padding: 9px 6px; font-weight: 600; color: #0284C7;">${dataText}</td>
+      <td style="padding: 9px 6px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
 
-        const card = document.createElement('div');
-        card.style.cssText = "background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; overflow: hidden; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);";
-        
-        card.innerHTML = `
-          <!-- কার্ডের মূল অংশ (ক্লিক করলে ড্রপডাউন খুলবে) -->
-          <div onclick="const b = this.parentElement.querySelector('.vas-details-body'); const a = this.querySelector('.arrow-icon'); if(b.style.display==='block'){ b.style.display='none'; a.style.transform='rotate(0deg)'; } else { b.style.display='block'; a.style.transform='rotate(180deg)'; }" 
-               style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; cursor: pointer; background: #FFFDFD;">
-            <div style="flex: 1; padding-right: 10px;">
-              <div style="font-weight: 700; font-size: 13.5px; color: #1E293B;">${title}</div>
-              <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap;">
-                <span style="font-size: 11px; color: #64748B;"><i class="fa-regular fa-clock"></i> মেয়াদ: ${toBanglaNumber(validity)} দিন</span>
-                ${ottBadges ? `<div style="display: flex; gap: 4px; flex-wrap: wrap;">${ottBadges}</div>` : ''}
-              </div>
-            </div>
-
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 14px; font-weight: 800; color: #16A34A; background: #DCFCE7; padding: 4px 10px; border-radius: 8px; white-space: nowrap;">
-                ৳ ${toBanglaNumber(price)}
-              </span>
-              <div style="width: 26px; height: 26px; border-radius: 50%; border: 1px solid #CBD5E1; display: flex; align-items: center; justify-content: center; background: #F8FAFC;">
-                <i class="fa-solid fa-chevron-down arrow-icon" style="font-size: 11px; color: #0284C7; transition: transform 0.25s;"></i>
-              </div>
-            </div>
-          </div>
-
-          <!-- ড্রপডাউন বডি (অফারের বিস্তারিত বিবরণ) -->
-          <div class="vas-details-body" style="display: none; padding: 10px 14px 12px; background: #F8FAFC; border-top: 1px dashed #E2E8F0; font-size: 12px; color: #334155;">
-            <div style="font-weight: 700; color: #0F172A; margin-bottom: 6px; font-size: 11.5px; text-transform: uppercase;">
-              <i class="fa-solid fa-gift" style="color: #E11D48; margin-right: 4px;"></i> অফার ও সুবিধার বিবরণ:
-            </div>
-            
-            <div style="display: flex; flex-direction: column; gap: 5px;">
-              ${rawOtt ? `
-                <div style="display: flex; align-items: flex-start; gap: 6px; color: #9F1239; background: #FFE4E6; padding: 6px 8px; border-radius: 6px;">
-                  <i class="fa-solid fa-tv" style="margin-top: 2px;"></i>
-                  <span><strong>ফ্রি ওটিটি সাবস্ক্রিপশন:</strong> ${rawOtt}</span>
-                </div>
-              ` : ''}
-
-              ${breakdownItems.length > 0 ? breakdownItems.map(item => `
-                <div style="display: flex; align-items: center; gap: 6px; color: #475569;">
-                  <i class="fa-solid fa-circle-check" style="color: #16A34A; font-size: 11px;"></i>
-                  <span>${item}</span>
-                </div>
-              `).join('') : `
-                <div style="color: #64748B;">• প্যাকেজ অন্তর্ভুক্ত অ্যাপে আনলিমিটেড স্ট্রিমিং সুবিধা</div>
-              `}
-            </div>
-          </div>
-        `;
-        vasList.appendChild(card);
-      });
-      if (vasBadge) vasBadge.innerText = `${toBanglaNumber(vasOffers.length)}টি প্যাক`;
-      vasBox.style.display = 'block';
-    } else {
-      vasBox.style.display = 'none';
-    }
-  }
+// ৬টি কার্ড ক্লিকে ডেডিকেটেড পেজ হ্যান্ডলার (প্লেসহোল্ডার)
+function openTelPackPage(packType) {
+  console.log("Selected pack type:", packType);
 }
 
 function filterTelecomOffers(filterType, chipEl) {
