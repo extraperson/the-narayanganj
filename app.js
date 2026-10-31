@@ -159,9 +159,9 @@ function normalizeRestaurantItem(item) {
     landmark: item.landmark || '',
     image_url: item.image_url || '',
     map_url: item.map_url || '',
-    // সার্বজনীন অনলাইন ও সোশ্যাল ফিল্ডসমূহ
     website: item.website || item.web || '',
     facebook: item.facebook || item.fb || '',
+    twitter: item.twitter || item.x || '',
     instagram: item.instagram || item.ig || '',
     email: item.email || item.mail || '',
     whatsapp: item.whatsapp || item.wa || '',
@@ -172,6 +172,7 @@ function normalizeRestaurantItem(item) {
     featured: item.featured || ''
   };
 }
+
 function normalizeAdminItem(item) {
   const cleanPhone = cleanPhoneNumber(item.leader_phone || item.phone || item.mobile || '');
   return {
@@ -264,18 +265,25 @@ function closeSlide(id) {
   if (el) el.classList.remove('open');
 }
 
-function closeCategoryPage() { closeSlide('categoryPage'); }
-function closeDoctorPage() { closeSlide('doctorPage'); }
-function closeDoctorProfile() { closeSlide('doctorProfileView'); }
-function closeBookmarkPage() { closeSlide('bookmarkPage'); }
-function closeDetails() { closeSlide('detailsView'); }
-function closeInstitutionResults() { closeSlide('eduResultsPage'); }
-function closeIspPackages() { closeSlide('ispPackagesPage'); }
-function closeCareCenters() { closeSlide('careCenterPage'); }
-function closeMobileCareHub() { closeSlide('mobileCareHubPage'); }
+function clearHashIfMatches(prefix) {
+  if (window.location.hash && window.location.hash.startsWith(prefix)) {
+    history.replaceState(null, null, window.location.pathname + window.location.search);
+  }
+}
+
+function closeCategoryPage() { closeSlide('categoryPage'); clearHashIfMatches('#category'); }
+function closeDoctorPage() { closeSlide('doctorPage'); clearHashIfMatches('#doctors'); }
+function closeDoctorProfile() { closeSlide('doctorProfileView'); clearHashIfMatches('#doctor'); }
+function closeBookmarkPage() { closeSlide('bookmarkPage'); clearHashIfMatches('#bookmarks'); }
+function closeDetails() { closeSlide('detailsView'); clearHashIfMatches('#details'); }
+function closeInstitutionResults() { closeSlide('eduResultsPage'); clearHashIfMatches('#eduResults'); }
+function closeIspPackages() { closeSlide('ispPackagesPage'); clearHashIfMatches('#ispPackages'); }
+function closeCareCenters() { closeSlide('careCenterPage'); clearHashIfMatches('#careCenters'); }
+function closeMobileCareHub() { closeSlide('mobileCareHubPage'); clearHashIfMatches('#mobileCareHub'); }
+function closeTelPackPage() { closeSlide('telPackDetailsPage'); clearHashIfMatches('#telPack'); }
 
 // --- ৩. ক্যাটাগরি পেজ ও ফিল্টারিং ইঞ্জিন ---
-function openCategoryPage(category, subtitle = '') {
+function openCategoryPage(category, subtitle = '', push = true) {
   currentCategory = category;
   const tEl = document.getElementById('catPageTitle');
   const sEl = document.getElementById('catPageSub');
@@ -286,28 +294,26 @@ function openCategoryPage(category, subtitle = '') {
 
   selectedCatArea = 'সব এলাকা';
 
-  // ফিল্টার চিপস এবং আইটেম রেন্ডার
   renderCategoryItems();
   const el = document.getElementById('categoryPage');
   if (el) {
     el.classList.add('open');
-    window.history.pushState({ page: 'category' }, '');
+    if (push) {
+      window.history.pushState({ page: 'category' }, '', `#category?name=${encodeURIComponent(category)}`);
+    }
   }
 }
 
-// ডেটা অনুযায়ী স্বয়ংক্রিয় এলাকা ফিল্টার চিপস তৈরির অপটিমাইজড ইঞ্জিন
 function renderDynamicAreaChips(areas) {
   const bar = document.getElementById('catAreaFilterBar');
   if (!bar) return;
 
-  // এলাকাগুলো বাংলা বর্ণানুক্রমিকভাবে সাজানো (চাষাড়া থাকলে সবার প্রথমে রাখা)
   const areaList = Array.from(areas).sort((a, b) => {
     if (a.includes('চাষাড়া')) return -1;
     if (b.includes('চাষাড়া')) return 1;
     return a.localeCompare(b, 'bn');
   });
 
-  // কোনো এলাকা না থাকলে বা মাত্র ১টি এলাকা থাকলে ফিল্টার বার অদৃশ্য থাকবে
   if (areaList.length <= 1) {
     bar.innerHTML = '';
     bar.style.display = 'none';
@@ -427,7 +433,7 @@ function renderCategoryItems() {
   } else if (currentCategory === 'পরিবহন') {
     sourceList = transportData.length > 0 ? transportData : placesData;
   } else if (currentCategory === 'সব') {
-    sourceList = [...placesData, ...healthData, ...educationData, ...restaurantsData, ...adminData, ...transportData, ...bankingData];
+    sourceList = [...placesData, ...healthData, ...educationData, ...restaurantsData, ...adminData, ...transportData, ...telecomData, ...bankingData];
   } else if (isBankingCategory) {
     sourceList = bankingData.length > 0 ? bankingData : placesData;
   }
@@ -474,7 +480,7 @@ function renderCategoryItems() {
     else if (currentCategory === 'জেনারেল স্টোর') matchCat = (itemCat.includes('জেনারেল স্টোর') || itemCat.includes('স্টোর') || itemCat.includes('মুদি'));
     else if (currentCategory === 'পরিবহন') matchCat = (itemCat.includes('পরিবহন') || itemCat.includes('বাস') || itemCat.includes('ট্রেন') || itemCat.includes('রেল') || itemCat.includes('লঞ্চ') || itemCat.includes('ঘাট'));
     else if (currentCategory === 'শপিং ও ব্যবসা') matchCat = (itemCat.includes('শপিং') || itemCat.includes('মার্কেট') || itemCat.includes('ব্যবসা') || itemCat.includes('আড়ত') || itemCat.includes('দোকান'));
-	else if (currentCategory === 'ব্যাংক শাখা') matchCat = (itemCat === 'ব্যাংক শাখা' || (itemCat.includes('ব্যাংক') && !itemCat.includes('উপশাখা') && !itemCat.includes('এজেন্ট') && !itemCat.includes('এটিএম')));
+    else if (currentCategory === 'ব্যাংক শাখা') matchCat = (itemCat === 'ব্যাংক শাখা' || (itemCat.includes('ব্যাংক') && !itemCat.includes('উপশাখা') && !itemCat.includes('এজেন্ট') && !itemCat.includes('এটিএম')));
     else if (currentCategory === 'উপশাখা') matchCat = (itemCat.includes('উপশাখা') || itemCat.toLowerCase().includes('sub-branch'));
     else if (currentCategory === 'এজেন্ট ব্যাংকিং') matchCat = (itemCat.includes('এজেন্ট') || itemCat.toLowerCase().includes('agent'));
     else if (currentCategory === 'এটিএম' || currentCategory === 'এটিএম বুথ') matchCat = (itemCat.includes('এটিএম') || itemCat.toLowerCase().includes('atm') || itemCat.includes('বুথ') || itemCat.toLowerCase().includes('crm'));
@@ -503,7 +509,7 @@ function renderCategoryItems() {
       const a = item.area.trim();
       if (a && a !== 'নারায়ণগঞ্জ') availableAreas.add(a);
     }
-	return matchCat && matchArea && matchSearch;
+    return matchCat && matchArea && matchSearch;
   });
   renderDynamicAreaChips(availableAreas);
 
@@ -596,7 +602,7 @@ function renderCategoryItems() {
 }
 
 // --- ৪. একক বিস্তারিত স্ক্রিন ইঞ্জিন ---
-function openDetails(item) {
+function openDetails(item, push = true) {
   if (!item) return;
   activeItem = item;
   const cat = (item.category || '').trim();
@@ -624,7 +630,7 @@ function openDetails(item) {
       const subsEl = document.getElementById('telSubsVal');
       if (typeEl) typeEl.innerText = item.type || 'মোবাইল নেটওয়ার্ক';
       if (subsEl) subsEl.innerText = item.subscribers || 'সারাদেশে বিস্তৃত';
-     renderTelecomOffersTable(item.code || item.name);
+      renderTelecomOffersTable(item.code || item.name);
     } else {
       telBox.style.display = 'none';
     }
@@ -1398,13 +1404,15 @@ function openDetails(item) {
   const dView = document.getElementById('detailsView');
   if (dView) {
     dView.classList.add('open');
-    window.history.pushState({ page: 'details' }, '');
+    if (push) {
+      window.history.pushState({ page: 'details' }, '', `#details?name=${encodeURIComponent(item.name || '')}`);
+    }
   }
 }
 
 // --- ৫. বিশেষজ্ঞ ডাক্তার মডিউল ---
 
-function openDoctorList(chamberName = null, title = 'বিশেষজ্ঞ ডাক্তারগণ') {
+function openDoctorList(chamberName = null, title = 'বিশেষজ্ঞ ডাক্তারগণ', push = true) {
   currentChamberFilter = chamberName;
   const tEl = document.getElementById('docPageTitle');
   const sEl = document.getElementById('docPageSub');
@@ -1437,7 +1445,10 @@ function openDoctorList(chamberName = null, title = 'বিশেষজ্ঞ �
   if (docPage) {
     docPage.classList.add('open');
     docPage.scrollTop = 0;
-    window.history.pushState({ page: 'doctors' }, '');
+    if (push) {
+      const docHash = chamberName ? `#doctors?chamber=${encodeURIComponent(chamberName)}` : '#doctors';
+      window.history.pushState({ page: 'doctors' }, '', docHash);
+    }
   }
 }
 
@@ -1572,7 +1583,7 @@ function renderDoctorItems() {
   });
 }
 
-function openDoctorProfile(doc) {
+function openDoctorProfile(doc, push = true) {
   if (!doc) return;
   activeDoctor = doc;
   
@@ -1668,7 +1679,9 @@ function openDoctorProfile(doc) {
   const pView = document.getElementById('doctorProfileView');
   if (pView) {
     pView.classList.add('open');
-    window.history.pushState({ page: 'docProfile' }, '');
+    if (push) {
+      window.history.pushState({ page: 'docProfile' }, '', `#doctor?name=${encodeURIComponent(doc.name || '')}`);
+    }
   }
 }
 
@@ -1746,7 +1759,7 @@ function toggleBookmarkActiveDoctor() {
   saveBookmarks();
 }
 
-function openBookmarkPage() {
+function openBookmarkPage(push = true) {
   const container = document.getElementById('bookmarkListings');
   if (!container) return;
   container.innerHTML = '';
@@ -1816,11 +1829,13 @@ function openBookmarkPage() {
   const el = document.getElementById('bookmarkPage');
   if (el) {
     el.classList.add('open');
-    window.history.pushState({ page: 'bookmarks' }, '');
+    if (push) {
+      window.history.pushState({ page: 'bookmarks' }, '', '#bookmarks');
+    }
   }
 }
 
-function viewInstitutionResults() {
+function viewInstitutionResults(push = true) {
   if (!activeItem) return;
   const tEl = document.getElementById('eduResultsTitle');
   const sEl = document.getElementById('eduResultsSub');
@@ -1907,11 +1922,13 @@ function viewInstitutionResults() {
   if (rPage) {
     rPage.classList.add('open');
     rPage.scrollTop = 0;
-    window.history.pushState({ page: 'eduResults' }, '');
+    if (push) {
+      window.history.pushState({ page: 'eduResults' }, '', `#eduResults?name=${encodeURIComponent(activeItem?.name || '')}`);
+    }
   }
 }
 
-function viewIspPackages() {
+function viewIspPackages(push = true) {
   if (!activeItem) return;
   const tEl = document.getElementById('ispPackagesTitle');
   const sEl = document.getElementById('ispPackagesSub');
@@ -2008,7 +2025,9 @@ function viewIspPackages() {
   if (pPage) {
     pPage.classList.add('open');
     pPage.scrollTop = 0;
-    window.history.pushState({ page: 'ispPackages' }, '');
+    if (push) {
+      window.history.pushState({ page: 'ispPackages' }, '', `#ispPackages?name=${encodeURIComponent(activeItem?.name || '')}`);
+    }
   }
 }
 
@@ -2029,6 +2048,7 @@ function goHome() {
   closeIspPackages();
   closeMobileCareHub();
   closeTelPackPage();
+  history.replaceState(null, null, ' ');
 }
 
 window.onpopstate = function() {
@@ -2234,7 +2254,6 @@ function renderTelecomOffersTable(opCode) {
   let rawKey = (opCode || '').toString().trim();
   const n = rawKey.toLowerCase();
   
-  // সার্বজনীন অপারেটর কোড সমাধান
   if (n.includes('গ্রামীণ') || n.includes('gp')) currentActiveOperatorCode = 'GP';
   else if (n.includes('বাংলালিংক') || n.includes('banglalink') || n.includes('bl')) currentActiveOperatorCode = 'BANGLALINK';
   else if (n.includes('রবি') || n.includes('robi')) currentActiveOperatorCode = 'ROBI';
@@ -2268,7 +2287,6 @@ function renderTelecomOffersTable(opCode) {
     return true;
   });
 
-  // রিচার্জের পরিমাণ অনুযায়ী Low to High সর্টিং
   filtered.sort((a, b) => {
     const priceA = parseFloat(toEnDigits(a.recharge || a.amount || a.price || '0')) || 0;
     const priceB = parseFloat(toEnDigits(b.recharge || b.amount || b.price || '0')) || 0;
@@ -2306,15 +2324,12 @@ function renderTelecomOffersTable(opCode) {
   });
 }
 
-// টেলিকম ডেডিকেটেড প্যাকেজ স্লাইড পেজ ক্লোজার
 function closeTelPackPage() {
   closeSlide('telPackDetailsPage');
 }
 
-// কার্ড ক্লিকে ডেটা ফিল্টার ও টেবিল রেন্ডারিং ইঞ্জিন
-function openTelPackPage(packType) {
+function openTelPackPage(packType, push = true) {
   if (packType === 'all') {
-    // সকল রিচার্জে ক্লিক করলে সরাসরি নিচের মূল টেবিলে স্ক্রল হবে
     const targetBox = document.getElementById('telOffersBox');
     if (targetBox) {
       targetBox.scrollIntoView({ behavior: 'smooth' });
@@ -2335,7 +2350,6 @@ function openTelPackPage(packType) {
 
   const opName = (activeItem && activeItem.name) ? activeItem.name : 'অপারেটর';
 
-  // ১. বর্তমান অপারেটরের অফার ফিল্টার
   const opOffers = (rechargeOffersData || []).filter(o => {
     if (!o) return false;
     const opCode = (o.operator_code || o.operator || '').toString().toLowerCase().trim();
@@ -2350,7 +2364,6 @@ function openTelPackPage(packType) {
     return isGP || isBL || isRobi || isAirtel || isTeletalk;
   });
 
-  // ২. প্যাকের ধরন অনুযায়ী ফিল্টার ও হেডার সেটআপ
   let matchedList = [];
   let headHtml = '';
 
@@ -2359,7 +2372,7 @@ function openTelPackPage(packType) {
     if (pSub) pSub.innerText = 'সাশ্রয়ী কলরেট ও স্পেশাল ট্যারিফ তালিকা';
     headHtml = `
       <th style="padding: 9px 8px; font-weight: 700;">রিচার্জ</th>
-      <th style="padding: 9px 8px; font-weight: 700;">কলরেট (পালস) </th>
+      <th style="padding: 9px 8px; font-weight: 700;">কলরেট (পালস)</th>
       <th style="padding: 9px 8px; font-weight: 700; text-align: right;">মেয়াদ</th>
     `;
     matchedList = opOffers.filter(o => {
@@ -2426,7 +2439,6 @@ function openTelPackPage(packType) {
 
   thead.innerHTML = headHtml;
 
-  // ৩. দাম অনুযায়ী Low to High সর্টিং
   matchedList.sort((a, b) => {
     const pA = parseFloat(toEnDigits(a.recharge || a.amount || a.price || '0')) || 0;
     const pB = parseFloat(toEnDigits(b.recharge || b.amount || b.price || '0')) || 0;
@@ -2490,12 +2502,13 @@ function openTelPackPage(packType) {
     });
   }
 
-  // পেজ ওপেন
   const p = document.getElementById('telPackDetailsPage');
   if (p) {
     p.classList.add('open');
     p.scrollTop = 0;
-    window.history.pushState({ page: 'telPackDetails' }, '');
+    if (push) {
+      window.history.pushState({ page: 'telPackDetails' }, '', `#telPackDetails?type=${packType}&name=${encodeURIComponent(activeItem?.name || '')}`);
+    }
   }
 }
 
@@ -2510,8 +2523,7 @@ function filterTelecomOffers(filterType, chipEl) {
 }
 
 function viewTelecomCare() {
-  if (!activeItem) return;
-  openCategoryPage('টেলিকম', `${activeItem.name}-এর কেয়ার সেন্টার`);
+  viewCareCenters();
 }
 
 function openMfsCalculatorFromProfile() {
@@ -2531,7 +2543,6 @@ function openMfsCalculatorFromProfile() {
   }
 }
 
-// অফলাইন ক্যাশ কি (Key)
 const OFFLINE_CACHE_KEY = 'the_narayanganj_offline_cache';
 
 function setAllAppData(bundle) {
@@ -2558,6 +2569,7 @@ async function loadData() {
     const localCached = localStorage.getItem(OFFLINE_CACHE_KEY);
     if (localCached) {
       setAllAppData(JSON.parse(localCached));
+      handleHashRoute();
     }
   } catch (e) {
     console.warn("ক্যাশ ডেটা পড়তে সমস্যা:", e);
@@ -2605,6 +2617,7 @@ async function loadData() {
     } catch (e) {
       console.warn("লোকাল ক্যাশ সংরক্ষণে সমস্যা:", e);
     }
+    handleHashRoute();
   } catch (err) {
     console.warn("ব্যাকগ্রাউন্ড ডেটা সিঙ্ক ব্যর্থ (অফলাইন ক্যাশ সক্রিয় আছে):", err);
   }
@@ -2672,7 +2685,7 @@ function renderMfsAccordion(rawServices) {
   box.style.display = container.children.length > 0 ? 'block' : 'none';
 }
 
-function viewCareCenters() {
+function viewCareCenters(push = true) {
   if (!activeItem) return;
   const code = (activeItem.code || activeItem.name || '').toUpperCase();
   let brand = 'BKASH';
@@ -2685,25 +2698,26 @@ function viewCareCenters() {
   else if (code.includes('AIRTEL') || activeItem.name.includes('এয়ারটেল')) brand = 'AIRTEL';
   else if (code.includes('TELETALK') || activeItem.name.includes('টেলিটক')) brand = 'TELETALK';
 
-  openServiceCenterFiltered(null, null, brand, `${activeItem.name}-এর কেয়ার পয়েন্ট`);
+  openServiceCenterFiltered(null, null, brand, `${activeItem.name}-এর কেয়ার পয়েন্ট`, push);
 }
 
-function openMobileCareHub() {
+function openMobileCareHub(push = true) {
   const p = document.getElementById('mobileCareHubPage');
   if (p) {
     p.classList.add('open');
     p.scrollTop = 0;
-    window.history.pushState({ page: 'mobileHub' }, '');
+    if (push) {
+      window.history.pushState({ page: 'mobileHub' }, '', '#mobileCareHub');
+    }
   }
 }
 
-// সার্ভিস সেন্টার ফিল্টারিং স্টেট ভ্যারিয়েবল
 let currentScTargetCat = null;
 let currentScTargetType = null;
 let currentScTargetBrand = null;
 let selectedScArea = 'সব এলাকা';
 
-function openServiceCenterFiltered(targetCat = null, targetType = null, targetBrand = null, pageTitle = 'সার্ভিস সেন্টার') {
+function openServiceCenterFiltered(targetCat = null, targetType = null, targetBrand = null, pageTitle = 'সার্ভিস সেন্টার', push = true) {
   currentScTargetCat = targetCat;
   currentScTargetType = targetType;
   currentScTargetBrand = targetBrand;
@@ -2730,7 +2744,9 @@ function openServiceCenterFiltered(targetCat = null, targetType = null, targetBr
   if (p) {
     p.classList.add('open');
     p.scrollTop = 0;
-    window.history.pushState({ page: 'careCenters' }, '');
+    if (push) {
+      window.history.pushState({ page: 'careCenters' }, '', `#careCenters?brand=${encodeURIComponent(targetBrand || '')}`);
+    }
   }
 }
 
@@ -2828,6 +2844,71 @@ function copyText(elementId) {
   }).catch(() => {
     prompt('কপি করতে সিলেক্ট করুন:', text);
   });
+}
+
+function handleHashRoute() {
+  const hash = decodeURIComponent(window.location.hash || '');
+  if (!hash || hash === '#home') {
+    goHome();
+    return;
+  }
+
+  const allItems = [
+    ...placesData,
+    ...healthData,
+    ...educationData,
+    ...restaurantsData,
+    ...adminData,
+    ...transportData,
+    ...telecomData,
+    ...bankingData
+  ];
+
+  if (hash === '#doctors') {
+    openDoctorList(null, 'সকল বিশেষজ্ঞ চিকিৎসক', false);
+  } else if (hash.startsWith('#category?name=')) {
+    const catName = hash.replace('#category?name=', '').trim();
+    openCategoryPage(catName, '', false);
+  } else if (hash.startsWith('#details?name=')) {
+    const itemName = hash.replace('#details?name=', '').trim();
+    const found = allItems.find(i => (i.name || i.title || '').trim() === itemName);
+    if (found) openDetails(found, false);
+  } else if (hash.startsWith('#doctorProfile?name=')) {
+    const docName = hash.replace('#doctorProfile?name=', '').trim();
+    const foundDoc = (doctorsData || []).find(d => (d.name || '').trim() === docName);
+    if (foundDoc) openDoctorProfile(foundDoc, false);
+  } else if (hash.startsWith('#eduResults?name=')) {
+    const instName = hash.replace('#eduResults?name=', '').trim();
+    const foundInst = (educationData || []).find(i => (i.name || i.name_bn || '').trim() === instName);
+    if (foundInst) {
+      activeItem = foundInst;
+      viewInstitutionResults(false);
+    }
+  } else if (hash.startsWith('#ispPackages?name=')) {
+    const ispName = hash.replace('#ispPackages?name=', '').trim();
+    const foundIsp = allItems.find(i => (i.name || '').trim() === ispName);
+    if (foundIsp) {
+      activeItem = foundIsp;
+      viewIspPackages(false);
+    }
+  } else if (hash.startsWith('#telPackDetails?')) {
+    const params = new URLSearchParams(hash.replace('#telPackDetails?', ''));
+    const pType = params.get('type') || '';
+    const opName = params.get('name') || '';
+    const foundTel = (telecomData || []).find(t => (t.name || '').trim() === opName);
+    if (foundTel) {
+      activeItem = foundTel;
+      openDetails(foundTel, false);
+      if (pType) openTelPackPage(pType, false);
+    }
+  } else if (hash.startsWith('#careCenters?brand=')) {
+    const brand = hash.replace('#careCenters?brand=', '').trim();
+    openServiceCenterFiltered(null, null, brand, 'সার্ভিস সেন্টার', false);
+  } else if (hash === '#mobileCareHub') {
+    openMobileCareHub(false);
+  } else if (hash === '#bookmarks') {
+    openBookmarkPage(false);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
