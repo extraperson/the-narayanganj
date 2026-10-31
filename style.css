@@ -292,6 +292,7 @@ body {
 #doctorPage, #mobileCareHubPage { z-index: 1500; }
 #eduResultsPage, #ispPackagesPage, #mfsCalculatorPage, #careCenterPage, #mfsLimitPage { z-index: 1600; }
 #doctorProfileView { z-index: 2000; background: #FFFFFF; }
+#telPackDetailsPage { z-index: 1200 !important; }
 
 .top-sub-header {
   position: sticky;

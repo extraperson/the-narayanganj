@@ -1321,6 +1321,7 @@ function openDetails(item) {
   const socialBox = document.getElementById('socialLinksBox');
   const webBtn = document.getElementById('linkWebsite');
   const fbBtn = document.getElementById('linkFacebook');
+  const xBtn = document.getElementById('linkTwitter');
   const ytBtn = document.getElementById('linkYoutube');
   const liBtn = document.getElementById('linkLinkedin');
   const igBtn = document.getElementById('linkInstagram');
@@ -1354,6 +1355,7 @@ function openDetails(item) {
 
   bindUniversalLink(webBtn, item.website || item.web || item.source_url);
   bindUniversalLink(fbBtn, item.facebook || item.fb);
+  bindUniversalLink(xBtn, item.twitter || item.x);
   bindUniversalLink(igBtn, item.instagram || item.ig);
   bindUniversalLink(ytBtn, item.youtube || item.yt);
   bindUniversalLink(liBtn, item.linkedin);
@@ -2026,10 +2028,12 @@ function goHome() {
   closeCategoryPage();
   closeIspPackages();
   closeMobileCareHub();
+  closeTelPackPage();
 }
 
 window.onpopstate = function() {
-  if (document.getElementById('mobileCareHubPage')?.classList.contains('open')) closeMobileCareHub();
+  if (document.getElementById('telPackDetailsPage')?.classList.contains('open')) closeTelPackPage();
+  else if (document.getElementById('mobileCareHubPage')?.classList.contains('open')) closeMobileCareHub();
   else if (document.getElementById('mfsLimitPage')?.classList.contains('open')) { if (typeof closeMfsLimit === 'function') closeMfsLimit(); }
   else if (document.getElementById('careCenterPage')?.classList.contains('open')) closeCareCenters();
   else if (document.getElementById('mfsCalculatorPage')?.classList.contains('open')) { if (typeof closeMfsCalculator === 'function') closeMfsCalculator(); }
@@ -2302,9 +2306,197 @@ function renderTelecomOffersTable(opCode) {
   });
 }
 
-// ৬টি কার্ড ক্লিকে ডেডিকেটেড পেজ হ্যান্ডলার (প্লেসহোল্ডার)
+// টেলিকম ডেডিকেটেড প্যাকেজ স্লাইড পেজ ক্লোজার
+function closeTelPackPage() {
+  closeSlide('telPackDetailsPage');
+}
+
+// কার্ড ক্লিকে ডেটা ফিল্টার ও টেবিল রেন্ডারিং ইঞ্জিন
 function openTelPackPage(packType) {
-  console.log("Selected pack type:", packType);
+  if (packType === 'all') {
+    // সকল রিচার্জে ক্লিক করলে সরাসরি নিচের মূল টেবিলে স্ক্রল হবে
+    const targetBox = document.getElementById('telOffersBox');
+    if (targetBox) {
+      targetBox.scrollIntoView({ behavior: 'smooth' });
+    }
+    return;
+  }
+
+  const pTitle = document.getElementById('telPackPageTitle');
+  const pSub = document.getElementById('telPackPageSub');
+  const thead = document.getElementById('telPackTableHead');
+  const tbody = document.getElementById('telPackTableBody');
+  const noData = document.getElementById('telPackNoDataMsg');
+  const countBadge = document.getElementById('telPackCountBadge');
+
+  if (!tbody || !thead) return;
+  tbody.innerHTML = '';
+  thead.innerHTML = '';
+
+  const opName = (activeItem && activeItem.name) ? activeItem.name : 'অপারেটর';
+
+  // ১. বর্তমান অপারেটরের অফার ফিল্টার
+  const opOffers = (rechargeOffersData || []).filter(o => {
+    if (!o) return false;
+    const opCode = (o.operator_code || o.operator || '').toString().toLowerCase().trim();
+    const curCode = (currentActiveOperatorCode || '').toLowerCase().trim();
+
+    if (opCode === curCode || opCode.includes(curCode) || curCode.includes(opCode)) return true;
+    const isGP = (curCode.includes('gp') || curCode.includes('গ্রাম')) && (opCode.includes('gp') || opCode.includes('গ্রাম'));
+    const isBL = (curCode.includes('banglalink') || curCode.includes('বাংলালিংক') || curCode.includes('bl')) && (opCode.includes('banglalink') || opCode.includes('বাংলালিংক') || opCode.includes('bl'));
+    const isRobi = (curCode.includes('robi') || curCode.includes('রবি')) && (opCode.includes('robi') || opCode.includes('রবি'));
+    const isAirtel = (curCode.includes('airtel') || curCode.includes('এয়ারটেল')) && (opCode.includes('airtel') || opCode.includes('এয়ারটেল'));
+    const isTeletalk = (curCode.includes('teletalk') || curCode.includes('টেলিটক')) && (opCode.includes('teletalk') || opCode.includes('টেলিটক'));
+    return isGP || isBL || isRobi || isAirtel || isTeletalk;
+  });
+
+  // ২. প্যাকের ধরন অনুযায়ী ফিল্টার ও হেডার সেটআপ
+  let matchedList = [];
+  let headHtml = '';
+
+  if (packType === 'rate_cutter') {
+    if (pTitle) pTitle.innerText = `${opName} - রেট কাটার অফার`;
+    if (pSub) pSub.innerText = 'সাশ্রয়ী কলরেট ও স্পেশাল ট্যারিফ তালিকা';
+    headHtml = `
+      <th style="padding: 9px 8px; font-weight: 700;">রিচার্জ</th>
+      <th style="padding: 9px 8px; font-weight: 700;">কলরেট (পালস) </th>
+      <th style="padding: 9px 8px; font-weight: 700; text-align: right;">মেয়াদ</th>
+    `;
+    matchedList = opOffers.filter(o => {
+      const type = (o.offer_type || o.type || '').toString().toLowerCase();
+      return type.includes('রেট') || type.includes('rate') || type.includes('ট্যারিফ');
+    });
+  } else if (packType === 'minute') {
+    if (pTitle) pTitle.innerText = `${opName} - মিনিট প্যাক`;
+    if (pSub) pSub.innerText = 'টকটাইম ও ভয়েস কল অফার';
+    headHtml = `
+      <th style="padding: 9px 8px; font-weight: 700;">রিচার্জ</th>
+      <th style="padding: 9px 8px; font-weight: 700;">মিনিট</th>
+      <th style="padding: 9px 8px; font-weight: 700; text-align: right;">মেয়াদ</th>
+    `;
+    matchedList = opOffers.filter(o => {
+      const min = (o.minute || o.Minute || '').toString().trim();
+      const mb = (o.data_mb || o.mb || '').toString().trim();
+      const type = (o.offer_type || o.type || '').toString().trim();
+      return type === 'মিনিট' || (min !== '' && min !== '-' && (!mb || mb === '-'));
+    });
+  } else if (packType === 'sms') {
+    if (pTitle) pTitle.innerText = `${opName} - এসএমএস প্যাক`;
+    if (pSub) pSub.innerText = 'মেসেজ বান্ডেল অফারসমূহ';
+    headHtml = `
+      <th style="padding: 9px 8px; font-weight: 700;">রিচার্জ</th>
+      <th style="padding: 9px 8px; font-weight: 700;">এসএমএস</th>
+      <th style="padding: 9px 8px; font-weight: 700; text-align: right;">মেয়াদ</th>
+    `;
+    matchedList = opOffers.filter(o => {
+      const type = (o.offer_type || o.type || '').toString().toLowerCase();
+      const sms = (o.sms || o.SMS || '').toString().trim();
+      return type.includes('sms') || type.includes('এসএমএস') || (sms !== '' && sms !== '-');
+    });
+  } else if (packType === 'data') {
+    if (pTitle) pTitle.innerText = `${opName} - ইন্টারনেট প্যাক`;
+    if (pSub) pSub.innerText = 'সকল ডাটা ভলিউম ও ব্রাউজিং অফার';
+    headHtml = `
+      <th style="padding: 9px 8px; font-weight: 700;">রিচার্জ</th>
+      <th style="padding: 9px 8px; font-weight: 700;">ইন্টারনেট</th>
+      <th style="padding: 9px 8px; font-weight: 700; text-align: right;">মেয়াদ</th>
+    `;
+    matchedList = opOffers.filter(o => {
+      const min = (o.minute || o.Minute || '').toString().trim();
+      const mb = (o.data_mb || o.mb || '').toString().trim();
+      const type = (o.offer_type || o.type || '').toString().trim();
+      return type === 'ইন্টারনেট' || (mb !== '' && mb !== '-' && (!min || min === '-'));
+    });
+  } else if (packType === 'bundle') {
+    if (pTitle) pTitle.innerText = `${opName} - বান্ডেল প্যাক`;
+    if (pSub) pSub.innerText = 'মিনিট ও ইন্টারনেট কম্বো অফার';
+    headHtml = `
+      <th style="padding: 9px 6px; font-weight: 700;">রিচার্জ</th>
+      <th style="padding: 9px 6px; font-weight: 700;">মিনিট</th>
+      <th style="padding: 9px 6px; font-weight: 700;">ইন্টারনেট</th>
+      <th style="padding: 9px 6px; font-weight: 700; text-align: right;">মেয়াদ</th>
+    `;
+    matchedList = opOffers.filter(o => {
+      const min = (o.minute || o.Minute || '').toString().trim();
+      const mb = (o.data_mb || o.mb || '').toString().trim();
+      const type = (o.offer_type || o.type || '').toString().trim();
+      return type === 'বান্ডেল' || (min !== '' && min !== '-' && mb !== '' && mb !== '-');
+    });
+  }
+
+  thead.innerHTML = headHtml;
+
+  // ৩. দাম অনুযায়ী Low to High সর্টিং
+  matchedList.sort((a, b) => {
+    const pA = parseFloat(toEnDigits(a.recharge || a.amount || a.price || '0')) || 0;
+    const pB = parseFloat(toEnDigits(b.recharge || b.amount || b.price || '0')) || 0;
+    return pA - pB;
+  });
+
+  if (countBadge) countBadge.innerText = `${toBanglaNumber(matchedList.length)}টি অফার`;
+
+  if (matchedList.length === 0) {
+    if (noData) noData.style.display = 'block';
+  } else {
+    if (noData) noData.style.display = 'none';
+
+    matchedList.forEach((o, idx) => {
+      const row = document.createElement('tr');
+      row.style.cssText = `border-bottom: 1px solid #E2E8F0; background: ${idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'};`;
+
+      const price = o.recharge || o.amount || o.price || '0';
+      const days = o.days || o.Day || o.day || o.validity_day || '১';
+      const daysText = `${toBanglaNumber(days)} দিন`;
+
+      if (packType === 'rate_cutter') {
+        const rateText = o.rate || o.call_rate || o.breakdown || o.title || '-';
+        row.innerHTML = `
+          <td style="padding: 9px 8px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
+          <td style="padding: 9px 8px; font-weight: 600; color: #0D9488;">${rateText}</td>
+          <td style="padding: 9px 8px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
+        `;
+      } else if (packType === 'minute') {
+        const min = o.minute || o.Minute || '-';
+        row.innerHTML = `
+          <td style="padding: 9px 8px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
+          <td style="padding: 9px 8px; font-weight: 600; color: #1E293B;">${toBanglaNumber(min)} মি.</td>
+          <td style="padding: 9px 8px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
+        `;
+      } else if (packType === 'sms') {
+        const sms = o.sms || o.SMS || o.data_mb || '-';
+        row.innerHTML = `
+          <td style="padding: 9px 8px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
+          <td style="padding: 9px 8px; font-weight: 600; color: #6B21A8;">${toBanglaNumber(sms)} টি</td>
+          <td style="padding: 9px 8px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
+        `;
+      } else if (packType === 'data') {
+        const mb = o.data_mb || o.mb || o.data || '-';
+        row.innerHTML = `
+          <td style="padding: 9px 8px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
+          <td style="padding: 9px 8px; font-weight: 600; color: #0284C7;">${mb}</td>
+          <td style="padding: 9px 8px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
+        `;
+      } else if (packType === 'bundle') {
+        const min = o.minute || o.Minute || '-';
+        const mb = o.data_mb || o.mb || o.data || '-';
+        row.innerHTML = `
+          <td style="padding: 9px 6px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
+          <td style="padding: 9px 6px; font-weight: 600; color: #1E293B;">${toBanglaNumber(min)} মি.</td>
+          <td style="padding: 9px 6px; font-weight: 600; color: #0284C7;">${mb}</td>
+          <td style="padding: 9px 6px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
+        `;
+      }
+      tbody.appendChild(row);
+    });
+  }
+
+  // পেজ ওপেন
+  const p = document.getElementById('telPackDetailsPage');
+  if (p) {
+    p.classList.add('open');
+    p.scrollTop = 0;
+    window.history.pushState({ page: 'telPackDetails' }, '');
+  }
 }
 
 function filterTelecomOffers(filterType, chipEl) {

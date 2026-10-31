@@ -930,20 +930,33 @@
           <i class="fa-solid fa-arrow-right" style="color: #16A34A; font-size: 14px;"></i>
         </div>
 
-        <!-- নতুন ৬টি অফার নেভিগেশন কার্ড গ্রিড -->
+        <!-- ৭টি অফার নেভিগেশন কার্ডের একটিমাত্র গ্রিড কন্টেইনার -->
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
-          <!-- ১. সকল রিচার্জ অ্যামাউন্ট -->
-          <div class="doc-nav-card" style="margin: 0; padding: 10px 12px; background: #F8FAFC; border-color: #E2E8F0; cursor: pointer;" onclick="openTelPackPage('all')">
-            <div class="doc-nav-left" style="gap: 8px;">
-              <div class="doc-nav-icon" style="width: 34px; height: 34px; font-size: 14px; background: #E2E8F0; color: #334155;"><i class="fa-solid fa-coins"></i></div>
+
+          <!-- ১. সকল রিচার্জ অফার (grid-column: span 2 দিয়ে ফুল উইডথ) -->
+          <div class="doc-nav-card" style="grid-column: span 2; margin: 0; padding: 12px 14px; background: #F8FAFC; border-color: #E2E8F0; cursor: pointer;" onclick="openTelPackPage('all')">
+            <div class="doc-nav-left" style="gap: 10px;">
+              <div class="doc-nav-icon" style="width: 38px; height: 38px; font-size: 15px; background: #E2E8F0; color: #334155;"><i class="fa-solid fa-coins"></i></div>
               <div>
-                <div style="font-size: 13px; font-weight: 700; color: #1E293B;">সকল রিচার্জ</div>
-                <div style="font-size: 10.5px; color: #64748B;">ফুল রিচার্জ তালিকা</div>
+                <div style="font-size: 14px; font-weight: 700; color: #1E293B;">সকল রিচার্জ অফার</div>
+                <div style="font-size: 11px; color: #64748B;">সকল মিনিট, ডাটা ও রিচার্জের পূর্ণাঙ্গ তালিকা</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-arrow-right" style="color: #64748B; font-size: 13px;"></i>
+          </div>
+
+          <!-- ২. রেট কাটার প্যাক -->
+          <div class="doc-nav-card" style="margin: 0; padding: 10px 12px; background: #F0FDFA; border-color: #99F6E4; cursor: pointer;" onclick="openTelPackPage('rate_cutter')">
+            <div class="doc-nav-left" style="gap: 8px;">
+              <div class="doc-nav-icon" style="width: 34px; height: 34px; font-size: 14px; background: #0D9488; color: #FFFFFF;"><i class="fa-solid fa-scissors"></i></div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #115E59;">রেট কাটার</div>
+                <div style="font-size: 10.5px; color: #0D9488;">সাশ্রয়ী কলরেট অফার</div>
               </div>
             </div>
           </div>
 
-          <!-- ২. মিনিট প্যাক -->
+          <!-- ৩. মিনিট প্যাক -->
           <div class="doc-nav-card" style="margin: 0; padding: 10px 12px; background: #EFF6FF; border-color: #BFDBFE; cursor: pointer;" onclick="openTelPackPage('minute')">
             <div class="doc-nav-left" style="gap: 8px;">
               <div class="doc-nav-icon" style="width: 34px; height: 34px; font-size: 14px; background: #3B82F6; color: #FFFFFF;"><i class="fa-solid fa-phone-volume"></i></div>
@@ -954,7 +967,7 @@
             </div>
           </div>
 
-          <!-- ৩. এসএমএস প্যাক -->
+          <!-- ৪. এসএমএস প্যাক -->
           <div class="doc-nav-card" style="margin: 0; padding: 10px 12px; background: #FAF5FF; border-color: #E9D5FF; cursor: pointer;" onclick="openTelPackPage('sms')">
             <div class="doc-nav-left" style="gap: 8px;">
               <div class="doc-nav-icon" style="width: 34px; height: 34px; font-size: 14px; background: #9333EA; color: #FFFFFF;"><i class="fa-solid fa-comment-sms"></i></div>
@@ -965,7 +978,7 @@
             </div>
           </div>
 
-          <!-- ৪. ইন্টারনেট প্যাক -->
+          <!-- ৫. ইন্টারনেট প্যাক -->
           <div class="doc-nav-card" style="margin: 0; padding: 10px 12px; background: #F0FDF4; border-color: #BBF7D0; cursor: pointer;" onclick="openTelPackPage('data')">
             <div class="doc-nav-left" style="gap: 8px;">
               <div class="doc-nav-icon" style="width: 34px; height: 34px; font-size: 14px; background: #16A34A; color: #FFFFFF;"><i class="fa-solid fa-globe"></i></div>
@@ -976,7 +989,7 @@
             </div>
           </div>
 
-          <!-- ৫. বান্ডেল প্যাক -->
+          <!-- ৬. বান্ডেল প্যাক -->
           <div class="doc-nav-card" style="margin: 0; padding: 10px 12px; background: #FFFBEB; border-color: #FDE68A; cursor: pointer;" onclick="openTelPackPage('bundle')">
             <div class="doc-nav-left" style="gap: 8px;">
               <div class="doc-nav-icon" style="width: 34px; height: 34px; font-size: 14px; background: #D97706; color: #FFFFFF;"><i class="fa-solid fa-box-open"></i></div>
@@ -987,7 +1000,7 @@
             </div>
           </div>
 
-          <!-- ৬. এন্টারটেইনমেন্ট প্যাক (VAS) -->
+          <!-- ৭. এন্টারটেইনমেন্ট প্যাক (VAS) -->
           <div class="doc-nav-card" style="margin: 0; padding: 10px 12px; background: #FFF1F2; border-color: #FECDD3; cursor: pointer;" onclick="openTelPackPage('vas')">
             <div class="doc-nav-left" style="gap: 8px;">
               <div class="doc-nav-icon" style="width: 34px; height: 34px; font-size: 14px; background: #E11D48; color: #FFFFFF;"><i class="fa-solid fa-clapperboard"></i></div>
@@ -997,6 +1010,7 @@
               </div>
             </div>
           </div>
+
         </div>
 
         <!-- মূল প্যাকেজ ও রিচার্জ অফারসমূহ টেবিল -->
@@ -1162,6 +1176,7 @@
 </a>
           <!-- সোশ্যাল মিডিয়া ও মেসেজিং -->
           <a href="#" id="linkFacebook" target="_blank" rel="noopener noreferrer" class="social-btn btn-fb" style="display: none;" title="ফেসবুক"><i class="fa-brands fa-facebook-f"></i></a>
+		  <a href="#" id="linkTwitter" target="_blank" rel="noopener noreferrer" class="social-btn" style="display: none; background: #000000; color: #FFFFFF;" title="এক্স (টুইটার)"><i class="fa-brands fa-x-twitter"></i></a>
           <a href="#" id="linkInstagram" target="_blank" rel="noopener noreferrer" class="social-btn btn-ig" style="display: none;" title="ইনস্টাগ্রাম"><i class="fa-brands fa-instagram"></i></a>
           <a href="#" id="linkWhatsapp" target="_blank" rel="noopener noreferrer" class="social-btn" style="display: none; background: #DCFCE7; color: #16A34A;" title="হোয়াটসঅ্যাপ"><i class="fa-brands fa-whatsapp"></i></a>
           <a href="#" id="linkYoutube" target="_blank" rel="noopener noreferrer" class="social-btn btn-yt" style="display: none;" title="ইউটিউব"><i class="fa-brands fa-youtube"></i></a>
@@ -1326,6 +1341,41 @@
     </div>
 
     <div class="page-listings" id="careCenterListings"></div>
+  </div>
+  
+  <!-- টেলিকম ডেডিকেটেড প্যাকেজ তালিকা স্লাইড পেজ -->
+  <div class="slide-page" id="telPackDetailsPage">
+    <div class="top-sub-header">
+      <button class="btn-circle" onclick="closeTelPackPage()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div>
+        <h3 id="telPackPageTitle">প্যাকেজ তালিকা</h3>
+        <p id="telPackPageSub" style="font-size: 12px; color: var(--text-muted);">অপারেটর ভিত্তিক অফার বিবরণ</p>
+      </div>
+    </div>
+
+    <div style="padding: 16px 20px 95px;">
+      <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div style="font-size: 14px; font-weight: 700; color: #0F172A; display: flex; align-items: center; gap: 7px;">
+            <i class="fa-solid fa-bolt" style="color: #EAB308;"></i>
+            <span id="telPackSectionLabel">উপলব্ধ অফারসমূহ</span>
+          </div>
+          <span id="telPackCountBadge" style="font-size: 11px; background: #E0F2FE; color: #0284C7; padding: 2px 8px; border-radius: 12px; font-weight: 700;">০টি অফার</span>
+        </div>
+
+        <div style="overflow-x: auto; border: 1px solid #E2E8F0; border-radius: 8px;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
+            <thead>
+              <tr id="telPackTableHead" style="background: #F8FAFC; color: #475569; border-bottom: 1.5px solid #CBD5E1;">
+                <!-- জাভাস্ক্রিপ্ট ডাইনামিকালি হেডার কলাম তৈরি করবে -->
+              </tr>
+            </thead>
+            <tbody id="telPackTableBody"></tbody>
+          </table>
+        </div>
+        <div id="telPackNoDataMsg" style="display: none; text-align: center; color: var(--text-muted); font-size: 12px; padding: 30px 0;">কোনো প্যাকেজ পাওয়া যায়নি।</div>
+      </div>
+    </div>
   </div>
   
   <!-- ১১. এমএফএস লেনদেনের লিমিট পেজ -->
