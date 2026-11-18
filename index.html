@@ -443,7 +443,7 @@
     <!-- বটম বার -->
     <nav class="bottom-nav">
       <div class="nav-item active" onclick="goHome()"><i class="fa-solid fa-house"></i>হোম</div>
-      <div class="nav-item" onclick="openDoctorList(null, 'সকল ডাক্তার')"><i class="fa-solid fa-user-doctor"></i>ডাক্তার</div>
+      <div class="nav-item" onclick="openEventPage()"><i class="fa-solid fa-calendar-days"></i>ইভেন্ট</div>
       <div class="nav-item" onclick="openBookmarkPage()"><i class="fa-solid fa-bookmark"></i>সংরক্ষণ</div>
       <div class="nav-item" onclick="openCategoryPage('সব', 'সকল তালিকা')"><i class="fa-solid fa-compass"></i>এক্সপ্লোর</div>
     </nav>
@@ -1353,7 +1353,8 @@
           <span id="telPackCountBadge" style="font-size: 11px; background: #E0F2FE; color: #0284C7; padding: 2px 8px; border-radius: 12px; font-weight: 700;">০টি অফার</span>
         </div>
 
-        <div style="overflow-x: auto; border: 1px solid #E2E8F0; border-radius: 8px;">
+        <!-- টেবিল কন্টেইনার (মিনিট, ডাটা ও অন্যান্য প্যাকের জন্য) -->
+        <div id="telPackTableWrapper" style="overflow-x: auto; border: 1px solid #E2E8F0; border-radius: 8px;">
           <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
             <thead>
               <tr id="telPackTableHead" style="background: #F8FAFC; color: #475569; border-bottom: 1.5px solid #CBD5E1;">
@@ -1363,6 +1364,9 @@
             <tbody id="telPackTableBody"></tbody>
           </table>
         </div>
+
+        <!-- এন্টারটেইনমেন্ট ও ওটিটি কার্ড কন্টেইনার -->
+        <div id="telPackCardsContainer" style="display: none; flex-direction: column; gap: 12px;"></div>
         <div id="telPackNoDataMsg" style="display: none; text-align: center; color: var(--text-muted); font-size: 12px; padding: 30px 0;">কোনো প্যাকেজ পাওয়া যায়নি।</div>
       </div>
     </div>
@@ -1485,6 +1489,28 @@
         </div>
       </div>
     </div>
+  </div>
+  
+  <!-- ১৩. ইভেন্ট ও সরকারি ছুটির স্লাইড পেজ -->
+  <div class="slide-page" id="eventPage">
+    <div class="top-sub-header">
+      <button class="btn-circle" onclick="closeEventPage()"><i class="fa-solid fa-arrow-left"></i></button>
+      <div>
+        <h3>ইভেন্ট ও ছুটির তালিকা</h3>
+        <p style="font-size: 12px; color: var(--text-muted);">নারায়ণগঞ্জের আয়োজন ও সরকারি ছুটি</p>
+      </div>
+    </div>
+
+    <!-- ক্যাটাগরি ফিল্টার চিপস -->
+    <div class="area-filter-scroll" id="eventFilterBar" style="background: #FFFFFF; border-bottom: 1px solid var(--border); padding-top: 8px; padding-bottom: 8px;">
+      <div class="area-chip active" onclick="filterEvents('সব', this)">সব ইভেন্ট</div>
+      <div class="area-chip" onclick="filterEvents('সরকারি ছুটি', this)">সরকারি ছুটি</div>
+      <div class="area-chip" onclick="filterEvents('মেলা ও উৎসব', this)">মেলা ও উৎসব</div>
+      <div class="area-chip" onclick="filterEvents('আলোচনা', this)">আলোচনা ও সভা</div>
+    </div>
+
+    <!-- ইভেন্ট কার্ড লিস্ট -->
+    <div class="page-listings" id="eventListings"></div>
   </div>
   
   <script src="tools.js"></script>

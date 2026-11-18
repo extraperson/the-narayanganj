@@ -13,6 +13,7 @@ const API_TELECOM = `https://opensheet.elk.sh/${SHEET_ID}/Telecom`;
 const API_OFFERS = `https://opensheet.elk.sh/${SHEET_ID}/RechargeOffers`;
 const API_SERVICE_CENTERS = `https://opensheet.elk.sh/${SHEET_ID}/ServiceCenters`;
 const API_BANKING = `https://opensheet.elk.sh/${SHEET_ID}/Banking`;
+const API_EVENTS = `https://opensheet.elk.sh/${SHEET_ID}/Events`;
 
 let placesData = [];
 let healthData = [];
@@ -27,6 +28,7 @@ let telecomData = [];
 let rechargeOffersData = [];
 let serviceCentersData = [];
 let bankingData = [];
+let eventsData = [];
 
 let currentCategory = 'সব';
 let currentChamberFilter = null;
@@ -35,6 +37,7 @@ let selectedDocArea = 'সব এলাকা';
 let selectedDocDept = 'সব বিভাগ';
 let activeItem = null;
 let activeDoctor = null;
+let currentEventFilter = 'সব';
 
 let currentTriviaIndex = 0;
 let totalTriviaSlides = 0;
@@ -2048,6 +2051,7 @@ function goHome() {
   closeIspPackages();
   closeMobileCareHub();
   closeTelPackPage();
+  closeEventPage();
   history.replaceState(null, null, ' ');
 }
 
@@ -2064,6 +2068,7 @@ window.onpopstate = function() {
   else if (document.getElementById('detailsView')?.classList.contains('open')) closeDetails();
   else if (document.getElementById('bookmarkPage')?.classList.contains('open')) closeBookmarkPage();
   else if (document.getElementById('categoryPage')?.classList.contains('open')) closeCategoryPage();
+  else if (document.getElementById('eventPage')?.classList.contains('open')) closeEventPage();
 };
 
 function shareDoctor() {
@@ -2328,12 +2333,68 @@ function closeTelPackPage() {
   closeSlide('telPackDetailsPage');
 }
 
+// ওটিটি প্ল্যাটফর্মের কমপ্যাক্ট রাউন্ডেড ব্র্যান্ড আইকন জেনারেটর
+function renderOttPlatformIcons(rawOtt) {
+  if (!rawOtt || typeof rawOtt !== 'string') return '';
+  const list = rawOtt.split(/[,|+]/).map(s => s.trim().toLowerCase()).filter(Boolean);
+  if (list.length === 0) return '';
+
+  let html = '<div style="display: flex; gap: 10px; align-items: center; margin: 6px 0 8px; flex-wrap: wrap;">';
+
+  list.forEach(p => {
+    if (p.includes('হইচই') || p.includes('hoichoi')) {
+      html += `
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+          <div style="width: 34px; height: 34px; border-radius: 50%; background: #E50012; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; box-shadow: 0 1px 4px rgba(229,0,18,0.2);">h</div>
+          <span style="font-size: 10px; color: #475569; font-weight: 600;">হইচই</span>
+        </div>`;
+    } else if (p.includes('চরকি') || p.includes('chorki')) {
+      html += `
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+          <div style="width: 34px; height: 34px; border-radius: 50%; background: #F59E0B; color: #1E293B; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; box-shadow: 0 1px 4px rgba(245,158,11,0.2);"><i class="fa-solid fa-play" style="margin-left: 2px;"></i></div>
+          <span style="font-size: 10px; color: #475569; font-weight: 600;">চরকি</span>
+        </div>`;
+    } else if (p.includes('বায়োস্কোপ') || p.includes('bioscope')) {
+      html += `
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+          <div style="width: 34px; height: 34px; border-radius: 50%; background: #0284C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; box-shadow: 0 1px 4px rgba(2,132,199,0.2);"><i class="fa-solid fa-circle-play"></i></div>
+          <span style="font-size: 10px; color: #475569; font-weight: 600;">বায়োস্কোপ</span>
+        </div>`;
+    } else if (p.includes('স্পোর্টস') || p.includes('tsports') || p.includes('টি-স্পোর্টস')) {
+      html += `
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+          <div style="width: 34px; height: 34px; border-radius: 50%; background: #991B1B; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 15px; font-family: sans-serif; box-shadow: 0 1px 4px rgba(153,27,27,0.2);">T</div>
+          <span style="font-size: 10px; color: #475569; font-weight: 600;">টি স্পোর্টস</span>
+        </div>`;
+    } else if (p.includes('টফি') || p.includes('toffee')) {
+      html += `
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+          <div style="width: 34px; height: 34px; border-radius: 50%; background: #EA580C; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; box-shadow: 0 1px 4px rgba(234,88,12,0.2);">t</div>
+          <span style="font-size: 10px; color: #475569; font-weight: 600;">টফি</span>
+        </div>`;
+    } else if (p.includes('সনি') || p.includes('sony') || p.includes('liv')) {
+      html += `
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+          <div style="width: 34px; height: 34px; border-radius: 50%; background: #0F172A; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 7px; font-weight: 700; box-shadow: 0 1px 4px rgba(15,23,42,0.2); line-height: 1;"><span style="font-size: 6.5px; color: #94A3B8;">SONY</span><span style="color: #F59E0B; font-weight: 900;">liv</span></div>
+          <span style="font-size: 10px; color: #475569; font-weight: 600;">সনি লিভ</span>
+        </div>`;
+    } else {
+      html += `
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+          <div style="width: 34px; height: 34px; border-radius: 50%; background: #E11D48; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; box-shadow: 0 1px 4px rgba(225,29,72,0.2);"><i class="fa-solid fa-clapperboard"></i></div>
+          <span style="font-size: 10px; color: #475569; font-weight: 600;">${p}</span>
+        </div>`;
+    }
+  });
+
+  html += '</div>';
+  return html;
+}
+
 function openTelPackPage(packType, push = true) {
   if (packType === 'all') {
     const targetBox = document.getElementById('telOffersBox');
-    if (targetBox) {
-      targetBox.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (targetBox) targetBox.scrollIntoView({ behavior: 'smooth' });
     return;
   }
 
@@ -2341,12 +2402,14 @@ function openTelPackPage(packType, push = true) {
   const pSub = document.getElementById('telPackPageSub');
   const thead = document.getElementById('telPackTableHead');
   const tbody = document.getElementById('telPackTableBody');
+  const tableWrapper = document.getElementById('telPackTableWrapper');
+  const cardsContainer = document.getElementById('telPackCardsContainer');
   const noData = document.getElementById('telPackNoDataMsg');
   const countBadge = document.getElementById('telPackCountBadge');
 
-  if (!tbody || !thead) return;
-  tbody.innerHTML = '';
-  thead.innerHTML = '';
+  if (tbody) tbody.innerHTML = '';
+  if (thead) thead.innerHTML = '';
+  if (cardsContainer) cardsContainer.innerHTML = '';
 
   const opName = (activeItem && activeItem.name) ? activeItem.name : 'অপারেটর';
 
@@ -2365,12 +2428,24 @@ function openTelPackPage(packType, push = true) {
   });
 
   let matchedList = [];
-  let headHtml = '';
+  let isVas = (packType === 'vas');
 
-  if (packType === 'rate_cutter') {
+  // এন্টারটেইনমেন্ট হলে কার্ড কনটেইনার দেখাবে, বাকি প্যাকগুলোর জন্য টেবিল দেখাবে
+  if (tableWrapper) tableWrapper.style.display = isVas ? 'none' : 'block';
+  if (cardsContainer) cardsContainer.style.display = isVas ? 'flex' : 'none';
+
+  if (isVas) {
+    if (pTitle) pTitle.innerText = `${opName} - এন্টারটেইনমেন্ট প্যাক`;
+    if (pSub) pSub.innerText = 'ওটিটি সাবস্ক্রিপশন ও স্ট্রিমিং অফারসমূহ';
+    matchedList = opOffers.filter(o => {
+      const type = (o.offer_type || o.type || '').toString().toLowerCase();
+      const ott = (o.ott_platforms || o.ott || o.platforms || '').toString().trim();
+      return type.includes('vas') || type.includes('ott') || type.includes('এন্টারটেইনমেন্ট') || type.includes('ওটিটি') || ott !== '';
+    });
+  } else if (packType === 'rate_cutter') {
     if (pTitle) pTitle.innerText = `${opName} - রেট কাটার অফার`;
     if (pSub) pSub.innerText = 'সাশ্রয়ী কলরেট ও স্পেশাল ট্যারিফ তালিকা';
-    headHtml = `
+    thead.innerHTML = `
       <th style="padding: 9px 8px; font-weight: 700;">রিচার্জ</th>
       <th style="padding: 9px 8px; font-weight: 700;">কলরেট (পালস)</th>
       <th style="padding: 9px 8px; font-weight: 700; text-align: right;">মেয়াদ</th>
@@ -2382,7 +2457,7 @@ function openTelPackPage(packType, push = true) {
   } else if (packType === 'minute') {
     if (pTitle) pTitle.innerText = `${opName} - মিনিট প্যাক`;
     if (pSub) pSub.innerText = 'টকটাইম ও ভয়েস কল অফার';
-    headHtml = `
+    thead.innerHTML = `
       <th style="padding: 9px 8px; font-weight: 700;">রিচার্জ</th>
       <th style="padding: 9px 8px; font-weight: 700;">মিনিট</th>
       <th style="padding: 9px 8px; font-weight: 700; text-align: right;">মেয়াদ</th>
@@ -2396,7 +2471,7 @@ function openTelPackPage(packType, push = true) {
   } else if (packType === 'sms') {
     if (pTitle) pTitle.innerText = `${opName} - এসএমএস প্যাক`;
     if (pSub) pSub.innerText = 'মেসেজ বান্ডেল অফারসমূহ';
-    headHtml = `
+    thead.innerHTML = `
       <th style="padding: 9px 8px; font-weight: 700;">রিচার্জ</th>
       <th style="padding: 9px 8px; font-weight: 700;">এসএমএস</th>
       <th style="padding: 9px 8px; font-weight: 700; text-align: right;">মেয়াদ</th>
@@ -2409,7 +2484,7 @@ function openTelPackPage(packType, push = true) {
   } else if (packType === 'data') {
     if (pTitle) pTitle.innerText = `${opName} - ইন্টারনেট প্যাক`;
     if (pSub) pSub.innerText = 'সকল ডাটা ভলিউম ও ব্রাউজিং অফার';
-    headHtml = `
+    thead.innerHTML = `
       <th style="padding: 9px 8px; font-weight: 700;">রিচার্জ</th>
       <th style="padding: 9px 8px; font-weight: 700;">ইন্টারনেট</th>
       <th style="padding: 9px 8px; font-weight: 700; text-align: right;">মেয়াদ</th>
@@ -2423,7 +2498,7 @@ function openTelPackPage(packType, push = true) {
   } else if (packType === 'bundle') {
     if (pTitle) pTitle.innerText = `${opName} - বান্ডেল প্যাক`;
     if (pSub) pSub.innerText = 'মিনিট ও ইন্টারনেট কম্বো অফার';
-    headHtml = `
+    thead.innerHTML = `
       <th style="padding: 9px 6px; font-weight: 700;">রিচার্জ</th>
       <th style="padding: 9px 6px; font-weight: 700;">মিনিট</th>
       <th style="padding: 9px 6px; font-weight: 700;">ইন্টারনেট</th>
@@ -2437,8 +2512,7 @@ function openTelPackPage(packType, push = true) {
     });
   }
 
-  thead.innerHTML = headHtml;
-
+  // লো টু হাই প্রাইস সর্টিং
   matchedList.sort((a, b) => {
     const pA = parseFloat(toEnDigits(a.recharge || a.amount || a.price || '0')) || 0;
     const pB = parseFloat(toEnDigits(b.recharge || b.amount || b.price || '0')) || 0;
@@ -2452,54 +2526,129 @@ function openTelPackPage(packType, push = true) {
   } else {
     if (noData) noData.style.display = 'none';
 
-    matchedList.forEach((o, idx) => {
-      const row = document.createElement('tr');
-      row.style.cssText = `border-bottom: 1px solid #E2E8F0; background: ${idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'};`;
+if (isVas && cardsContainer) {
+      // ওটিটি আইকন উপরে এবং ডিটেইলস নিচে—প্যাডিং ও স্পেসিং স্লিম করা ডিজাইন
+      matchedList.forEach(o => {
+        const price = o.recharge || o.amount || o.price || '0';
+        const days = o.days || o.Day || o.day || o.validity_day || '১';
+        const title = o.title || o.offer_name || o.package || `${o.data_mb || ''} এন্টারটেইনমেন্ট প্যাক`;
+        const ottText = o.ott_platforms || o.ott || o.platforms || '';
+        const dialCode = o.dial_code || o.code || o.ussd || '';
+        const subTitleText = o.subtitle || o.sub_title || '';
 
-      const price = o.recharge || o.amount || o.price || '0';
-      const days = o.days || o.Day || o.day || o.validity_day || '১';
-      const daysText = `${toBanglaNumber(days)} দিন`;
+        // পয়েন্টসমূহ ফিল্টার
+        let points = [];
+        if (o.features) {
+          points = o.features.split(/[|\n]/).map(p => p.trim()).filter(Boolean);
+        } else if (o.points) {
+          points = o.points.split(/[|\n]/).map(p => p.trim()).filter(Boolean);
+        } else if (o.breakdown && (o.breakdown.includes('|') || o.breakdown.includes('\n'))) {
+          points = o.breakdown.split(/[|\n]/).map(p => p.trim()).filter(Boolean);
+        } else {
+          if (o.data_mb && o.data_mb !== '-') points.push(`${o.data_mb} ইন্টারনেট ডেটা`);
+          if (o.minute && o.minute !== '-') points.push(`${toBanglaNumber(o.minute)} মিনিট`);
+          if (o.sms && o.sms !== '-') points.push(`${toBanglaNumber(o.sms)} এসএমএস`);
+          if (o.breakdown && !points.includes(o.breakdown) && subTitleText !== o.breakdown) points.push(o.breakdown);
+        }
 
-      if (packType === 'rate_cutter') {
-        const rateText = o.rate || o.call_rate || o.breakdown || o.title || '-';
-        row.innerHTML = `
-          <td style="padding: 9px 8px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
-          <td style="padding: 9px 8px; font-weight: 600; color: #0D9488;">${rateText}</td>
-          <td style="padding: 9px 8px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
+        const card = document.createElement('div');
+        card.style.cssText = "background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);";
+        card.innerHTML = `
+          <!-- হেড সারি: বামে টাইটেল ও মেয়াদী ব্যাজ, ডানে বড় প্রাইস -->
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;">
+            <div style="flex: 1;">
+              <div style="font-size: 14.5px; font-weight: 800; color: #0F172A; line-height: 1.25;">${title}</div>
+              <div style="display: flex; align-items: center; gap: 6px; margin-top: 3px; font-size: 11px; color: #64748B;">
+                <span style="background: #F1F5F9; color: #475569; padding: 1px 6px; border-radius: 4px; font-weight: 600;">মেয়াদ: ${toBanglaNumber(days)} দিন</span>
+                ${subTitleText ? `<span>• ${subTitleText}</span>` : ''}
+              </div>
+            </div>
+
+            <div style="text-align: right; flex-shrink: 0;">
+              <div style="font-size: 20px; font-weight: 800; color: #16A34A; line-height: 1;">৳ ${toBanglaNumber(price)}</div>
+            </div>
+          </div>
+
+          <!-- সূক্ষ্ম ড্যাশড ডিভাইডার -->
+          <div style="border-top: 1px dashed #E2E8F0; margin: 8px 0 4px;"></div>
+
+          <!-- ওটিটি প্ল্যাটফর্ম রাউন্ড আইকন (উপরে সারিবদ্ধ) -->
+          ${renderOttPlatformIcons(ottText)}
+
+          <!-- সুবিধা ও পয়েন্ট বক্স (আইকনের নিচে ফুল উইডথ) -->
+          ${points.length > 0 ? `
+            <div style="background: #F8FAFC; border: 1px solid #F1F5F9; border-radius: 8px; padding: 6px 10px; display: flex; flex-direction: column; gap: 4px;">
+              ${points.map(pt => `
+                <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: #1E293B; font-weight: 600;">
+                  <i class="fa-solid fa-circle-check" style="color: #0284C7; font-size: 12px; flex-shrink: 0;"></i>
+                  <span>${pt}</span>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+
+          <!-- ডায়াল কোড বাটন (যদি থাকে) -->
+          ${dialCode ? `
+            <div style="margin-top: 6px; display: flex; justify-content: flex-end;">
+              <a href="tel:${encodeURIComponent(dialCode)}" class="btn-action btn-call" style="font-size: 10.5px; padding: 3px 8px; border-radius: 4px;">
+                <i class="fa-solid fa-phone"></i> ডায়াল ${dialCode}
+              </a>
+            </div>
+          ` : ''}
         `;
-      } else if (packType === 'minute') {
-        const min = o.minute || o.Minute || '-';
-        row.innerHTML = `
-          <td style="padding: 9px 8px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
-          <td style="padding: 9px 8px; font-weight: 600; color: #1E293B;">${toBanglaNumber(min)} মি.</td>
-          <td style="padding: 9px 8px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
-        `;
-      } else if (packType === 'sms') {
-        const sms = o.sms || o.SMS || o.data_mb || '-';
-        row.innerHTML = `
-          <td style="padding: 9px 8px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
-          <td style="padding: 9px 8px; font-weight: 600; color: #6B21A8;">${toBanglaNumber(sms)} টি</td>
-          <td style="padding: 9px 8px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
-        `;
-      } else if (packType === 'data') {
-        const mb = o.data_mb || o.mb || o.data || '-';
-        row.innerHTML = `
-          <td style="padding: 9px 8px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
-          <td style="padding: 9px 8px; font-weight: 600; color: #0284C7;">${mb}</td>
-          <td style="padding: 9px 8px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
-        `;
-      } else if (packType === 'bundle') {
-        const min = o.minute || o.Minute || '-';
-        const mb = o.data_mb || o.mb || o.data || '-';
-        row.innerHTML = `
-          <td style="padding: 9px 6px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
-          <td style="padding: 9px 6px; font-weight: 600; color: #1E293B;">${toBanglaNumber(min)} মি.</td>
-          <td style="padding: 9px 6px; font-weight: 600; color: #0284C7;">${mb}</td>
-          <td style="padding: 9px 6px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
-        `;
-      }
-      tbody.appendChild(row);
-    });
+        cardsContainer.appendChild(card);
+      });
+    } else if (tbody) {
+      // অন্যান্য ক্যাটাগরির টেবিল রো রেন্ডারিং
+      matchedList.forEach((o, idx) => {
+        const row = document.createElement('tr');
+        row.style.cssText = `border-bottom: 1px solid #E2E8F0; background: ${idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'};`;
+
+        const price = o.recharge || o.amount || o.price || '0';
+        const days = o.days || o.Day || o.day || o.validity_day || '১';
+        const daysText = `${toBanglaNumber(days)} দিন`;
+
+        if (packType === 'rate_cutter') {
+          const rateText = o.rate || o.call_rate || o.breakdown || o.title || '-';
+          row.innerHTML = `
+            <td style="padding: 9px 8px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
+            <td style="padding: 9px 8px; font-weight: 600; color: #0D9488;">${rateText}</td>
+            <td style="padding: 9px 8px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
+          `;
+        } else if (packType === 'minute') {
+          const min = o.minute || o.Minute || '-';
+          row.innerHTML = `
+            <td style="padding: 9px 8px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
+            <td style="padding: 9px 8px; font-weight: 600; color: #1E293B;">${toBanglaNumber(min)} মি.</td>
+            <td style="padding: 9px 8px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
+          `;
+        } else if (packType === 'sms') {
+          const sms = o.sms || o.SMS || o.data_mb || '-';
+          row.innerHTML = `
+            <td style="padding: 9px 8px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
+            <td style="padding: 9px 8px; font-weight: 600; color: #6B21A8;">${toBanglaNumber(sms)} টি</td>
+            <td style="padding: 9px 8px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
+          `;
+        } else if (packType === 'data') {
+          const mb = o.data_mb || o.mb || o.data || '-';
+          row.innerHTML = `
+            <td style="padding: 9px 8px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
+            <td style="padding: 9px 8px; font-weight: 600; color: #0284C7;">${mb}</td>
+            <td style="padding: 9px 8px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
+          `;
+        } else if (packType === 'bundle') {
+          const min = o.minute || o.Minute || '-';
+          const mb = o.data_mb || o.mb || o.data || '-';
+          row.innerHTML = `
+            <td style="padding: 9px 6px; font-weight: 700; color: #16A34A; white-space: nowrap;">৳ ${toBanglaNumber(price)}</td>
+            <td style="padding: 9px 6px; font-weight: 600; color: #1E293B;">${toBanglaNumber(min)} মি.</td>
+            <td style="padding: 9px 6px; font-weight: 600; color: #0284C7;">${mb}</td>
+            <td style="padding: 9px 6px; text-align: right; color: #475569; font-weight: 600; white-space: nowrap;">${daysText}</td>
+          `;
+        }
+        tbody.appendChild(row);
+      });
+    }
   }
 
   const p = document.getElementById('telPackDetailsPage');
@@ -2560,6 +2709,7 @@ function setAllAppData(bundle) {
   rechargeOffersData = Array.isArray(bundle.offers) ? bundle.offers : [];
   serviceCentersData = Array.isArray(bundle.serviceCenters) ? bundle.serviceCenters : [];
   bankingData = Array.isArray(bundle.banking) ? bundle.banking : [];
+  eventsData = Array.isArray(bundle.events) ? bundle.events : [];
 
   updateCategoryCounts();
 }
@@ -2578,7 +2728,7 @@ async function loadData() {
   if (!navigator.onLine) return;
 
   try {
-    const [pData, hData, dData, rData, eData, restData, aData, pkgData, tData, telData, offData, scData, bData] = await Promise.all([
+    const [pData, hData, dData, rData, eData, restData, aData, pkgData, tData, telData, offData, scData, bData, evData] = await Promise.all([
       fetch(API_PLACES).then(r => r.json()).catch(() => null),
       fetch(API_HEALTH).then(r => r.json()).catch(() => null),
       fetch(API_DOCTORS).then(r => r.json()).catch(() => null),
@@ -2591,7 +2741,8 @@ async function loadData() {
       fetch(API_TELECOM).then(r => r.json()).catch(() => null),
       fetch(API_OFFERS).then(r => r.json()).catch(() => null),
       fetch(API_SERVICE_CENTERS).then(r => r.json()).catch(() => null),
-      fetch(API_BANKING).then(r => r.json()).catch(() => null)
+      fetch(API_BANKING).then(r => r.json()).catch(() => null),
+      fetch(API_EVENTS).then(r => r.json()).catch(() => null)
     ]);
 
     const freshBundle = {
@@ -2607,7 +2758,8 @@ async function loadData() {
       telecom: Array.isArray(telData) ? organizeListings(telData) : telecomData,
       offers: Array.isArray(offData) ? offData : rechargeOffersData,
       serviceCenters: Array.isArray(scData) ? scData : serviceCentersData,
-      banking: Array.isArray(bData) ? organizeListings(bData.map(normalizeBankingItem)) : bankingData
+      banking: Array.isArray(bData) ? organizeListings(bData.map(normalizeBankingItem)) : bankingData,
+      events: Array.isArray(evData) ? evData : eventsData
     };
 
     setAllAppData(freshBundle);
@@ -2908,6 +3060,153 @@ function handleHashRoute() {
     openMobileCareHub(false);
   } else if (hash === '#bookmarks') {
     openBookmarkPage(false);
+  } else if (hash === '#events') { 
+    openEventPage(false); 
+  }
+}
+
+// --- ইভেন্ট ও সরকারি ছুটির তালিকা ইঞ্জিন ---
+function closeEventPage() {
+  closeSlide('eventPage');
+  clearHashIfMatches('#events');
+}
+
+function filterEvents(cat, chipEl) {
+  currentEventFilter = cat;
+  const bar = document.getElementById('eventFilterBar');
+  if (bar) {
+    bar.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
+    if (chipEl) chipEl.classList.add('active');
+  }
+  renderEventCards(true);
+}
+
+function formatBanglaEventDate(dateStr) {
+  if (!dateStr) return '';
+  const months = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+  const cleanDate = toEnDigits(dateStr).trim();
+  const parts = cleanDate.split('-');
+  if (parts.length !== 3) return dateStr;
+  const day = toBanglaNumber(parseInt(parts[2], 10));
+  const monthName = months[parseInt(parts[1], 10) - 1] || '';
+  const year = toBanglaNumber(parts[0]);
+  return `${day} ${monthName}, ${year}`;
+}
+
+function openEventPage(push = true) {
+  const p = document.getElementById('eventPage');
+  if (p) {
+    p.classList.add('open');
+    renderEventCards(true);
+    if (push) {
+      window.history.pushState({ page: 'events' }, '', '#events');
+    }
+  }
+}
+
+function renderEventCards(autoScrollToToday = false) {
+  const container = document.getElementById('eventListings');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  const filtered = (eventsData || [])
+    .filter(ev => {
+      if (!ev || !ev.title) return false;
+      if (currentEventFilter === 'সব') return true;
+      return (ev.category || '').includes(currentEventFilter);
+    })
+    .sort((a, b) => toEnDigits(a.date || '').localeCompare(toEnDigits(b.date || '')));
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 50px 20px;">কোনো ইভেন্ট বা ছুটির তথ্য পাওয়া যায়নি।</div>`;
+    return;
+  }
+
+  let targetScrollElement = null;
+
+  filtered.forEach(ev => {
+    const evDate = toEnDigits(ev.date || '').trim();
+    const isPast = evDate && evDate < todayStr;
+    const isToday = evDate === todayStr;
+    const isHoliday = (ev.category || '').includes('ছুটি');
+    const hasImage = ev.image_url && ev.image_url.trim() !== '';
+
+    const card = document.createElement('div');
+    card.style.cssText = `
+      background: #FFFFFF;
+      border: 1.5px solid ${isToday ? '#DC2626' : 'var(--border)'};
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      cursor: pointer;
+      opacity: ${isPast ? '0.78' : '1'};
+    `;
+
+    if (!targetScrollElement && evDate >= todayStr) {
+      targetScrollElement = card;
+    }
+
+    const formattedDate = formatBanglaEventDate(evDate);
+    const dateLine = `${formattedDate}${ev.time ? ' • ' + ev.time : ''}`;
+
+    card.innerHTML = `
+      ${hasImage ? `
+        <div style="width: 100%; height: 165px; background: #F1F5F9; overflow: hidden;">
+          <img src="${ev.image_url}" alt="${ev.title}" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
+        </div>
+      ` : ''}
+
+      <div style="padding: 12px 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+          <div style="font-size: 12px; font-weight: 700; color: ${isToday ? '#DC2626' : '#E11D48'};">
+            <i class="fa-regular fa-calendar" style="margin-right: 4px;"></i>${dateLine}
+          </div>
+          ${isToday ? `<span style="font-size: 10px; background: #FEE2E2; color: #DC2626; font-weight: 800; padding: 2px 7px; border-radius: 10px;">আজকে</span>` : ''}
+          ${isPast ? `<span style="font-size: 10px; background: #F1F5F9; color: #64748B; font-weight: 600; padding: 2px 7px; border-radius: 10px;">সম্পন্ন</span>` : ''}
+        </div>
+
+        <div style="font-size: 15.5px; font-weight: 800; color: #0F172A; margin-top: 4px; line-height: 1.35;">
+          ${ev.title}
+        </div>
+
+        ${ev.location ? `
+          <div style="font-size: 12px; color: #475569; margin-top: 4px;">
+            <i class="fa-solid fa-location-dot" style="color: #64748B; width: 14px;"></i> ${ev.location}
+          </div>
+        ` : ''}
+
+        <div style="margin-top: 8px; display: flex; align-items: center; gap: 6px;">
+          <span style="font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 6px; background: ${isHoliday ? '#FEF2F2' : '#EFF6FF'}; color: ${isHoliday ? '#B91C1C' : '#1D4ED8'};">
+            ${ev.category || 'ইভেন্ট'}
+          </span>
+        </div>
+      </div>
+    `;
+
+    card.onclick = () => {
+      openDetails({
+        name: ev.title,
+        category: ev.category || 'ইভেন্ট',
+        area: ev.location || 'নারায়ণগঞ্জ',
+        address: ev.location || 'নারায়ণগঞ্জ',
+        timing: dateLine,
+        landmark: ev.details || '',
+        website: ev.link || '',
+        map_url: ev.map_url || '',
+        image_url: ev.image_url || ''
+      });
+    };
+
+    container.appendChild(card);
+  });
+
+  if (autoScrollToToday && targetScrollElement) {
+    setTimeout(() => {
+      targetScrollElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
   }
 }
 
