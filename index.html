@@ -440,12 +440,12 @@
 	  
     </div>
 
-    <!-- বটম বার -->
+	<!-- বটম বার -->
     <nav class="bottom-nav">
-      <div class="nav-item active" onclick="goHome()"><i class="fa-solid fa-house"></i>হোম</div>
-      <div class="nav-item" onclick="openEventPage()"><i class="fa-solid fa-calendar-days"></i>ইভেন্ট</div>
-      <div class="nav-item" onclick="openBookmarkPage()"><i class="fa-solid fa-bookmark"></i>সংরক্ষণ</div>
-      <div class="nav-item" onclick="openCategoryPage('সব', 'সকল তালিকা')"><i class="fa-solid fa-compass"></i>এক্সপ্লোর</div>
+      <div class="nav-item active" id="nav-home" onclick="switchBottomTab('home')"><i class="fa-solid fa-house"></i>হোম</div>
+      <div class="nav-item" id="nav-events" onclick="switchBottomTab('events')"><i class="fa-solid fa-calendar-days"></i>ইভেন্ট</div>
+      <div class="nav-item" id="nav-saved" onclick="switchBottomTab('saved')"><i class="fa-solid fa-bookmark"></i>সংরক্ষণ</div>
+      <div class="nav-item" id="nav-explore" onclick="switchBottomTab('explore')"><i class="fa-solid fa-compass"></i>এক্সপ্লোর</div>
     </nav>
   </div>
 

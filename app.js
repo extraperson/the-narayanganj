@@ -266,6 +266,7 @@ function organizeListings(dataList) {
 function closeSlide(id) {
   const el = document.getElementById(id);
   if (el) el.classList.remove('open');
+  if (typeof syncBottomNavState === 'function') syncBottomNavState();
 }
 
 function clearHashIfMatches(prefix) {
@@ -2038,7 +2039,27 @@ function openSubmitForm() {
   window.open("https://forms.gle/sample", '_blank');
 }
 
-function goHome() {
+function setActiveNav(navId) {
+  document.querySelectorAll('.bottom-nav .nav-item').forEach(el => {
+    el.classList.remove('active');
+  });
+  const target = document.getElementById(navId);
+  if (target) target.classList.add('active');
+}
+
+function syncBottomNavState() {
+  if (document.getElementById('eventPage')?.classList.contains('open')) {
+    setActiveNav('nav-events');
+  } else if (document.getElementById('bookmarkPage')?.classList.contains('open')) {
+    setActiveNav('nav-saved');
+  } else if (document.getElementById('categoryPage')?.classList.contains('open') && currentCategory === 'সব') {
+    setActiveNav('nav-explore');
+  } else {
+    setActiveNav('nav-home');
+  }
+}
+
+function closeAllSlidePages() {
   if (typeof closeMfsLimit === 'function') closeMfsLimit();
   if (typeof closeMfsCalculator === 'function') closeMfsCalculator();
   closeCareCenters();
@@ -2052,7 +2073,29 @@ function goHome() {
   closeMobileCareHub();
   closeTelPackPage();
   closeEventPage();
+}
+
+function switchBottomTab(tab) {
+  closeAllSlidePages();
+  if (tab === 'home') {
+    history.replaceState(null, null, ' ');
+    setActiveNav('nav-home');
+  } else if (tab === 'events') {
+    openEventPage();
+    setActiveNav('nav-events');
+  } else if (tab === 'saved') {
+    openBookmarkPage();
+    setActiveNav('nav-saved');
+  } else if (tab === 'explore') {
+    openCategoryPage('সব', 'সকল তালিকা');
+    setActiveNav('nav-explore');
+  }
+}
+
+function goHome() {
+  closeAllSlidePages();
   history.replaceState(null, null, ' ');
+  setActiveNav('nav-home');
 }
 
 window.onpopstate = function() {
@@ -2069,6 +2112,7 @@ window.onpopstate = function() {
   else if (document.getElementById('bookmarkPage')?.classList.contains('open')) closeBookmarkPage();
   else if (document.getElementById('categoryPage')?.classList.contains('open')) closeCategoryPage();
   else if (document.getElementById('eventPage')?.classList.contains('open')) closeEventPage();
+  syncBottomNavState();
 };
 
 function shareDoctor() {
@@ -3063,6 +3107,7 @@ function handleHashRoute() {
   } else if (hash === '#events') { 
     openEventPage(false); 
   }
+  syncBottomNavState();
 }
 
 // --- ইভেন্ট ও সরকারি ছুটির তালিকা ইঞ্জিন ---

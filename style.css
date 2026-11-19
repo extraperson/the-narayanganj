@@ -560,7 +560,7 @@ body {
   justify-content: space-around;
   padding: 10px 0;
   border-top: 1px solid var(--border);
-  z-index: 100;
+  z-index: 2500;
 }
 
 .nav-item {
